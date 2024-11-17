@@ -327,9 +327,14 @@ class SIMULATOR_API UDefaultPlayerOptions : public UObject
 public:
 	UDefaultPlayerOptions();
 
-	UPROPERTY(BlueprintReadOnly, Category = "PlayerOptions")
-	UDefaultPlayerOptions* PlayerOptionsInstance;
+	UFUNCTION(BlueprintCallable, Category = "PlayerOptions")
+	static UDefaultPlayerOptions* GetPlayerOptionsInstance();
+	
+	static UDefaultPlayerOptions* PlayerOptionsInstance;
 
+	UFUNCTION(BlueprintCallable, Category = "PlayerOptions")
+	void PrintOptionMap();
+	
 	UFUNCTION(BlueprintCallable, Category = "PlayerOptions")
 	int UpdateOptionValue(const EOptionType OptionType, const FString& OptionName, const float& Value, const uint8 WheelIndex = 0);
 	UFUNCTION(BlueprintCallable, Category = "PlayerOptions")

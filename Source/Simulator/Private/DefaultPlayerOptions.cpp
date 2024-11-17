@@ -4,25 +4,38 @@
 #include "DefaultPlayerOptions.h"
 
 EDriveMode FDefaultBasicUserOption::DefaultDriveMode = EDriveMode::AllWheelDrive;
+UDefaultPlayerOptions* UDefaultPlayerOptions::PlayerOptionsInstance = nullptr;
 
 UDefaultPlayerOptions::UDefaultPlayerOptions()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Started"));
 
-	PlayerOptionsInstance = NewObject<UDefaultPlayerOptions>();
+	PlayerOptionsInstance = this;
 	
 	BasicUserOptionInstance = MakeUnique<FDefaultBasicUserOption>(OptionMap);
 	PhysicsUserOptionInstance = MakeUnique<FDefaultPhysicsUserOption>(OptionMap);
 	AdvanceUserOptionInstance = MakeUnique<FDefaultAdvanceUserOption>(OptionMap);
 	//TryLoadUserOption(BasicPath);
 
+
+	UE_LOG(LogTemp, Warning, TEXT("Ended"));
+
+}
+
+UDefaultPlayerOptions* UDefaultPlayerOptions::GetPlayerOptionsInstance()
+{
+	PlayerOptionsInstance = PlayerOptionsInstance == nullptr ? NewObject<UDefaultPlayerOptions>() : PlayerOptionsInstance;
+	return PlayerOptionsInstance;
+}
+
+void UDefaultPlayerOptions::PrintOptionMap()
+{
 	for(auto & name : OptionMap)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Option: %s"), *name.Key.ToString());
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Ended"));
-
 }
+
 
 int UDefaultPlayerOptions::UpdateOptionValue(const EOptionType OptionType, const FString& OptionName, const float& Value, const UINT8 WheelIndex)
 {

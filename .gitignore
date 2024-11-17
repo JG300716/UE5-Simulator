@@ -1,0 +1,27 @@
+# Ignore build files and intermediate folders
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vscode/
+
+# Ignore user-specific files
+*.log
+*.temp
+*.ini
+*.aps
+*.user
+*.userprefs
+*.ncb
+*.suo
+*.sln.docstates
+
+# Ignore backup files
+Backup/
+Backup-*
+
+# Ignore macOS files
+.DS_Store
+
+# Ignore Windows files
+Thumbs.db

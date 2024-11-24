@@ -1,6 +1,7 @@
 /**
 * Was made for engineer degree thesis purposes.
  * Author: Jakub Golder
+ * https://github.com/JG300716
  */
 
 #pragma once

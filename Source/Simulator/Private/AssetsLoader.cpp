@@ -1,6 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
+/**
+* Was made for engineer degree thesis purposes.
+ * Author: Jakub Golder
+ * https://github.com/JG300716
+ */
 #include "AssetsLoader.h"
 TArray<FString> UAssetsLoader::GetFoldersInDirectory(const FString& DirectoryPath)
 {

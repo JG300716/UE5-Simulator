@@ -13,7 +13,10 @@ public class Simulator : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"InputCore",
-			"ChaosVehicles"
+			"ChaosVehicles",
+			"Slate",   
+			"SlateCore",
+			"UMG"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

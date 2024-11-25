@@ -21,15 +21,6 @@ enum EOptionsButtonType : uint8
 	OptionsButton = 3
 };
 
-UENUM(BlueprintType, Blueprintable, Category = "OptionsButton")
-enum ECursorDirection : uint8
-{
-	Up = 0,
-	Down = 1,
-	Left = 2,
-	Right = 3
-};
-
 UCLASS(BlueprintType, Blueprintable)
 class SIMULATOR_API UOptionsButtonType : public UButton
 {
@@ -38,7 +29,7 @@ class SIMULATOR_API UOptionsButtonType : public UButton
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsButton")
-	void ChangeButtonOutline(bool bIsOutline);
+	void ChangeButtonOutline(const bool bIsOutline) const;
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsButton")
 	void InitializeButton(UButton* Button, EOptionsButtonType Type, FString Name, FString Path);

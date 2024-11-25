@@ -5,22 +5,26 @@
  */
 #include "OptionsLibrary.h"
 
-FVector3f UOptionsLibrary::MoveCursor(const ECursorDirection Direction, const FVector3d CursorPosition, const TArray<uint8> Sizes)
+TArray<uint8> UOptionsLibrary::Sizes;
+TArray<uint8> UOptionsLibrary::MaxColumns;
+
+void UOptionsLibrary::Initialize(TArray<uint8> TmpSizes, TArray<uint8> TmpMaxColumns)
+{
+    Sizes = TmpSizes;
+    MaxColumns = TmpMaxColumns;
+}
+
+FVector3f UOptionsLibrary::MoveCursor(const EControllersArrowsDirection Direction, const FVector3d CursorPosition)
 {
     FVector3f NewCursorPosition = FVector3f(CursorPosition);
 
     const uint8 Page = CursorPosition.Z;
-    const uint8 MaxColumns = (Page == 2) ? 1 : 5; // Options panel has 1 column, others have 5
-    uint8 PageSize = 0;
-
-    for(int i = 0; i < Page; i++)
-    {
-        PageSize += Sizes[i];
-    }
-
+    const uint8 Columns = MaxColumns[Page]; // Number of columns in the current page
+    const uint8 PageSize = Sizes[Page]; // Size of the current page only
+   
     switch (Direction)
     {
-        case ECursorDirection::Up:
+        case EControllersArrowsDirection::Up:
             if (CursorPosition.Y > 0)
             {
                 NewCursorPosition.Y--;
@@ -29,23 +33,20 @@ FVector3f UOptionsLibrary::MoveCursor(const ECursorDirection Direction, const FV
             }
             return NewCursorPosition;
 
-        case ECursorDirection::Down:
+        case EControllersArrowsDirection::Down:
             if (CursorPosition.Y == 0)
             {
                 NewCursorPosition.Y = 1; // Move to the first row of the grid
                 NewCursorPosition.X = 0; // Snap to the first column
                 return NewCursorPosition;
             }
-
-            if (CursorPosition.Y >= FMath::CeilToInt(PageSize / (float)MaxColumns) - 1)
+            if (CursorPosition.Y >= FMath::CeilToInt(PageSize / (float)Columns) - 1)
                 return NewCursorPosition; // Already at the bottom row, do nothing
 
             NewCursorPosition.Y++;
-            if (NewCursorPosition.Y == FMath::CeilToInt(PageSize / (float)MaxColumns) - 1)
-                NewCursorPosition.X = FMath::Min(CursorPosition.X, PageSize % MaxColumns - 1); // Clamp to last slot
             return NewCursorPosition;
 
-        case ECursorDirection::Left:
+        case EControllersArrowsDirection::Left:
             if (CursorPosition.Y == 0)
             {
                 // Moving left among tab buttons
@@ -57,9 +58,6 @@ FVector3f UOptionsLibrary::MoveCursor(const ECursorDirection Direction, const FV
                 return NewCursorPosition;
             }
 
-            if (Page == 2)
-                return NewCursorPosition; // Do nothing for Options panel
-
             if (CursorPosition.X > 0)
             {
                 NewCursorPosition.X--;
@@ -69,11 +67,11 @@ FVector3f UOptionsLibrary::MoveCursor(const ECursorDirection Direction, const FV
             if (CursorPosition.Y > 1)
             {
                 NewCursorPosition.Y--;
-                NewCursorPosition.X = MaxColumns - 1; // Wrap to the end of the previous row
+                NewCursorPosition.X = Columns - 1; // Wrap to the end of the previous row
             }
             return NewCursorPosition;
 
-        case ECursorDirection::Right:
+        case EControllersArrowsDirection::Right:
             if (CursorPosition.Y == 0)
             {
                 // Moving right among tab buttons
@@ -85,16 +83,16 @@ FVector3f UOptionsLibrary::MoveCursor(const ECursorDirection Direction, const FV
                 return NewCursorPosition;
             }
 
-            if (Page == 2)
-                return NewCursorPosition; // Do nothing for Options panel
-
-            if (CursorPosition.X < MaxColumns - 1 && (CursorPosition.Y * MaxColumns + CursorPosition.X + 1) < PageSize)
+            // Check if within bounds of the row
+            if (CursorPosition.X + 1 < Columns && 
+                (CursorPosition.Y - 1) * Columns + CursorPosition.X + 1 < PageSize)
             {
                 NewCursorPosition.X++;
                 return NewCursorPosition; // Move right within the same row
             }
 
-            if ((CursorPosition.Y + 1) * MaxColumns < PageSize)
+            // Check if we can wrap to the next row
+            if ((CursorPosition.Y) * Columns < PageSize)
             {
                 NewCursorPosition.Y++;
                 NewCursorPosition.X = 0; // Wrap to the beginning of the next row
@@ -106,47 +104,82 @@ FVector3f UOptionsLibrary::MoveCursor(const ECursorDirection Direction, const FV
     }
 }
 
-void UOptionsLibrary::UpdateSelectedButton(
+
+bool UOptionsLibrary::UpdateSelectedButton(
     TArray<UOptionsButtonType*> Buttons,
     const FVector CurrentCursorPosition,
-    const FVector PreviousCursorPosition,
-    const TArray<uint8> Sizes,
-    const TArray<uint8> MaxColumns)
+    const FVector PreviousCursorPosition)
 {
-    auto CalculateIndex = [Sizes, MaxColumns](const FVector& CursorPosition) -> int32
+    auto CalculateIndex = [](const FVector& CursorPosition) -> int32
     {
         const uint32 Page = CursorPosition.Z;
         uint32 PageOffset = 0;
+        if (Page >= static_cast<uint32>(MaxColumns.Num())) return -1; // Invalid page
         const uint32 RowOffset = MaxColumns[Page] * __max((CursorPosition.Y - 1), 0);
         const bool IsTabButton = CursorPosition.Y == 0;
-        const uint32 ColumnOffset = IsTabButton ? 0 : 1;
+        const uint32 ColumnOffset = CursorPosition.X + (IsTabButton ? 0 : 1);
+        if (Page >= static_cast<uint32>(Sizes.Num())) return -1; // Invalid page
         for(uint32 i = 0; i < Page; i++)
         {
             PageOffset += Sizes[i];
         }
         return Page + PageOffset + RowOffset + ColumnOffset;
     };
-
-
+  
     // Ensure valid positions
     if (CurrentCursorPosition.Z < 0 || PreviousCursorPosition.Z < 0)
-        return; // Invalid position
+        return false; // Invalid position
 
+    if (MaxColumns.IsEmpty()) return false;
+
+    if (Sizes.IsEmpty()) return false;
+    
     // Compute indices for current and previous buttons
     const int32 CurrentIndex = CalculateIndex(CurrentCursorPosition);
     const int32 PreviousIndex = CalculateIndex(PreviousCursorPosition);
 
-    UE_LOG(LogTemp, Warning, TEXT("CurrentIndex: %d, PreviousIndex: %d"), CurrentIndex, PreviousIndex);
-    
-    // Update buttons if indices are valid
+    if (Buttons.IsEmpty()) return false;
+
+    if (CurrentIndex < 0 || CurrentIndex >= Buttons.Num()) return false;
+    // Update buttons if indices are vali
+
+    if (Buttons.IsValidIndex(PreviousIndex) && PreviousIndex != CurrentIndex)
+    {
+        Buttons[PreviousIndex]->ChangeButtonOutline(false); // Remove highlight from the previously selected button
+    }
     if (Buttons.IsValidIndex(CurrentIndex))
     {
         Buttons[CurrentIndex]->ChangeButtonOutline(true); // Highlight the currently selected button
     }
 
-    if (Buttons.IsValidIndex(PreviousIndex) && PreviousIndex != CurrentIndex)
+    if (abs((CurrentCursorPosition - PreviousCursorPosition).Z) != 1) return false; // Only update if the page has changed
+    return true;
+    
+}
+
+TArray<UOptionsButtonType*> UOptionsLibrary::AddTabButtons(TArray<UButton*> TabButtons, TArray<UOptionsButtonType*> Buttons)
+{
+    uint32 Offset = 0;
+    for(int i = 0; i < TabButtons.Num(); i++)
     {
-        Buttons[PreviousIndex]->ChangeButtonOutline(false); // Remove highlight from the previously selected button
+        UOptionsButtonType* Button = NewObject<UOptionsButtonType>(UOptionsButtonType::StaticClass());
+        Button->InitializeButton(TabButtons[i], EOptionsButtonType::TabButton, TabButtons[i]->GetName(), "");
+        Buttons.Insert(Button, Offset);
+        Offset += Sizes[i] + 1;
+    }
+    return Buttons;
+}
+
+void UOptionsLibrary::ChangePanelVisibility(TArray<UUniformGridPanel*> Panels, const FVector CursorPosition, const FVector PreviousCursorPosition)
+{
+    if (CursorPosition.Z == PreviousCursorPosition.Z) return; // Only change visibility if the page has changed
+    if (Panels.IsValidIndex(CursorPosition.Z))
+    {
+        Panels[CursorPosition.Z]->SetVisibility(ESlateVisibility::Visible);
+    }
+    if (Panels.IsValidIndex(PreviousCursorPosition.Z))
+    {
+        Panels[PreviousCursorPosition.Z]->SetVisibility(ESlateVisibility::Hidden);
     }
 }
 

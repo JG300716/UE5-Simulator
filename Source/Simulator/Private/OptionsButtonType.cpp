@@ -14,10 +14,11 @@ void UOptionsButtonType::InitializeButton(UButton* Button, EOptionsButtonType Ty
  this->OptionButtonPath = Path;
 }
 
-void UOptionsButtonType::ChangeButtonOutline(bool bIsOutline)
+void UOptionsButtonType::ChangeButtonOutline(const bool bIsOutline) const
 {
  if (OptionButton == nullptr) return;
  FButtonStyle Style = OptionButton->GetStyle();
- Style.Normal.OutlineSettings.Color = bIsOutline ? FLinearColor::Yellow : FLinearColor::Black;
+ UE_LOG(LogTemp, Warning, TEXT("ChangeButtonOutline: %d"), bIsOutline);
+ Style.Normal.OutlineSettings.Color = bIsOutline ? FLinearColor(255, 165, 0, 1) : FLinearColor::Black;
  OptionButton->SetStyle(Style);
 }

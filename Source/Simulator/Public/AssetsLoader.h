@@ -17,5 +17,9 @@ class SIMULATOR_API UAssetsLoader : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "FileSystem")	static TArray<FString> GetFoldersInDirectory(const FString& DirectoryPath);
+	UFUNCTION(BlueprintCallable, Category = "FileSystem")
+	static TArray<FString> GetFoldersInDirectory(const FString& DirectoryPath);
+
+	UFUNCTION(BlueprintCallable, Category = "FileSystem")
+	static FString GetAssetPath(const FString& DirectoryPath, const FString& AssetName);
 };

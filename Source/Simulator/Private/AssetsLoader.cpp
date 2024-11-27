@@ -28,3 +28,16 @@ TArray<FString> UAssetsLoader::GetFoldersInDirectory(const FString& DirectoryPat
 
     return FolderPaths;
 }
+
+FString UAssetsLoader::GetAssetPath(const FString& DirectoryPath, const FString& AssetName)
+{
+    // Construct the full path based on the provided DirectoryPath and AssetName
+    FString AssetPath = FPaths::ProjectContentDir() + DirectoryPath / AssetName;
+    if (FPaths::FileExists(AssetPath)) {
+        UE_LOG(LogTemp, Warning, TEXT("Asset found at %s."), *AssetPath);
+    } else {
+        UE_LOG(LogTemp, Error, TEXT("Asset was not found at %s."), *AssetPath);
+    }
+
+    return AssetPath;
+}

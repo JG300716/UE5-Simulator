@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/Button.h"
-#include "OptionsButtonType.generated.h"
+#include "OptionsBaseButton.generated.h"
 
 /**
  * Was made for engineer degree thesis purposes.
@@ -22,7 +22,7 @@ enum EOptionsButtonType : uint8
 };
 
 UCLASS(BlueprintType, Blueprintable)
-class SIMULATOR_API UOptionsButtonType : public UButton
+class SIMULATOR_API UOptionsBaseButton : public UButton
 {
 	GENERATED_BODY()
 
@@ -32,7 +32,7 @@ public:
 	void ChangeButtonOutline(const bool bIsOutline) const;
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsButton")
-	void InitializeButton(UButton* Button, EOptionsButtonType Type, FString Name, FString Path);
+	void InitializeBaseButton(UButton* Button, EOptionsButtonType Type);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton")
 	UButton* OptionButton;
@@ -40,9 +40,4 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton")
 	TEnumAsByte<EOptionsButtonType> OptionButtonType;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton")
-	FString OptionButtonName;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton")
-	FString OptionButtonPath;
 };

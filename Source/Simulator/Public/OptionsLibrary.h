@@ -7,7 +7,7 @@
 #include "Components/Button.h"
 #include "Components/UniformGridPanel.h" // For UUniformGridPanel
 #include "Styling/SlateTypes.h"      // For FButtonStyle
-#include "OptionsButtonType.h"       // For EControllersArrowsDirection
+#include "OptionsBaseButton.h"       // For EControllersArrowsDirection
 
 #include "Chaos/UniformGrid.h"
 
@@ -47,17 +47,23 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
 	static void Initialize(TArray<uint8> TmpSizes, TArray<uint8> TmpMaxColumns);
+
+	UFUNCTION()
+	static int32 GetSelectedButtonIndex(const FVector CursorPosition);
+	
+	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
+	static UOptionsBaseButton* GetSelectedButton(TArray<UOptionsBaseButton*> Buttons, const FVector CursorPosition);
 	
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
 	static FVector3f MoveCursor(const EControllersArrowsDirection Direction, const FVector CursorPosition);
-
+	
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
-	static bool UpdateSelectedButton(TArray<UOptionsButtonType*> Buttons, const FVector CurrentCursorPosition, const FVector PreviousCursorPosition);
+	static bool UpdateSelectedButton(TArray<UOptionsBaseButton*> Buttons, const FVector CurrentCursorPosition, const FVector PreviousCursorPosition);
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
 	static void ChangePanelVisibility(TArray<UUniformGridPanel*> Panels, const FVector CursorPosition, const FVector PreviousCursorPosition);
 	
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
-	static TArray<UOptionsButtonType*> AddTabButtons(TArray<UButton*> TabButtons, TArray<UOptionsButtonType*> Buttons);
+	static TArray<UOptionsBaseButton*> AddTabButtons(TArray<UButton*> TabButtons, TArray<UOptionsBaseButton*> Buttons);
 	
 };

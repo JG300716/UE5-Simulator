@@ -14,6 +14,30 @@ void UOptionsLibrary::Initialize(TArray<uint8> TmpSizes, TArray<uint8> TmpMaxCol
     MaxColumns = TmpMaxColumns;
 }
 
+int32 UOptionsLibrary::GetSelectedButtonIndex(const FVector CursorPosition)
+{
+    const uint32 Page = CursorPosition.Z;
+    uint32 PageOffset = 0;
+    if (Page >= static_cast<uint32>(MaxColumns.Num())) return -1; // Invalid page
+    const uint32 RowOffset = MaxColumns[Page] * __max((CursorPosition.Y - 1), 0);
+    const bool IsTabButton = CursorPosition.Y == 0;
+    const uint32 ColumnOffset = CursorPosition.X + (IsTabButton ? 0 : 1);
+    if (Page >= static_cast<uint32>(Sizes.Num())) return -1; // Invalid page
+    for(uint32 i = 0; i < Page; i++)
+    {
+        PageOffset += Sizes[i];
+    }
+    return Page + PageOffset + RowOffset + ColumnOffset;
+}
+
+
+UOptionsBaseButton* UOptionsLibrary::GetSelectedButton(TArray<UOptionsBaseButton*> Buttons, const FVector CursorPosition)
+{
+    const int32 Index = GetSelectedButtonIndex(CursorPosition);
+    if (Index < 0 || Index >= Buttons.Num()) return nullptr; // Invalid index
+    return Buttons[Index];
+}
+
 FVector3f UOptionsLibrary::MoveCursor(const EControllersArrowsDirection Direction, const FVector3d CursorPosition)
 {
     FVector3f NewCursorPosition = FVector3f(CursorPosition);
@@ -106,25 +130,10 @@ FVector3f UOptionsLibrary::MoveCursor(const EControllersArrowsDirection Directio
 
 
 bool UOptionsLibrary::UpdateSelectedButton(
-    TArray<UOptionsButtonType*> Buttons,
+    TArray<UOptionsBaseButton*> Buttons,
     const FVector CurrentCursorPosition,
     const FVector PreviousCursorPosition)
 {
-    auto CalculateIndex = [](const FVector& CursorPosition) -> int32
-    {
-        const uint32 Page = CursorPosition.Z;
-        uint32 PageOffset = 0;
-        if (Page >= static_cast<uint32>(MaxColumns.Num())) return -1; // Invalid page
-        const uint32 RowOffset = MaxColumns[Page] * __max((CursorPosition.Y - 1), 0);
-        const bool IsTabButton = CursorPosition.Y == 0;
-        const uint32 ColumnOffset = CursorPosition.X + (IsTabButton ? 0 : 1);
-        if (Page >= static_cast<uint32>(Sizes.Num())) return -1; // Invalid page
-        for(uint32 i = 0; i < Page; i++)
-        {
-            PageOffset += Sizes[i];
-        }
-        return Page + PageOffset + RowOffset + ColumnOffset;
-    };
   
     // Ensure valid positions
     if (CurrentCursorPosition.Z < 0 || PreviousCursorPosition.Z < 0)
@@ -135,8 +144,8 @@ bool UOptionsLibrary::UpdateSelectedButton(
     if (Sizes.IsEmpty()) return false;
     
     // Compute indices for current and previous buttons
-    const int32 CurrentIndex = CalculateIndex(CurrentCursorPosition);
-    const int32 PreviousIndex = CalculateIndex(PreviousCursorPosition);
+    const int32 CurrentIndex = GetSelectedButtonIndex(CurrentCursorPosition);
+    const int32 PreviousIndex = GetSelectedButtonIndex(PreviousCursorPosition);
 
     if (Buttons.IsEmpty()) return false;
 
@@ -157,13 +166,13 @@ bool UOptionsLibrary::UpdateSelectedButton(
     
 }
 
-TArray<UOptionsButtonType*> UOptionsLibrary::AddTabButtons(TArray<UButton*> TabButtons, TArray<UOptionsButtonType*> Buttons)
+TArray<UOptionsBaseButton*> UOptionsLibrary::AddTabButtons(TArray<UButton*> TabButtons, TArray<UOptionsBaseButton*> Buttons)
 {
     uint32 Offset = 0;
     for(int i = 0; i < TabButtons.Num(); i++)
     {
-        UOptionsButtonType* Button = NewObject<UOptionsButtonType>(UOptionsButtonType::StaticClass());
-        Button->InitializeButton(TabButtons[i], EOptionsButtonType::TabButton, TabButtons[i]->GetName(), "");
+        UOptionsBaseButton* Button = NewObject<UOptionsBaseButton>(UOptionsBaseButton::StaticClass());
+        Button->InitializeBaseButton(TabButtons[i], EOptionsButtonType::TabButton);
         Buttons.Insert(Button, Offset);
         Offset += Sizes[i] + 1;
     }

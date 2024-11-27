@@ -7,11 +7,15 @@
 
 TArray<uint8> UOptionsLibrary::Sizes;
 TArray<uint8> UOptionsLibrary::MaxColumns;
+TArray<UOptionsBaseButton*> UOptionsLibrary::Buttons;
+int32 UOptionsLibrary::IndexOfChosenVehicle;
 
-void UOptionsLibrary::Initialize(TArray<uint8> TmpSizes, TArray<uint8> TmpMaxColumns)
+void UOptionsLibrary::Initialize(TArray<uint8> TmpSizes, TArray<uint8> TmpMaxColumns, TArray<UOptionsBaseButton*> TmpButtons)
 {
     Sizes = TmpSizes;
     MaxColumns = TmpMaxColumns;
+    Buttons = TmpButtons;
+    IndexOfChosenVehicle = -1;
 }
 
 int32 UOptionsLibrary::GetSelectedButtonIndex(const FVector CursorPosition)
@@ -31,7 +35,7 @@ int32 UOptionsLibrary::GetSelectedButtonIndex(const FVector CursorPosition)
 }
 
 
-UOptionsBaseButton* UOptionsLibrary::GetSelectedButton(TArray<UOptionsBaseButton*> Buttons, const FVector CursorPosition)
+UOptionsBaseButton* UOptionsLibrary::GetSelectedButton(const FVector CursorPosition)
 {
     const int32 Index = GetSelectedButtonIndex(CursorPosition);
     if (Index < 0 || Index >= Buttons.Num()) return nullptr; // Invalid index
@@ -130,7 +134,6 @@ FVector3f UOptionsLibrary::MoveCursor(const EControllersArrowsDirection Directio
 
 
 bool UOptionsLibrary::UpdateSelectedButton(
-    TArray<UOptionsBaseButton*> Buttons,
     const FVector CurrentCursorPosition,
     const FVector PreviousCursorPosition)
 {
@@ -152,13 +155,13 @@ bool UOptionsLibrary::UpdateSelectedButton(
     if (CurrentIndex < 0 || CurrentIndex >= Buttons.Num()) return false;
     // Update buttons if indices are vali
 
-    if (Buttons.IsValidIndex(PreviousIndex) && PreviousIndex != CurrentIndex)
+    if (Buttons.IsValidIndex(PreviousIndex) && PreviousIndex != CurrentIndex && PreviousIndex != IndexOfChosenVehicle)
     {
-        Buttons[PreviousIndex]->ChangeButtonOutline(false); // Remove highlight from the previously selected button
+        Buttons[PreviousIndex]->ChangeButtonOutline(false, OptionsHoveredButtonColor); // Remove highlight from the previously selected button
     }
-    if (Buttons.IsValidIndex(CurrentIndex))
+    if (Buttons.IsValidIndex(CurrentIndex) && CurrentIndex != IndexOfChosenVehicle)
     {
-        Buttons[CurrentIndex]->ChangeButtonOutline(true); // Highlight the currently selected button
+        Buttons[CurrentIndex]->ChangeButtonOutline(true, OptionsHoveredButtonColor); // Highlight the currently selected button
     }
 
     if (abs((CurrentCursorPosition - PreviousCursorPosition).Z) != 1) return false; // Only update if the page has changed
@@ -166,7 +169,7 @@ bool UOptionsLibrary::UpdateSelectedButton(
     
 }
 
-TArray<UOptionsBaseButton*> UOptionsLibrary::AddTabButtons(TArray<UButton*> TabButtons, TArray<UOptionsBaseButton*> Buttons)
+TArray<UOptionsBaseButton*> UOptionsLibrary::AddTabButtons(TArray<UButton*> TabButtons)
 {
     uint32 Offset = 0;
     for(int i = 0; i < TabButtons.Num(); i++)
@@ -192,3 +195,21 @@ void UOptionsLibrary::ChangePanelVisibility(TArray<UUniformGridPanel*> Panels, c
     }
 }
 
+void UOptionsLibrary::SuccessedToLoadAsset(const FVector CursorPosition)
+{
+    if (IndexOfChosenVehicle >= 0 && IndexOfChosenVehicle < Buttons.Num())
+    {
+        Buttons[IndexOfChosenVehicle]->ChangeButtonOutline(false, OptionsChosenButtonColor);
+    }
+    IndexOfChosenVehicle = GetSelectedButtonIndex(CursorPosition);
+    if (IndexOfChosenVehicle < 0 || IndexOfChosenVehicle >= Buttons.Num()) return; // Invalid index
+    Buttons[IndexOfChosenVehicle]->ChangeButtonOutline(true, OptionsChosenButtonColor);
+}
+
+void UOptionsLibrary::FailedToLoadAsset(const FVector CursorPosition)
+{
+    if (IndexOfChosenVehicle > 0 && IndexOfChosenVehicle < Buttons.Num()) Buttons[IndexOfChosenVehicle]->ChangeButtonOutline(false, OptionsFailedButtonColor);
+    IndexOfChosenVehicle = GetSelectedButtonIndex(CursorPosition);
+    if (IndexOfChosenVehicle < 0 || IndexOfChosenVehicle >= Buttons.Num()) return; // Invalid index
+    Buttons[IndexOfChosenVehicle]->ChangeButtonOutline(true, OptionsFailedButtonColor);
+}

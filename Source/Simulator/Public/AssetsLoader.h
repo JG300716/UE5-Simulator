@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MyCar.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 #include "AssetsLoader.generated.h"
 
 /**
@@ -19,7 +21,7 @@ class SIMULATOR_API UAssetsLoader : public UBlueprintFunctionLibrary
 public:
 	UFUNCTION(BlueprintCallable, Category = "FileSystem")
 	static TArray<FString> GetFoldersInDirectory(const FString& DirectoryPath);
-
+	
 	UFUNCTION(BlueprintCallable, Category = "FileSystem")
-	static FString GetAssetPath(const FString& DirectoryPath, const FString& AssetName);
+	static TSoftClassPtr<AMyCar> LoadAsset(const FString& AssetPath, bool &Success);
 };

@@ -29,15 +29,48 @@ TArray<FString> UAssetsLoader::GetFoldersInDirectory(const FString& DirectoryPat
     return FolderPaths;
 }
 
-FString UAssetsLoader::GetAssetPath(const FString& DirectoryPath, const FString& AssetName)
+//
+// void ListFilesInDirectory()
+// {
+//     // Directory you want to scan (change this path to match your directory)
+//     FString DirectoryPath = TEXT("/Game/Simulator/Cars/FinalModels/Schevrolet/");
+//
+//     // Get the Asset Registry Module
+//     FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+//     IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
+//
+//     // Get all assets in the directory (this returns all asset metadata)
+//     TArray<FAssetData> AssetDataArray;
+//     AssetRegistry.GetAssetsByPath(FName(*DirectoryPath), AssetDataArray);
+//
+//     // Log each file in the directory
+//     for (const FAssetData& AssetData : AssetDataArray)
+//     {
+//         FString AssetName = AssetData.AssetName.ToString();
+//         FString AssetPath = AssetData.ObjectPath.ToString();
+//
+//         // You can process the asset here as needed
+//         UE_LOG(LogTemp, Log, TEXT("Asset found: %s at Path: %s"), *AssetName, *AssetPath);
+//     }
+//
+//     // Optionally, handle if no assets were found
+//     if (AssetDataArray.Num() == 0)
+//     {
+//         UE_LOG(LogTemp, Warning, TEXT("No assets found in the directory: %s"), *DirectoryPath);
+//     }
+// }
+
+TSoftClassPtr<AMyCar> UAssetsLoader::LoadAsset(const FString& AssetPath, bool &Success)
 {
-    // Construct the full path based on the provided DirectoryPath and AssetName
-    FString AssetPath = FPaths::ProjectContentDir() + DirectoryPath / AssetName;
-    if (FPaths::FileExists(AssetPath)) {
-        UE_LOG(LogTemp, Warning, TEXT("Asset found at %s."), *AssetPath);
+   // Example path:
+   // "/Game/Simulator/Cars/FinalModels/Schevrolet/Schevrolet_Object.Schevrolet_Object_C"
+    TSoftClassPtr<AMyCar> Asset = TSoftClassPtr<AMyCar>(FSoftObjectPath(AssetPath));
+    Success = Asset.IsValid();
+    if (Success) {
+        UE_LOG(LogTemp, Warning, TEXT("Asset loaded successfully from %s."), *AssetPath);
     } else {
-        UE_LOG(LogTemp, Error, TEXT("Asset was not found at %s."), *AssetPath);
+        UE_LOG(LogTemp, Error, TEXT("Asset could not be loaded from %s."), *AssetPath);
     }
 
-    return AssetPath;
+    return Asset;
 }

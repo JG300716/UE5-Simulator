@@ -29,7 +29,7 @@ class SIMULATOR_API UOptionsBaseButton : public UButton
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsButton")
-	void ChangeButtonOutline(const bool bIsOutline) const;
+	void ChangeButtonOutline(const bool bIsOutline, const FLinearColor Color) const;
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsButton")
 	void InitializeBaseButton(UButton* Button, EOptionsButtonType Type);

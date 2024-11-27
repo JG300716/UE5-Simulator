@@ -13,19 +13,26 @@ void UOptionsSelectButton::InitializeSelectButton(UButton* Button, EOptionsButto
 
 FString UOptionsSelectButton::VehicleButtonClicked()
 {
-	return FPaths::ProjectContentDir() + OptionButtonPath + OptionButtonName + TEXT("_Object.uasset");
-
+	// Example path:
+	// "/Game/Simulator/Cars/FinalModels/Schevrolet/Schevrolet_Object.Schevrolet_Object_C"
+	
+	FString Result = OptionButtonPath;
+	Result = Result.RightChop(OptionButtonPath.Find(TEXT("/Content/")));
+	Result.ReplaceInline(TEXT("Content"), TEXT("Game"));
+	const FString AssetName = OptionButtonName + TEXT("_Object");
+	Result = Result / AssetName + TEXT(".") + AssetName + TEXT("_C");
+	UE_LOG(LogTemp, Warning, TEXT("VehicleButtonClicked: %s"), *Result);
+	return  Result;
 }
 
 void UOptionsSelectButton::VehicleButtonClickedWrapper()
 {
 	AssetObjectPath = VehicleButtonClicked();
-	UE_LOG(LogTemp, Warning, TEXT("VehicleButtonClickedWrapper: %s"), *AssetObjectPath);
 }
 
 FString UOptionsSelectButton::MapButtonClicked()
 {
-	return FPaths::ProjectContentDir() + OptionButtonPath + OptionButtonName + TEXT(".uasset");
+	return OptionButtonPath + OptionButtonName + TEXT(".uasset");
 }
 
 void UOptionsSelectButton::MapButtonClickedWrapper()

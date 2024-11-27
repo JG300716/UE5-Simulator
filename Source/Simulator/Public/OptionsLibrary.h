@@ -8,6 +8,7 @@
 #include "Components/UniformGridPanel.h" // For UUniformGridPanel
 #include "Styling/SlateTypes.h"      // For FButtonStyle
 #include "OptionsBaseButton.h"       // For EControllersArrowsDirection
+#include "OptionsSelectButton.h"
 
 #include "Chaos/UniformGrid.h"
 
@@ -43,27 +44,37 @@ class SIMULATOR_API UOptionsLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 	static TArray<uint8> Sizes;
 	static TArray<uint8> MaxColumns;
+	static TArray<UOptionsBaseButton*> Buttons;
+	static int32 IndexOfChosenVehicle;
+	static constexpr FLinearColor OptionsHoveredButtonColor = FLinearColor(255, 165, 0, 1);
+	static constexpr FLinearColor OptionsChosenButtonColor = FLinearColor(0, 255, 0, 1);
+	static constexpr FLinearColor OptionsFailedButtonColor = FLinearColor(255, 0, 0, 1);
 public:
-
+	
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
-	static void Initialize(TArray<uint8> TmpSizes, TArray<uint8> TmpMaxColumns);
+	static void Initialize(TArray<uint8> TmpSizes, TArray<uint8> TmpMaxColumns, TArray<UOptionsBaseButton*> TmpButtons);
 
 	UFUNCTION()
 	static int32 GetSelectedButtonIndex(const FVector CursorPosition);
 	
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
-	static UOptionsBaseButton* GetSelectedButton(TArray<UOptionsBaseButton*> Buttons, const FVector CursorPosition);
+	static UOptionsBaseButton* GetSelectedButton( const FVector CursorPosition);
 	
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
 	static FVector3f MoveCursor(const EControllersArrowsDirection Direction, const FVector CursorPosition);
 	
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
-	static bool UpdateSelectedButton(TArray<UOptionsBaseButton*> Buttons, const FVector CurrentCursorPosition, const FVector PreviousCursorPosition);
+	static bool UpdateSelectedButton(const FVector CurrentCursorPosition, const FVector PreviousCursorPosition);
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
 	static void ChangePanelVisibility(TArray<UUniformGridPanel*> Panels, const FVector CursorPosition, const FVector PreviousCursorPosition);
 	
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
-	static TArray<UOptionsBaseButton*> AddTabButtons(TArray<UButton*> TabButtons, TArray<UOptionsBaseButton*> Buttons);
-	
+	static TArray<UOptionsBaseButton*> AddTabButtons(TArray<UButton*> TabButtons);
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
+	static void SuccessedToLoadAsset(const FVector CursorPosition);
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
+	static void FailedToLoadAsset(const FVector CursorPosition);
 };

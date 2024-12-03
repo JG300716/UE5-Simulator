@@ -13,12 +13,11 @@ UDefaultPlayerOptions::UDefaultPlayerOptions()
 	UE_LOG(LogTemp, Warning, TEXT("Started"));
 
 	PlayerOptionsInstance = this;
+	FDefaultBasicUserOption::Create(OptionMap);
+	FDefaultPhysicsUserOption::Create(OptionMap);
+	FDefaultAdvanceUserOption::Create(OptionMap);
 	
-	BasicUserOptionInstance = MakeUnique<FDefaultBasicUserOption>(OptionMap);
-	PhysicsUserOptionInstance = MakeUnique<FDefaultPhysicsUserOption>(OptionMap);
-	AdvanceUserOptionInstance = MakeUnique<FDefaultAdvanceUserOption>(OptionMap);
 	//TryLoadUserOption(BasicPath);
-
 
 	UE_LOG(LogTemp, Warning, TEXT("Ended"));
 
@@ -57,16 +56,17 @@ int UDefaultPlayerOptions::UpdateOptionValue(const EOptionType OptionType, const
 
 int UDefaultPlayerOptions::UpdateBasicOptionValue(const FString& OptionName)
 {
-	TFOption<bool>* const Option = reinterpret_cast<TFOption<bool>*>(GetOption(FName(OptionName)));
+	TUOption<bool>* const Option = reinterpret_cast<TUOption<bool>*>(GetOption(FName(OptionName)));
 	if (Option == nullptr) return -1;
 	const bool NewValue = !Option->Value;
 	Option->Value = NewValue;
+
 	return NewValue;
 }
 
 int UDefaultPlayerOptions::UpdatePhysicsOptionValue(const FString& OptionName, const float& Value)
 {
-	TFOption<float>* const Option = reinterpret_cast<TFOption<float>*>(GetOption(FName(OptionName)));
+	TUOption<float>* const Option = reinterpret_cast<TUOption<float>*>(GetOption(FName(OptionName)));
 	if (Option == nullptr) return -1;
 	const float NewValue = Option->Value + Value * Option->Step;
 	if (Option->MaxValue < NewValue || Option->MinValue > NewValue) return -1;
@@ -76,7 +76,7 @@ int UDefaultPlayerOptions::UpdatePhysicsOptionValue(const FString& OptionName, c
 
 int UDefaultPlayerOptions::UpdateAdvanceOptionValue(const FString& OptionName, const UINT8 WheelIndex)
 {
-	TFOption<BVehicleWheels*>const * const Option =  reinterpret_cast<TFOption<BVehicleWheels*>* const>(GetOption(FName(OptionName)));
+	TUOption<BVehicleWheels*>const * const Option =  reinterpret_cast<TUOption<BVehicleWheels*>* const>(GetOption(FName(OptionName)));
 	if (Option == nullptr) return -1;
 	bool NewValue;
 	switch (WheelIndex)
@@ -90,7 +90,7 @@ int UDefaultPlayerOptions::UpdateAdvanceOptionValue(const FString& OptionName, c
 	return NewValue;
 }
 
-FOptionBase* UDefaultPlayerOptions::GetOption(const FName OptionName)
+UOptionBase* UDefaultPlayerOptions::GetOption(const FName OptionName)
 {
 	return OptionMap.Contains(OptionName) ? OptionMap[OptionName] : nullptr;
 }
@@ -104,4 +104,3 @@ bool UDefaultPlayerOptions::TryLoadUserOption(const FString& Path)
 {
 	return true;
 }
-

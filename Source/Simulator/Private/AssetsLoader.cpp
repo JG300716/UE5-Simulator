@@ -60,7 +60,7 @@ TArray<FString> UAssetsLoader::GetFoldersInDirectory(const FString& DirectoryPat
 //     }
 // }
 
-TSoftClassPtr<AMyCar> UAssetsLoader::LoadAsset(const FString& AssetPath, bool &Success)
+TSoftClassPtr<AMyCar> UAssetsLoader::LoadVehicleAsset(const FString& AssetPath, bool &Success)
 {
    // Example path:
    // "/Game/Simulator/Cars/FinalModels/Schevrolet/Schevrolet_Object.Schevrolet_Object_C"
@@ -73,4 +73,22 @@ TSoftClassPtr<AMyCar> UAssetsLoader::LoadAsset(const FString& AssetPath, bool &S
     }
 
     return Asset;
+}
+
+FString UAssetsLoader::LoadMapAsset(const FString& AssetPath, bool &Success)
+{
+    // Example path:
+    // "/Game/Simulator/Maps/Racetrack/Racetrack_Map"
+
+    const FSoftObjectPath AssetObjectPath = FSoftObjectPath(AssetPath);
+    Success = AssetObjectPath.IsValid();
+    if (Success)
+    {
+        UE_LOG(LogTemp, Log, TEXT("Level '%s' is preloaded."), *AssetPath);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Failed to preload level '%s'."), *AssetPath);
+    }
+    return AssetPath;
 }

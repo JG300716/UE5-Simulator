@@ -9,6 +9,7 @@ TArray<uint8> UOptionsLibrary::Sizes;
 TArray<uint8> UOptionsLibrary::MaxColumns;
 TArray<UOptionsBaseButton*> UOptionsLibrary::Buttons;
 int32 UOptionsLibrary::IndexOfChosenVehicle;
+int32 UOptionsLibrary::IndexOfChosenMap;
 
 void UOptionsLibrary::Initialize(TArray<uint8> TmpSizes, TArray<uint8> TmpMaxColumns, TArray<UOptionsBaseButton*> TmpButtons)
 {
@@ -195,21 +196,34 @@ void UOptionsLibrary::ChangePanelVisibility(TArray<UUniformGridPanel*> Panels, c
     }
 }
 
-void UOptionsLibrary::SuccessedToLoadAsset(const FVector CursorPosition)
+void UOptionsLibrary::SucceededToLoadVehicleAsset(const FVector CursorPosition)
 {
-    if (IndexOfChosenVehicle >= 0 && IndexOfChosenVehicle < Buttons.Num())
-    {
-        Buttons[IndexOfChosenVehicle]->ChangeButtonOutline(false, OptionsChosenButtonColor);
-    }
-    IndexOfChosenVehicle = GetSelectedButtonIndex(CursorPosition);
-    if (IndexOfChosenVehicle < 0 || IndexOfChosenVehicle >= Buttons.Num()) return; // Invalid index
-    Buttons[IndexOfChosenVehicle]->ChangeButtonOutline(true, OptionsChosenButtonColor);
+    LoadAssetWith(CursorPosition, IndexOfChosenVehicle, OptionsChosenButtonColor);
 }
 
-void UOptionsLibrary::FailedToLoadAsset(const FVector CursorPosition)
+void UOptionsLibrary::FailedToLoadVehicleAsset(const FVector CursorPosition)
 {
-    if (IndexOfChosenVehicle > 0 && IndexOfChosenVehicle < Buttons.Num()) Buttons[IndexOfChosenVehicle]->ChangeButtonOutline(false, OptionsFailedButtonColor);
-    IndexOfChosenVehicle = GetSelectedButtonIndex(CursorPosition);
-    if (IndexOfChosenVehicle < 0 || IndexOfChosenVehicle >= Buttons.Num()) return; // Invalid index
-    Buttons[IndexOfChosenVehicle]->ChangeButtonOutline(true, OptionsFailedButtonColor);
+    LoadAssetWith(CursorPosition, IndexOfChosenVehicle, OptionsFailedButtonColor);
+}
+
+void UOptionsLibrary::SucceededToLoadMapAsset(const FVector CursorPosition)
+{
+    LoadAssetWith(CursorPosition, IndexOfChosenMap, OptionsChosenButtonColor);
+}
+
+void UOptionsLibrary::FailedToLoadMapAsset(const FVector CursorPosition)
+{
+    LoadAssetWith(CursorPosition, IndexOfChosenMap, OptionsFailedButtonColor);
+}
+
+void UOptionsLibrary::LoadAssetWith(const FVector &CursorPosition, int32 &IndexOfChosenAsset, const FLinearColor Color)
+{
+    if (IsButtonValid(IndexOfChosenAsset)) Buttons[IndexOfChosenAsset]->ChangeButtonOutline(false, Color);
+    IndexOfChosenAsset = GetSelectedButtonIndex(CursorPosition);
+    if (IsButtonValid(IndexOfChosenAsset)) Buttons[IndexOfChosenAsset]->ChangeButtonOutline(true, Color);
+}
+
+bool UOptionsLibrary::IsButtonValid(const int32 Index)
+{
+    return Index >= 0 && Index < Buttons.Num() && Buttons[Index] != nullptr;
 }

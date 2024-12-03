@@ -18,7 +18,7 @@ enum EOptionsButtonType : uint8
 	TabButton = 0,
 	VehicleButton = 1,
 	MapButton = 2,
-	OptionsButton = 3
+	OptionsButton = 3,
 };
 
 UCLASS(BlueprintType, Blueprintable)

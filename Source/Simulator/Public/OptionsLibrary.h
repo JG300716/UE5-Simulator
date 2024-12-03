@@ -46,9 +46,15 @@ class SIMULATOR_API UOptionsLibrary : public UBlueprintFunctionLibrary
 	static TArray<uint8> MaxColumns;
 	static TArray<UOptionsBaseButton*> Buttons;
 	static int32 IndexOfChosenVehicle;
+	static int32 IndexOfChosenMap;
 	static constexpr FLinearColor OptionsHoveredButtonColor = FLinearColor(255, 165, 0, 1);
 	static constexpr FLinearColor OptionsChosenButtonColor = FLinearColor(0, 255, 0, 1);
 	static constexpr FLinearColor OptionsFailedButtonColor = FLinearColor(255, 0, 0, 1);
+
+	UFUNCTION()
+	static void LoadAssetWith(const FVector &CursorPosition, int32 &IndexOfChosenAsset, const FLinearColor Color);
+	
+	static bool IsButtonValid(const int32 Index);
 public:
 	
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
@@ -73,8 +79,14 @@ public:
 	static TArray<UOptionsBaseButton*> AddTabButtons(TArray<UButton*> TabButtons);
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
-	static void SuccessedToLoadAsset(const FVector CursorPosition);
+	static void SucceededToLoadVehicleAsset(const FVector CursorPosition);
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
-	static void FailedToLoadAsset(const FVector CursorPosition);
+	static void FailedToLoadVehicleAsset(const FVector CursorPosition);
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
+	static void SucceededToLoadMapAsset(const FVector CursorPosition);
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
+	static void FailedToLoadMapAsset(const FVector CursorPosition);
 };

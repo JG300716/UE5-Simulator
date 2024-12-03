@@ -32,7 +32,16 @@ void UOptionsSelectButton::VehicleButtonClickedWrapper()
 
 FString UOptionsSelectButton::MapButtonClicked()
 {
-	return OptionButtonPath + OptionButtonName + TEXT(".uasset");
+	// Example path:
+	// "/Game/Simulator/Maps/Racetrack/Racetrack_Object"
+	
+	FString Result = OptionButtonPath;
+	Result = Result.RightChop(OptionButtonPath.Find(TEXT("/Content/")));
+	Result.ReplaceInline(TEXT("Content"), TEXT("Game"));
+	const FString AssetName = OptionButtonName + TEXT("_Object");
+	Result = Result / AssetName + TEXT(".") + AssetName + TEXT("_C");
+	UE_LOG(LogTemp, Warning, TEXT("MapButtonClicked: %s"), *Result);
+	return  Result;
 }
 
 void UOptionsSelectButton::MapButtonClickedWrapper()

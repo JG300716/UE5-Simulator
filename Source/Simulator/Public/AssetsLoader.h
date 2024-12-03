@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "MyCar.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Engine/LevelStreamingDynamic.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "AssetsLoader.generated.h"
 
@@ -23,5 +24,8 @@ public:
 	static TArray<FString> GetFoldersInDirectory(const FString& DirectoryPath);
 	
 	UFUNCTION(BlueprintCallable, Category = "FileSystem")
-	static TSoftClassPtr<AMyCar> LoadAsset(const FString& AssetPath, bool &Success);
+	static TSoftClassPtr<AMyCar> LoadVehicleAsset(const FString& AssetPath, bool &Success);
+
+	UFUNCTION(BlueprintCallable, Category = "FileSystem")
+	static FString LoadMapAsset(const FString& AssetPath, bool &Success);
 };

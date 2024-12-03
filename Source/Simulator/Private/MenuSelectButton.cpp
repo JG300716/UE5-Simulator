@@ -1,50 +1,50 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "OptionsSelectButton.h"
+#include "MenuSelectButton.h"
 
-void UOptionsSelectButton::InitializeSelectButton(UButton* Button, EOptionsButtonType Type, FString Name, FString Path)
+void UMenuSelectButton::InitializeSelectButton(UButton* Button, EMenuButtonType Type, FString Name, FString Path)
 {
 	if (Button == nullptr) return;
 	InitializeBaseButton(Button, Type);
-	this->OptionButtonName = Name;
-	this->OptionButtonPath = Path;
+	this->MenuButtonName = Name;
+	this->MenuButtonPath = Path;
 }
 
-FString UOptionsSelectButton::VehicleButtonClicked()
+FString UMenuSelectButton::VehicleButtonClicked()
 {
 	// Example path:
 	// "/Game/Simulator/Cars/FinalModels/Schevrolet/Schevrolet_Object.Schevrolet_Object_C"
 	
-	FString Result = OptionButtonPath;
-	Result = Result.RightChop(OptionButtonPath.Find(TEXT("/Content/")));
+	FString Result = MenuButtonPath;
+	Result = Result.RightChop(MenuButtonPath.Find(TEXT("/Content/")));
 	Result.ReplaceInline(TEXT("Content"), TEXT("Game"));
-	const FString AssetName = OptionButtonName + TEXT("_Object");
+	const FString AssetName = MenuButtonName + TEXT("_Object");
 	Result = Result / AssetName + TEXT(".") + AssetName + TEXT("_C");
 	UE_LOG(LogTemp, Warning, TEXT("VehicleButtonClicked: %s"), *Result);
 	return  Result;
 }
 
-void UOptionsSelectButton::VehicleButtonClickedWrapper()
+void UMenuSelectButton::VehicleButtonClickedWrapper()
 {
 	AssetObjectPath = VehicleButtonClicked();
 }
 
-FString UOptionsSelectButton::MapButtonClicked()
+FString UMenuSelectButton::MapButtonClicked()
 {
 	// Example path:
 	// "/Game/Simulator/Maps/Racetrack/Racetrack_Object"
 	
-	FString Result = OptionButtonPath;
-	Result = Result.RightChop(OptionButtonPath.Find(TEXT("/Content/")));
+	FString Result = MenuButtonPath;
+	Result = Result.RightChop(MenuButtonPath.Find(TEXT("/Content/")));
 	Result.ReplaceInline(TEXT("Content"), TEXT("Game"));
-	const FString AssetName = OptionButtonName + TEXT("_Object");
+	const FString AssetName = MenuButtonName + TEXT("_Object");
 	Result = Result / AssetName + TEXT(".") + AssetName + TEXT("_C");
 	UE_LOG(LogTemp, Warning, TEXT("MapButtonClicked: %s"), *Result);
 	return  Result;
 }
 
-void UOptionsSelectButton::MapButtonClickedWrapper()
+void UMenuSelectButton::MapButtonClickedWrapper()
 {
 	AssetObjectPath = MapButtonClicked();
 	UE_LOG(LogTemp, Warning, TEXT("MapButtonClickedWrapper: %s"), *AssetObjectPath);

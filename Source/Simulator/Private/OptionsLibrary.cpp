@@ -7,11 +7,11 @@
 
 TArray<uint8> UOptionsLibrary::Sizes;
 TArray<uint8> UOptionsLibrary::MaxColumns;
-TArray<UOptionsBaseButton*> UOptionsLibrary::Buttons;
+TArray<UMenuBaseButton*> UOptionsLibrary::Buttons;
 int32 UOptionsLibrary::IndexOfChosenVehicle;
 int32 UOptionsLibrary::IndexOfChosenMap;
 
-void UOptionsLibrary::Initialize(TArray<uint8> TmpSizes, TArray<uint8> TmpMaxColumns, TArray<UOptionsBaseButton*> TmpButtons)
+void UOptionsLibrary::Initialize(TArray<uint8> TmpSizes, TArray<uint8> TmpMaxColumns, TArray<UMenuBaseButton*> TmpButtons)
 {
     Sizes = TmpSizes;
     MaxColumns = TmpMaxColumns;
@@ -36,7 +36,7 @@ int32 UOptionsLibrary::GetSelectedButtonIndex(const FVector CursorPosition)
 }
 
 
-UOptionsBaseButton* UOptionsLibrary::GetSelectedButton(const FVector CursorPosition)
+UMenuBaseButton* UOptionsLibrary::GetSelectedButton(const FVector CursorPosition)
 {
     const int32 Index = GetSelectedButtonIndex(CursorPosition);
     if (Index < 0 || Index >= Buttons.Num()) return nullptr; // Invalid index
@@ -170,13 +170,13 @@ bool UOptionsLibrary::UpdateSelectedButton(
     
 }
 
-TArray<UOptionsBaseButton*> UOptionsLibrary::AddTabButtons(TArray<UButton*> TabButtons)
+TArray<UMenuBaseButton*> UOptionsLibrary::AddTabButtons(TArray<UButton*> TabButtons)
 {
     uint32 Offset = 0;
     for(int i = 0; i < TabButtons.Num(); i++)
     {
-        UOptionsBaseButton* Button = NewObject<UOptionsBaseButton>(UOptionsBaseButton::StaticClass());
-        Button->InitializeBaseButton(TabButtons[i], EOptionsButtonType::TabButton);
+        UMenuBaseButton* Button = NewObject<UMenuBaseButton>(UMenuBaseButton::StaticClass());
+        Button->InitializeBaseButton(TabButtons[i], EMenuButtonType::TabButton);
         Buttons.Insert(Button, Offset);
         Offset += Sizes[i] + 1;
     }

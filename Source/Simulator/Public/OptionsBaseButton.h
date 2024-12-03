@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/Button.h"
-#include "OptionsBaseButton.generated.h"
+#include "MenuBaseButton.h"
+#include "OptionsBoolButton.generated.h"
 
 /**
  * Was made for engineer degree thesis purposes.
@@ -13,31 +13,25 @@
  */
 
 UENUM(BlueprintType, Blueprintable, Category = "OptionsButton")
-enum EOptionsButtonType : uint8
+enum EOptionsButtonType
 {
-	TabButton = 0,
-	VehicleButton = 1,
-	MapButton = 2,
-	OptionsButton = 3,
+	BoolButton = 0,
+	ValueButton = 1,
+	WheelsBoolButton = 2,
+	WheelsValueButton = 3,
+	VehicleValueButton = 4,
 };
 
-UCLASS(BlueprintType, Blueprintable)
-class SIMULATOR_API UOptionsBaseButton : public UButton
+UCLASS()
+class SIMULATOR_API UOptionsBaseButton : public UMenuBaseButton
 {
 	GENERATED_BODY()
-
 public:
 
-	UFUNCTION(BlueprintCallable, Category = "OptionsButton")
-	void ChangeButtonOutline(const bool bIsOutline, const FLinearColor Color) const;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton")
+	TEnumAsByte<EOptionsButtonType> OptionsButtonType;
 
-	UFUNCTION(BlueprintCallable, Category = "OptionsButton")
-	void InitializeBaseButton(UButton* Button, EOptionsButtonType Type);
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton")
-	UButton* OptionButton;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton")
-	TEnumAsByte<EOptionsButtonType> OptionButtonType;
+	FString OptionName;
 	
 };

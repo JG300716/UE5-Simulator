@@ -3,21 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "OptionsBaseButton.h"
+#include "MenuBaseButton.h"
 #include "AssetsLoader.h"
 #include "OptionsSelectButton.generated.h"
 
 /**
- * 
+ * Was made for engineer degree thesis purposes.
+ * Author: Jakub Golder
+ * https://github.com/JG300716
  */
+
 UCLASS()
-class SIMULATOR_API UOptionsSelectButton : public UOptionsBaseButton
+class SIMULATOR_API UMenuSelectButton : public UMenuBaseButton
 {
 	GENERATED_BODY()
 public:
 	
 	UFUNCTION(BlueprintCallable, Category = "OptionsButton")
-	void InitializeSelectButton(UButton* Button, EOptionsButtonType Type, FString Name, FString Path);
+	void InitializeSelectButton(UButton* Button, EMenuButtonType Type, FString Name, FString Path);
 
 	UFUNCTION()
 	FString VehicleButtonClicked();
@@ -32,10 +35,10 @@ public:
 	void MapButtonClickedWrapper();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton")
-	FString OptionButtonName;
+	FString MenuButtonName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton")
-	FString OptionButtonPath;
+	FString MenuButtonPath;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton")
 	FString AssetObjectPath;

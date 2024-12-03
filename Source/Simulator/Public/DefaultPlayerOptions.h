@@ -125,7 +125,7 @@ public:
 	FString Unit;
 	FString Tooltip;
 	bool IsAffectingOtherOptions;
-	void Initialize(TUOption<float> &Option)
+	void Initialize(const TUOption<float> &Option)
 	{
 		this->OptionName = Option.OptionName;
 		this->OptionType = Option.OptionType;
@@ -137,6 +137,13 @@ public:
 		this->Unit = Option.Unit;
 		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
+	}
+
+	static UOptionFloat* CreateOption(const TUOption<float> &Option)
+	{
+		UOptionFloat* NewOption = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
+		NewOption->Initialize(Option);
+		return NewOption;
 	}
 };
 UCLASS(BlueprintType)
@@ -153,7 +160,7 @@ public:
 	FString Unit;
 	FString Tooltip;
 	bool IsAffectingOtherOptions;
-	void Initialize(TUOption<int32> &Option)
+	void Initialize(const TUOption<int32> &Option)
 	{
 		this->OptionName = Option.OptionName;
 		this->OptionType = Option.OptionType;
@@ -166,6 +173,13 @@ public:
 		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
 	}
+
+	static UOptionInt* CreateOption(const TUOption<int32> &Option)
+	{
+		UOptionInt* NewOption = NewObject<UOptionInt>(GetTransientPackage(), UOptionInt::StaticClass());
+		NewOption->Initialize(Option);
+		return NewOption;
+	}
 };
 UCLASS(BlueprintType)
 class UOptionBool : public UOptionBase
@@ -177,7 +191,7 @@ public:
 	bool DefaultValue;
 	FString Tooltip;
 	bool IsAffectingOtherOptions;
-	void Initialize(TUOption<bool> &Option)
+	void Initialize(const TUOption<bool> &Option)
 	{
 		this->OptionName = Option.OptionName;
 		this->OptionType = Option.OptionType;
@@ -185,6 +199,13 @@ public:
 		this->DefaultValue = Option.DefaultValue;
 		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
+	}
+
+	static UOptionBool* CreateOption(const TUOption<bool> &Option)
+	{
+		UOptionBool* NewOption = NewObject<UOptionBool>(GetTransientPackage(), UOptionBool::StaticClass());
+		NewOption->Initialize(Option);
+		return NewOption;
 	}
 	
 };
@@ -202,7 +223,7 @@ public:
 	float Step;
 	FString Tooltip;
 	bool IsAffectingOtherOptions;
-	void Initialize(TUOption<EDriveMode> &Option)
+	void Initialize(const TUOption<EDriveMode> &Option)
 	{
 		this->OptionName = Option.OptionName;
 		this->OptionType = Option.OptionType;
@@ -213,6 +234,13 @@ public:
 		this->Step = Option.Step;
 		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
+	}
+
+	static UOptionDriveMode* CreateOption(const TUOption<EDriveMode> &Option)
+	{
+		UOptionDriveMode* NewOption = NewObject<UOptionDriveMode>(GetTransientPackage(), UOptionDriveMode::StaticClass());
+		NewOption->Initialize(Option);
+		return NewOption;
 	}
 };
 
@@ -230,7 +258,7 @@ public:
 	FString Tooltip;
 	bool IsAffectingOtherOptions;
 
-	void Initialize(TUOption<FVehicle> &Option)
+	void Initialize(const TUOption<FVehicle> &Option)
 	{
 		this->OptionName = Option.OptionName;
 		this->OptionType = Option.OptionType;
@@ -241,6 +269,13 @@ public:
 		this->Step = Option.Step;
 		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
+	}
+
+	static UOptionVehicle* CreateOption(const TUOption<FVehicle> &Option)
+	{
+		UOptionVehicle* NewOption = NewObject<UOptionVehicle>(GetTransientPackage(), UOptionVehicle::StaticClass());
+		NewOption->Initialize(Option);
+		return NewOption;
 	}
 	
 };
@@ -258,7 +293,7 @@ public:
 	FString Tooltip;
 	bool IsAffectingOtherOptions;
 
-	void Initialize(TUOption<FVehicleWheels> &Option)
+	void Initialize(const TUOption<FVehicleWheels> &Option)
 	{
 		this->OptionName = Option.OptionName;
 		this->OptionType = Option.OptionType;
@@ -270,8 +305,7 @@ public:
 		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
 	}
-
-	void Initialize(TUOption<BVehicleWheels> &Option)
+	void Initialize(const TUOption<BVehicleWheels> &Option)
 	{
 		this->OptionName = Option.OptionName;
 		this->OptionType = Option.OptionType;
@@ -282,6 +316,19 @@ public:
 		this->Step = Option.Step;
 		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
+	}
+
+	static UOptionWheels* CreateOption(const TUOption<FVehicleWheels> &Option)
+	{
+		UOptionWheels* NewOption = NewObject<UOptionWheels>(GetTransientPackage(), UOptionWheels::StaticClass());
+		NewOption->Initialize(Option);
+		return NewOption;
+	}
+	static UOptionWheels* CreateOption(const TUOption<BVehicleWheels> &Option)
+	{
+		UOptionWheels* NewOption = NewObject<UOptionWheels>(GetTransientPackage(), UOptionWheels::StaticClass());
+		NewOption->Initialize(Option);
+		return NewOption;
 	}
 
 	FVehicleWheels& operator=(const BVehicleWheels &Other)
@@ -318,23 +365,14 @@ struct FDefaultBasicUserOption
     TUOption<bool> TractionControlEnabledValues = {Basic, "Traction Control Enabled", bDefaultTractionControlEnabled, bDefaultTractionControlEnabled, false, true, 1, "", "Enable traction control", true};
     TUOption<bool> AbsEnabledValues = {Basic, "ABS Enabled", bDefaultAbsEnabled, bDefaultAbsEnabled, false, true, 1, "", "Enable ABS", true};
 
-    UOptionBool* ManualGearbox = NewObject<UOptionBool>(GetTransientPackage(), UOptionBool::StaticClass());
-    UOptionBool* AutomaticGearbox = NewObject<UOptionBool>(GetTransientPackage(), UOptionBool::StaticClass());
-    UOptionBool* AutomaticReverse = NewObject<UOptionBool>(GetTransientPackage(), UOptionBool::StaticClass());
-    UOptionDriveMode* DriveMode = NewObject<UOptionDriveMode>(GetTransientPackage(), UOptionDriveMode::StaticClass());
-    UOptionBool* SuspensionEnabled = NewObject<UOptionBool>(GetTransientPackage(), UOptionBool::StaticClass());
-    UOptionBool* WheelFrictionEnabled = NewObject<UOptionBool>(GetTransientPackage(), UOptionBool::StaticClass());
-    UOptionBool* TractionControlEnabled = NewObject<UOptionBool>(GetTransientPackage(), UOptionBool::StaticClass());
-    UOptionBool* AbsEnabled = NewObject<UOptionBool>(GetTransientPackage(), UOptionBool::StaticClass());
-
-    ManualGearbox->Initialize(ManualGearboxValues);
-    AutomaticGearbox->Initialize(AutomaticGearboxValues);
-    AutomaticReverse->Initialize(AutomaticReverseValues);
-    DriveMode->Initialize(DriveModeValues);
-    SuspensionEnabled->Initialize(SuspensionEnabledValues);
-    WheelFrictionEnabled->Initialize(WheelFrictionEnabledValues);
-    TractionControlEnabled->Initialize(TractionControlEnabledValues);
-    AbsEnabled->Initialize(AbsEnabledValues);
+    UOptionBool* ManualGearbox = UOptionBool::CreateOption(ManualGearboxValues);
+    UOptionBool* AutomaticGearbox =UOptionBool::CreateOption(AutomaticGearboxValues);
+    UOptionBool* AutomaticReverse = UOptionBool::CreateOption(AutomaticReverseValues);
+    UOptionDriveMode* DriveMode = UOptionDriveMode::CreateOption(DriveModeValues);
+    UOptionBool* SuspensionEnabled = UOptionBool::CreateOption(SuspensionEnabledValues);
+    UOptionBool* WheelFrictionEnabled = UOptionBool::CreateOption(WheelFrictionEnabledValues);
+    UOptionBool* TractionControlEnabled = UOptionBool::CreateOption(TractionControlEnabledValues);
+    UOptionBool* AbsEnabled = UOptionBool::CreateOption(AbsEnabledValues);
 
     OptionMap.Add(TEXT("ManualGearbox"), ManualGearbox);
     OptionMap.Add(TEXT("AutomaticGearbox"), AutomaticGearbox);
@@ -345,8 +383,6 @@ struct FDefaultBasicUserOption
     OptionMap.Add(TEXT("TractionControlEnabled"), TractionControlEnabled);
     OptionMap.Add(TEXT("AbsEnabled"), AbsEnabled);
 }
-
-	
 	static constexpr bool bDefaultManualGearbox = false;
 	static constexpr bool bDefaultAutomaticGearbox = true;
 	static constexpr bool bDefaultAutomaticReverse = false;
@@ -422,51 +458,28 @@ struct FDefaultPhysicsUserOption
 			"Set the hand brake torque of the wheels",
 			false };
 
-		UOptionVehicle* VehicleMasses = NewObject<UOptionVehicle>(GetTransientPackage(), UOptionVehicle::StaticClass());
-		UOptionFloat* HorsePower = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
-		UOptionFloat* MaxRpm = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
-		UOptionFloat* MaxTorque = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
-		UOptionFloat* AngleRatio = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
-		UOptionFloat* FrontRearSplit = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
-		UOptionFloat* DragCoefficient = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
-		UOptionFloat* DownForceCoefficient = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
-		UOptionFloat* AutomaticGearboxUpShiftRpm = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
-		UOptionFloat* AutomaticGearboxDownShiftRpm = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
-		UOptionFloat* GearboxChangeTime = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
-		UOptionFloat* GearboxTransmissionEfficiency = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
-		UOptionWheels* WheelsFrictionForceMultiplier = NewObject<UOptionWheels>(GetTransientPackage(), UOptionWheels::StaticClass());
-		UOptionFloat* MaxWheelsSteeringAngle = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
-		UOptionFloat* SuspensionMaxRaise = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
-		UOptionFloat* SuspensionMaxDrop = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
-		UOptionFloat* SuspensionDumpRatio = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
-		UOptionFloat* SuspensionSpringRatio = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
-		UOptionFloat* SuspensionPreload = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
-		UOptionFloat* SuspensionSmoothness = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
-		UOptionWheels* WheelsBrakeTorque = NewObject<UOptionWheels>(GetTransientPackage(), UOptionWheels::StaticClass());
-		UOptionWheels* WheelsHandBrakeTorque = NewObject<UOptionWheels>(GetTransientPackage(), UOptionWheels::StaticClass());
-
-		VehicleMasses->Initialize(VehicleMassesValues);
-		HorsePower->Initialize(HorsePowerValues);
-		MaxRpm->Initialize(MaxRpmValues);
-		MaxTorque->Initialize(MaxTorqueValues);
-		AngleRatio->Initialize(AngleRatioValues);
-		FrontRearSplit->Initialize(FrontRearSplitValues);
-		DragCoefficient->Initialize(DragCoefficientValues);
-		DownForceCoefficient->Initialize(DownForceCoefficientValues);
-		AutomaticGearboxUpShiftRpm->Initialize(AutomaticGearboxUpShiftRpmValues);
-		AutomaticGearboxDownShiftRpm->Initialize(AutomaticGearboxDownShiftRpmValues);
-		GearboxChangeTime->Initialize(GearboxChangeTimeValues);
-		GearboxTransmissionEfficiency->Initialize(GearboxTransmissionEfficiencyValues);
-		WheelsFrictionForceMultiplier->Initialize(WheelsFrictionForceMultiplierValues);
-		MaxWheelsSteeringAngle->Initialize(MaxWheelsSteeringAngleValues);
-		SuspensionMaxRaise->Initialize(SuspensionMaxRaiseValues);
-		SuspensionMaxDrop->Initialize(SuspensionMaxDropValues);
-		SuspensionDumpRatio->Initialize(SuspensionDumpRatioValues);
-		SuspensionSpringRatio->Initialize(SuspensionSpringRatioValues);
-		SuspensionPreload->Initialize(SuspensionPreloadValues);
-		SuspensionSmoothness->Initialize(SuspensionSmoothnessValues);
-		WheelsBrakeTorque->Initialize(WheelsBrakeTorqueValues);
-		WheelsHandBrakeTorque->Initialize(WheelsHandBrakeTorqueValues);
+		UOptionVehicle* VehicleMasses = UOptionVehicle::CreateOption(VehicleMassesValues);
+		UOptionFloat* HorsePower = UOptionFloat::CreateOption(HorsePowerValues);
+		UOptionFloat* MaxRpm = UOptionFloat::CreateOption(MaxRpmValues);
+		UOptionFloat* MaxTorque = UOptionFloat::CreateOption(MaxTorqueValues);
+		UOptionFloat* AngleRatio = UOptionFloat::CreateOption(AngleRatioValues);
+		UOptionFloat* FrontRearSplit = UOptionFloat::CreateOption(FrontRearSplitValues);
+		UOptionFloat* DragCoefficient = UOptionFloat::CreateOption(DragCoefficientValues);
+		UOptionFloat* DownForceCoefficient = UOptionFloat::CreateOption(DownForceCoefficientValues);
+		UOptionFloat* AutomaticGearboxUpShiftRpm = UOptionFloat::CreateOption(AutomaticGearboxUpShiftRpmValues);
+		UOptionFloat* AutomaticGearboxDownShiftRpm = UOptionFloat::CreateOption(AutomaticGearboxDownShiftRpmValues);
+		UOptionFloat* GearboxChangeTime = UOptionFloat::CreateOption(GearboxChangeTimeValues);
+		UOptionFloat* GearboxTransmissionEfficiency = UOptionFloat::CreateOption(GearboxTransmissionEfficiencyValues);
+		UOptionWheels* WheelsFrictionForceMultiplier = UOptionWheels::CreateOption(WheelsFrictionForceMultiplierValues);
+		UOptionFloat* MaxWheelsSteeringAngle = UOptionFloat::CreateOption(MaxWheelsSteeringAngleValues);
+		UOptionFloat* SuspensionMaxRaise = UOptionFloat::CreateOption(SuspensionMaxRaiseValues);
+		UOptionFloat* SuspensionMaxDrop = UOptionFloat::CreateOption(SuspensionMaxDropValues);
+		UOptionFloat* SuspensionDumpRatio = UOptionFloat::CreateOption(SuspensionDumpRatioValues);
+		UOptionFloat* SuspensionSpringRatio = UOptionFloat::CreateOption(SuspensionSpringRatioValues);
+		UOptionFloat* SuspensionPreload = UOptionFloat::CreateOption(SuspensionPreloadValues);
+		UOptionFloat* SuspensionSmoothness = UOptionFloat::CreateOption(SuspensionSmoothnessValues);
+		UOptionWheels* WheelsBrakeTorque = UOptionWheels::CreateOption(WheelsBrakeTorqueValues);
+		UOptionWheels* WheelsHandBrakeTorque = UOptionWheels::CreateOption(WheelsHandBrakeTorqueValues);
 		
 		OptionMap.Add(TEXT("VehicleMasses"), VehicleMasses);
 		OptionMap.Add(TEXT("HorsePower"), HorsePower);
@@ -573,17 +586,11 @@ struct FDefaultAdvanceUserOption
 			"Set which wheels have the suspension enabled",
 			true };
 
-		UOptionWheels* WheelsAffectedByBrakes = NewObject<UOptionWheels>(GetTransientPackage(), UOptionWheels::StaticClass());
-		UOptionWheels* WheelsAffectedByHandBrakes = NewObject<UOptionWheels>(GetTransientPackage(), UOptionWheels::StaticClass());
-		UOptionWheels* WheelsAffectedByEngine = NewObject<UOptionWheels>(GetTransientPackage(), UOptionWheels::StaticClass());
-		UOptionWheels* WheelsAffectedBySteering = NewObject<UOptionWheels>(GetTransientPackage(), UOptionWheels::StaticClass());
-		UOptionWheels* WheelsSuspensionEnabled = NewObject<UOptionWheels>(GetTransientPackage(), UOptionWheels::StaticClass());
-
-		WheelsAffectedByBrakes->Initialize(WheelsAffectedByBrakesValues);
-		WheelsAffectedByHandBrakes->Initialize(WheelsAffectedByHandBrakesValues);
-		WheelsAffectedByEngine->Initialize(WheelsAffectedByEngineValues);
-		WheelsAffectedBySteering->Initialize(WheelsAffectedBySteeringValues);
-		WheelsSuspensionEnabled->Initialize(WheelsSuspensionEnabledValues);
+		UOptionWheels* WheelsAffectedByBrakes = UOptionWheels::CreateOption(WheelsAffectedByBrakesValues);
+		UOptionWheels* WheelsAffectedByHandBrakes = UOptionWheels::CreateOption(WheelsAffectedByHandBrakesValues);
+		UOptionWheels* WheelsAffectedByEngine = UOptionWheels::CreateOption(WheelsAffectedByEngineValues);
+		UOptionWheels* WheelsAffectedBySteering = UOptionWheels::CreateOption(WheelsAffectedBySteeringValues);
+		UOptionWheels* WheelsSuspensionEnabled = UOptionWheels::CreateOption(WheelsSuspensionEnabledValues);
 		
 		OptionMap.Add(TEXT("WheelsAffectedByBrakes"), WheelsAffectedByBrakes);
 		OptionMap.Add(TEXT("WheelsAffectedByHandBrakes"), WheelsAffectedByHandBrakes);

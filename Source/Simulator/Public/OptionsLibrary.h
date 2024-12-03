@@ -44,7 +44,7 @@ class SIMULATOR_API UOptionsLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 	static TArray<uint8> Sizes;
 	static TArray<uint8> MaxColumns;
-	static TArray<UOptionsBaseButton*> Buttons;
+	static TArray<UMenuBaseButton*> Buttons;
 	static int32 IndexOfChosenVehicle;
 	static int32 IndexOfChosenMap;
 	static constexpr FLinearColor OptionsHoveredButtonColor = FLinearColor(255, 165, 0, 1);
@@ -58,13 +58,13 @@ class SIMULATOR_API UOptionsLibrary : public UBlueprintFunctionLibrary
 public:
 	
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
-	static void Initialize(TArray<uint8> TmpSizes, TArray<uint8> TmpMaxColumns, TArray<UOptionsBaseButton*> TmpButtons);
+	static void Initialize(TArray<uint8> TmpSizes, TArray<uint8> TmpMaxColumns, TArray<UMenuBaseButton*> TmpButtons);
 
 	UFUNCTION()
 	static int32 GetSelectedButtonIndex(const FVector CursorPosition);
 	
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
-	static UOptionsBaseButton* GetSelectedButton( const FVector CursorPosition);
+	static UMenuBaseButton* GetSelectedButton( const FVector CursorPosition);
 	
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
 	static FVector3f MoveCursor(const EControllersArrowsDirection Direction, const FVector CursorPosition);
@@ -76,7 +76,7 @@ public:
 	static void ChangePanelVisibility(TArray<UUniformGridPanel*> Panels, const FVector CursorPosition, const FVector PreviousCursorPosition);
 	
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
-	static TArray<UOptionsBaseButton*> AddTabButtons(TArray<UButton*> TabButtons);
+	static TArray<UMenuBaseButton*> AddTabButtons(TArray<UButton*> TabButtons);
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
 	static void SucceededToLoadVehicleAsset(const FVector CursorPosition);

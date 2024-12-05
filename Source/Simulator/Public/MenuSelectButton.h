@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "MenuBaseButton.h"
 #include "AssetsLoader.h"
-#include "OptionsSelectButton.generated.h"
+#include "MenuSelectButton.generated.h"
 
 /**
  * Was made for engineer degree thesis purposes.

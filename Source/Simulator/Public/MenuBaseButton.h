@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/Button.h"
-#include "OptionsBaseButton.generated.h"
+#include "MenuBaseButton.generated.h"
 
 /**
  * Was made for engineer degree thesis purposes.

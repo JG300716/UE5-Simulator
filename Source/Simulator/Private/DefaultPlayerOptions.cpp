@@ -7,6 +7,7 @@
 
 EDriveMode FDefaultBasicUserOption::DefaultDriveMode = EDriveMode::AllWheelDrive;
 UDefaultPlayerOptions* UDefaultPlayerOptions::PlayerOptionsInstance = nullptr;
+TMap<FName, UOptionBase*> UDefaultPlayerOptions::OptionMap;
 
 UDefaultPlayerOptions::UDefaultPlayerOptions()
 {
@@ -38,15 +39,15 @@ void UDefaultPlayerOptions::PrintOptionMap()
 }
 
 
-int UDefaultPlayerOptions::UpdateOptionValue(const EOptionType OptionType, const FString& OptionName, const float& Value, const UINT8 WheelIndex)
+int UDefaultPlayerOptions::UpdateOptionValue(const ESettingsType OptionType, const FString& OptionName, const float& Value, const UINT8 WheelIndex)
 {
 	switch(OptionType)
 	{
-	case EOptionType::Basic:
+	case ESettingsType::Basic:
 		return UpdateBasicOptionValue(OptionName);
-	case EOptionType::Physics:
+	case ESettingsType::Physics:
 		return UpdatePhysicsOptionValue(OptionName, Value);
-	case EOptionType::Advance:
+	case ESettingsType::Advance:
 		return UpdateAdvanceOptionValue(OptionName, WheelIndex);
 	default:
 		return -1;
@@ -103,4 +104,9 @@ bool UDefaultPlayerOptions::TrySaveUserOption(const FString& Path)
 bool UDefaultPlayerOptions::TryLoadUserOption(const FString& Path)
 {
 	return true;
+}
+
+TMap<FName, UOptionBase*> UDefaultPlayerOptions::GetOptionMap()
+{
+	return OptionMap;
 }

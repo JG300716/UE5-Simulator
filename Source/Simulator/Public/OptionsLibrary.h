@@ -8,7 +8,7 @@
 #include "Components/UniformGridPanel.h" // For UUniformGridPanel
 #include "Styling/SlateTypes.h"      // For FButtonStyle
 #include "OptionsBaseButton.h"       // For EControllersArrowsDirection
-#include "OptionsSelectButton.h"
+#include "MenuSelectButton.h"
 
 #include "Chaos/UniformGrid.h"
 
@@ -73,7 +73,7 @@ public:
 	static bool UpdateSelectedButton(const FVector CurrentCursorPosition, const FVector PreviousCursorPosition);
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
-	static void ChangePanelVisibility(TArray<UUniformGridPanel*> Panels, const FVector CursorPosition, const FVector PreviousCursorPosition);
+	static void ChangePanelVisibility(TArray<UWidget*> Panels, const FVector CursorPosition, const FVector PreviousCursorPosition);
 	
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
 	static TArray<UMenuBaseButton*> AddTabButtons(TArray<UButton*> TabButtons);

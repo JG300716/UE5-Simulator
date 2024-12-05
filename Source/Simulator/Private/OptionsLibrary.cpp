@@ -183,7 +183,7 @@ TArray<UMenuBaseButton*> UOptionsLibrary::AddTabButtons(TArray<UButton*> TabButt
     return Buttons;
 }
 
-void UOptionsLibrary::ChangePanelVisibility(TArray<UUniformGridPanel*> Panels, const FVector CursorPosition, const FVector PreviousCursorPosition)
+void UOptionsLibrary::ChangePanelVisibility(TArray<UWidget*> Panels, const FVector CursorPosition, const FVector PreviousCursorPosition)
 {
     if (CursorPosition.Z == PreviousCursorPosition.Z) return; // Only change visibility if the page has changed
     if (Panels.IsValidIndex(CursorPosition.Z))

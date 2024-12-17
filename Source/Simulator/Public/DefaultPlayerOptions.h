@@ -11,7 +11,7 @@
 
 
 #define DEFINE_VEHICLE_WHEEL_PARTS_STRUCT(StructName, Type) \
-USTRUCT(NotBlueprintType)                                     \
+USTRUCT(BlueprintType)                                     \
 struct StructName                                          \
 {                                                          \
 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VehicleBodyParts") \
@@ -28,7 +28,7 @@ Type RearRightWheel;                                   \
 };
 
 #define DEFINE_VEHICLE_BODY_PARTS_STRUCT(StructName, WheelStructName, Type) \
-USTRUCT(NotBlueprintType)                                                     \
+USTRUCT(BlueprintType)                                                     \
 struct StructName                                                          \
 {                                                                          \
 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VehicleBodyParts") \
@@ -38,29 +38,45 @@ UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VehicleBodyParts") \
 WheelStructName Wheels;                                                \
 };
 
-DEFINE_VEHICLE_WHEEL_PARTS_STRUCT(FVehicleWheels, float)
-DEFINE_VEHICLE_BODY_PARTS_STRUCT(FVehicle, FVehicleWheels, float)
 DEFINE_VEHICLE_WHEEL_PARTS_STRUCT(BVehicleWheels, bool)
 
-
-UENUM(BlueprintType, Blueprintable, Category = "OptionsButton")
-enum EDriveMode : uint8
+USTRUCT(BlueprintType)
+struct FVehicleWheels
 {
-	Custom = 0,
-	AllWheelDrive = 1,
-	FrontWheelDrive = 2,
-	RearWheelDrive = 3
+	GENERATED_BODY()
+public:
+	float FrontLeftWheel;
+	float FrontRightWheel;
+	float RearLeftWheel;
+	float RearRightWheel;
 };
 
-UENUM(BlueprintType, Blueprintable, Category = "OptionsButton")
+USTRUCT(BlueprintType)
+struct FVehicle
+{
+	GENERATED_BODY()
+
+public:
+	float Chassis;
+	FVehicleWheels Wheels;
+	
+};
+
+UENUM(BlueprintType, Blueprintable, Category = "OptionsButton|Enum")
+enum EDriveMode : uint8
+{
+	AllWheelDrive = 0,
+	FrontWheelDrive = 1,
+	RearWheelDrive = 2
+};
+UENUM(BlueprintType, Blueprintable, Category = "OptionsButton|Enum")
 enum ESettingsType : uint8
 {
 	Basic = 0,
 	Physics = 1,
 	Advance = 2
 };
-
-UENUM(BlueprintType, Blueprintable, Category = "OptionsButton")
+UENUM(BlueprintType, Blueprintable, Category = "OptionsButton|Enum")
 enum EOptionsButtonType : uint8
 {
 	BoolButton = 0,
@@ -129,16 +145,15 @@ public:
 	{}
 
 };
-
 UCLASS(BlueprintType)
 class SIMULATOR_API UOptionFloat : public UOptionBase
 {
 	GENERATED_BODY()
 public:
-	float Value;
-	float DefaultValue;
-	float MinValue;
-	float MaxValue;
+	float FValue;
+	float FDefaultValue;
+	float FMinValue;
+	float FMaxValue;
 	float Step;
 	FString Unit;
 	FString Tooltip;
@@ -148,14 +163,20 @@ public:
 		this->OptionName = Option.OptionName;
 		this->OptionsButtonType = Option.OptionsButtonType;
 		this->SettingsType = Option.OptionType;
-		this->Value = Option.Value;
-		this->DefaultValue = Option.DefaultValue;
-		this->MinValue = Option.MinValue;
-		this->MaxValue = Option.MaxValue;
+		this->FValue = Option.Value;
+		this->FDefaultValue = Option.DefaultValue;
+		this->FMinValue = Option.MinValue;
+		this->FMaxValue = Option.MaxValue;
 		this->Step = Option.Step;
 		this->Unit = Option.Unit;
 		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsButton|Class|Float")
+	float ReadFloatValue() const
+	{
+		return FValue;
 	}
 
 	static UOptionFloat* CreateOption(const TUOption<float> &Option)
@@ -166,49 +187,13 @@ public:
 	}
 };
 UCLASS(BlueprintType)
-class SIMULATOR_API UOptionInt : public UOptionBase
-{
-	GENERATED_BODY()
-
-public:
-	int32 Value;
-	int32 DefaultValue;
-	int32 MinValue;
-	int32 MaxValue;
-	float Step;
-	FString Unit;
-	FString Tooltip;
-	bool IsAffectingOtherOptions;
-	void Initialize(const TUOption<int32> &Option)
-	{
-		this->OptionName = Option.OptionName;
-		this->OptionsButtonType = Option.OptionsButtonType;
-		this->SettingsType = Option.OptionType;
-		this->Value = Option.Value;
-		this->DefaultValue = Option.DefaultValue;
-		this->MinValue = Option.MinValue;
-		this->MaxValue = Option.MaxValue;
-		this->Step = Option.Step;
-		this->Unit = Option.Unit;
-		this->Tooltip = Option.Tooltip;
-		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
-	}
-
-	static UOptionInt* CreateOption(const TUOption<int32> &Option)
-	{
-		UOptionInt* NewOption = NewObject<UOptionInt>(GetTransientPackage(), UOptionInt::StaticClass());
-		NewOption->Initialize(Option);
-		return NewOption;
-	}
-};
-UCLASS(BlueprintType)
 class UOptionBool : public UOptionBase
 {
 	GENERATED_BODY()
 
 public:
-	bool Value;
-	bool DefaultValue;
+	bool BValue;
+	bool BDefaultValue;
 	FString Tooltip;
 	bool IsAffectingOtherOptions;
 	void Initialize(const TUOption<bool> &Option)
@@ -216,10 +201,17 @@ public:
 		this->OptionName = Option.OptionName;
 		this->OptionsButtonType = Option.OptionsButtonType;
 		this->SettingsType = Option.OptionType;
-		this->Value = Option.Value;
-		this->DefaultValue = Option.DefaultValue;
+		this->BValue = Option.Value;
+		this->BDefaultValue = Option.DefaultValue;
 		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsButton|Class|Bool")
+	bool ReadBoolValue() const
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ReadBoolValue: %d"), BValue);
+		return BValue;
 	}
 
 	static UOptionBool* CreateOption(const TUOption<bool> &Option)
@@ -237,10 +229,10 @@ class UOptionDriveMode : public UOptionBase
 	GENERATED_BODY()
 
 public:
-	TEnumAsByte<EDriveMode> Value;
-	TEnumAsByte<EDriveMode> DefaultValue;
-	TEnumAsByte<EDriveMode> MinValue;
-	TEnumAsByte<EDriveMode> MaxValue;
+	TEnumAsByte<EDriveMode> DriveModeValue;
+	TEnumAsByte<EDriveMode> DriveModeDefaultValue;
+	TEnumAsByte<EDriveMode> DriveModeMinValue;
+	TEnumAsByte<EDriveMode> DriveModeMaxValue;
 	float Step;
 	FString Tooltip;
 	bool IsAffectingOtherOptions;
@@ -249,13 +241,19 @@ public:
 		this->OptionName = Option.OptionName;
 		this->OptionsButtonType = Option.OptionsButtonType;
 		this->SettingsType = Option.OptionType;
-		this->Value = Option.Value;
-		this->DefaultValue = Option.DefaultValue;
-		this->MinValue = Option.MinValue;
-		this->MaxValue = Option.MaxValue;
+		this->DriveModeValue = Option.Value;
+		this->DriveModeDefaultValue = Option.DefaultValue;
+		this->DriveModeMinValue = Option.MinValue;
+		this->DriveModeMaxValue = Option.MaxValue;
 		this->Step = Option.Step;
 		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
+	}
+	
+	UFUNCTION(BlueprintCallable, Category = "OptionsButton|Class|EDriveMode")
+	TEnumAsByte<EDriveMode> ReadDriveModeValue() const
+	{
+		return DriveModeValue;
 	}
 
 	static UOptionDriveMode* CreateOption(const TUOption<EDriveMode> &Option)
@@ -272,10 +270,10 @@ class UOptionVehicle : public UOptionBase
 	GENERATED_BODY()
 public:
 
-	FVehicle Value;
-	FVehicle DefaultValue;
-	FVehicle MinValue;
-	FVehicle MaxValue;
+	FVehicle FVehicleValue;
+	FVehicle FVehicleDefaultValue;
+	FVehicle FVehicleMinValue;
+	FVehicle FVehicleMaxValue;
 	float Step;
 	FString Tooltip;
 	bool IsAffectingOtherOptions;
@@ -285,15 +283,21 @@ public:
 		this->OptionName = Option.OptionName;
 		this->OptionsButtonType = Option.OptionsButtonType;
 		this->SettingsType = Option.OptionType;
-		this->Value = Option.Value;
-		this->DefaultValue = Option.DefaultValue;
-		this->MinValue = Option.MinValue;
-		this->MaxValue = Option.MaxValue;
+		this->FVehicleValue = Option.Value;
+		this->FVehicleDefaultValue = Option.DefaultValue;
+		this->FVehicleMinValue = Option.MinValue;
+		this->FVehicleMaxValue = Option.MaxValue;
 		this->Step = Option.Step;
 		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
 	}
 
+	UFUNCTION(BlueprintCallable, Category = "OptionsButton|Class|FVehicle")
+	FVehicle ReadVehicleValue() const
+	{
+		return FVehicleValue;
+	}
+	
 	static UOptionVehicle* CreateOption(const TUOption<FVehicle> &Option)
 	{
 		UOptionVehicle* NewOption = NewObject<UOptionVehicle>(GetTransientPackage(), UOptionVehicle::StaticClass());
@@ -308,10 +312,10 @@ class UOptionWheels : public UOptionBase
 {
 	GENERATED_BODY()
 public:
-	FVehicleWheels Value;
-	FVehicleWheels DefaultValue;
-	FVehicleWheels MinValue;
-	FVehicleWheels MaxValue;
+	FVehicleWheels FVehicleWheelsValue;
+	FVehicleWheels FVehicleWheelsDefaultValue;
+	FVehicleWheels FVehicleWheelsMinValue;
+	FVehicleWheels FVehicleWheelsMaxValue;
 	float Step;
 	FString Tooltip;
 	bool IsAffectingOtherOptions;
@@ -321,10 +325,10 @@ public:
 		this->OptionName = Option.OptionName;
 		this->OptionsButtonType = Option.OptionsButtonType;
 		this->SettingsType = Option.OptionType;
-		this->Value = Option.Value;
-		this->DefaultValue = Option.DefaultValue;
-		this->MinValue = Option.MinValue;
-		this->MaxValue = Option.MaxValue;
+		this->FVehicleWheelsValue = Option.Value;
+		this->FVehicleWheelsDefaultValue = Option.DefaultValue;
+		this->FVehicleWheelsMinValue = Option.MinValue;
+		this->FVehicleWheelsMaxValue = Option.MaxValue;
 		this->Step = Option.Step;
 		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
@@ -334,13 +338,19 @@ public:
 		this->OptionName = Option.OptionName;
 		this->OptionsButtonType = Option.OptionsButtonType;
 		this->SettingsType = Option.OptionType;
-		this->Value = ConvertToVehicleWheels(Option.Value);
-		this->DefaultValue = ConvertToVehicleWheels(Option.DefaultValue);
-		this->MinValue = ConvertToVehicleWheels(Option.MinValue);
-		this->MaxValue = ConvertToVehicleWheels(Option.MaxValue);
+		this->FVehicleWheelsValue = ConvertToVehicleWheels(Option.Value);
+		this->FVehicleWheelsDefaultValue = ConvertToVehicleWheels(Option.DefaultValue);
+		this->FVehicleWheelsMinValue = ConvertToVehicleWheels(Option.MinValue);
+		this->FVehicleWheelsMaxValue = ConvertToVehicleWheels(Option.MaxValue);
 		this->Step = Option.Step;
 		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsButton|Class|FVehicleWheels")
+	FVehicleWheels ReadVehicleWheelsValue() const
+	{
+		return FVehicleWheelsValue;
 	}
 
 	static UOptionWheels* CreateOption(const TUOption<FVehicleWheels> &Option)
@@ -358,12 +368,12 @@ public:
 
 	FVehicleWheels& operator=(const BVehicleWheels &Other)
 	{
-		this->Value = ConvertToVehicleWheels(Other);
-		return this->Value;
+		this->FVehicleWheelsValue = ConvertToVehicleWheels(Other);
+		return this->FVehicleWheelsValue;
 	}
 
 private:
-	FVehicleWheels ConvertToVehicleWheels(const BVehicleWheels& Source)
+	static FVehicleWheels ConvertToVehicleWheels(const BVehicleWheels& Source)
 	{
 		FVehicleWheels Result;
 		Result.FrontLeftWheel = Source.FrontLeftWheel;

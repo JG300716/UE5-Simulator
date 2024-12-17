@@ -20,7 +20,7 @@ class SIMULATOR_API UMenuSelectButton : public UMenuBaseButton
 public:
 	
 	UFUNCTION(BlueprintCallable, Category = "OptionsButton")
-	void InitializeSelectButton(UButton* Button, EMenuButtonType Type, FString Name, FString Path);
+	void InitializeSelectButton(TArray<UButton*> Buttons, EMenuButtonType Type, FString Name, FString Path);
 
 	UFUNCTION()
 	FString VehicleButtonClicked();

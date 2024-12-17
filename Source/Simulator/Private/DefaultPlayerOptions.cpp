@@ -108,5 +108,6 @@ bool UDefaultPlayerOptions::TryLoadUserOption(const FString& Path)
 
 TMap<FName, UOptionBase*> UDefaultPlayerOptions::GetOptionMap()
 {
+	UE_LOG(LogTemp, Warning, TEXT("GetOptionMap"));
 	return OptionMap;
 }

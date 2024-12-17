@@ -175,8 +175,10 @@ TArray<UMenuBaseButton*> UOptionsLibrary::AddTabButtons(TArray<UButton*> TabButt
     uint32 Offset = 0;
     for(int i = 0; i < TabButtons.Num(); i++)
     {
+        TArray<UButton*> TmpButtons;
+        TmpButtons.Add(TabButtons[i]);
         UMenuBaseButton* Button = NewObject<UMenuBaseButton>(UMenuBaseButton::StaticClass());
-        Button->InitializeBaseButton(TabButtons[i], EMenuButtonType::TabButton);
+        Button->InitializeBaseButton(TmpButtons, EMenuButtonType::TabButton);
         Buttons.Insert(Button, Offset);
         Offset += Sizes[i] + 1;
     }

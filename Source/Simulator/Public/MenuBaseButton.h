@@ -32,10 +32,10 @@ public:
 	void ChangeButtonOutline(const bool bIsOutline, const FLinearColor Color) const;
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsButton")
-	void InitializeBaseButton(UButton* Button, EMenuButtonType Type);
+	void InitializeBaseButton(TArray<UButton*> Buttons, EMenuButtonType Type);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton")
-	UButton* MenuButton;
+	TArray<UButton*> MenuButton;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton")
 	TEnumAsByte<EMenuButtonType> MenuButtonType;

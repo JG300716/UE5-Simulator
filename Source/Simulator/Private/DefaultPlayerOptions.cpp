@@ -5,6 +5,8 @@
  */
 #include "DefaultPlayerOptions.h"
 
+#include "Blueprint/UserWidget.h"
+
 EDriveMode FDefaultBasicUserOption::DefaultDriveMode = EDriveMode::AllWheelDrive;
 UDefaultPlayerOptions* UDefaultPlayerOptions::PlayerOptionsInstance = nullptr;
 TMap<FName, UOptionBase*> UDefaultPlayerOptions::OptionMap;
@@ -110,4 +112,24 @@ TMap<FName, UOptionBase*> UDefaultPlayerOptions::GetOptionMap()
 {
 	UE_LOG(LogTemp, Warning, TEXT("GetOptionMap"));
 	return OptionMap;
+}
+
+void UDefaultPlayerOptions::LogOptionMap()
+{
+	for(auto & name : OptionMap)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Option: %s"), *name.Key.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Value: %d"), (int8)name.Value->SettingsType.GetIntValue());
+		UE_LOG(LogTemp, Warning, TEXT("Option Type: %d"), (int8)name.Value->OptionsButtonType.GetIntValue());
+	}
+}
+
+void UDefaultPlayerOptions::GetOptionByName(const FName OptionName, UOptionBase* &Option, TEnumAsByte<EOptionsButtonType> &OptionType)
+{
+	if (!OptionMap.Contains(OptionName)) return;
+	Option = OptionMap[OptionName];
+	OptionType = Option->OptionsButtonType;
+	UE_LOG(LogTemp, Warning, TEXT("Option: %s"), *OptionName.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Value: %d"), (int8)Option->SettingsType.GetIntValue());
+	UE_LOG(LogTemp, Warning, TEXT("Option Type: %d"), (int8)Option->OptionsButtonType.GetIntValue());
 }

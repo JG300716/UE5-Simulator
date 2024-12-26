@@ -15,7 +15,7 @@ class SIMULATOR_API UOptionsValueButton : public UOptionsBaseButton
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton/Value")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton | Value")
 	float Value;
 	
 };

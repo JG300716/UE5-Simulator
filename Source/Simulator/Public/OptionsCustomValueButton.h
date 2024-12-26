@@ -14,7 +14,7 @@ class SIMULATOR_API UOptionsCustomValueButton : public UOptionsBaseButton
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton/CustomValue")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton | CustomValue")
 	TEnumAsByte<EDriveMode> Value;
 	
 };

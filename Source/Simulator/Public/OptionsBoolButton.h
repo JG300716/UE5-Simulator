@@ -14,7 +14,7 @@ class SIMULATOR_API UOptionsBoolButton : public UOptionsBaseButton
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton/Bool")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton | Bool")
 	bool Value;
 	
 };

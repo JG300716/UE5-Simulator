@@ -100,6 +100,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerOptions")
 	FString OptionName;
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsButton|Class")
+	void InitializeBase(const ESettingsType &Type, const EOptionsButtonType &OptionType, const FString &Name)
+	{
+		this->AddToRoot();
+		this->OptionName = Name;
+		this->OptionsButtonType = OptionType;
+		this->SettingsType = Type;
+	}
 };
 template <typename T>
 USTRUCT(NotBlueprintType)
@@ -160,9 +169,7 @@ public:
 	bool IsAffectingOtherOptions;
 	void Initialize(const TUOption<float> &Option)
 	{
-		this->OptionName = Option.OptionName;
-		this->OptionsButtonType = Option.OptionsButtonType;
-		this->SettingsType = Option.OptionType;
+		InitializeBase(Option.OptionType, Option.OptionsButtonType, Option.OptionName);
 		this->FValue = Option.Value;
 		this->FDefaultValue = Option.DefaultValue;
 		this->FMinValue = Option.MinValue;
@@ -198,9 +205,7 @@ public:
 	bool IsAffectingOtherOptions;
 	void Initialize(const TUOption<bool> &Option)
 	{
-		this->OptionName = Option.OptionName;
-		this->OptionsButtonType = Option.OptionsButtonType;
-		this->SettingsType = Option.OptionType;
+		InitializeBase(Option.OptionType, Option.OptionsButtonType, Option.OptionName);
 		this->BValue = Option.Value;
 		this->BDefaultValue = Option.DefaultValue;
 		this->Tooltip = Option.Tooltip;
@@ -238,9 +243,7 @@ public:
 	bool IsAffectingOtherOptions;
 	void Initialize(const TUOption<EDriveMode> &Option)
 	{
-		this->OptionName = Option.OptionName;
-		this->OptionsButtonType = Option.OptionsButtonType;
-		this->SettingsType = Option.OptionType;
+		InitializeBase(Option.OptionType, Option.OptionsButtonType, Option.OptionName);
 		this->DriveModeValue = Option.Value;
 		this->DriveModeDefaultValue = Option.DefaultValue;
 		this->DriveModeMinValue = Option.MinValue;
@@ -280,9 +283,7 @@ public:
 
 	void Initialize(const TUOption<FVehicle> &Option)
 	{
-		this->OptionName = Option.OptionName;
-		this->OptionsButtonType = Option.OptionsButtonType;
-		this->SettingsType = Option.OptionType;
+		InitializeBase(Option.OptionType, Option.OptionsButtonType, Option.OptionName);
 		this->FVehicleValue = Option.Value;
 		this->FVehicleDefaultValue = Option.DefaultValue;
 		this->FVehicleMinValue = Option.MinValue;
@@ -322,9 +323,7 @@ public:
 
 	void Initialize(const TUOption<FVehicleWheels> &Option)
 	{
-		this->OptionName = Option.OptionName;
-		this->OptionsButtonType = Option.OptionsButtonType;
-		this->SettingsType = Option.OptionType;
+		InitializeBase(Option.OptionType, Option.OptionsButtonType, Option.OptionName);
 		this->FVehicleWheelsValue = Option.Value;
 		this->FVehicleWheelsDefaultValue = Option.DefaultValue;
 		this->FVehicleWheelsMinValue = Option.MinValue;
@@ -335,9 +334,7 @@ public:
 	}
 	void Initialize(const TUOption<BVehicleWheels> &Option)
 	{
-		this->OptionName = Option.OptionName;
-		this->OptionsButtonType = Option.OptionsButtonType;
-		this->SettingsType = Option.OptionType;
+		InitializeBase(Option.OptionType, Option.OptionsButtonType, Option.OptionName);
 		this->FVehicleWheelsValue = ConvertToVehicleWheels(Option.Value);
 		this->FVehicleWheelsDefaultValue = ConvertToVehicleWheels(Option.DefaultValue);
 		this->FVehicleWheelsMinValue = ConvertToVehicleWheels(Option.MinValue);
@@ -682,4 +679,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerOptions")
 	static TMap<FName, UOptionBase*> GetOptionMap();
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerOptions")
+	static void GetOptionByName(const FName OptionName, UOptionBase* &Option, TEnumAsByte<EOptionsButtonType> &OptionType);
+	
+	UFUNCTION(BlueprintCallable, Category = "PlayerOptions")
+	static void LogOptionMap();
+
 };

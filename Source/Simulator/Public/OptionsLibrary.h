@@ -7,7 +7,7 @@
 #include "Components/Button.h"
 #include "Components/UniformGridPanel.h" // For UUniformGridPanel
 #include "Styling/SlateTypes.h"      // For FButtonStyle
-#include "OptionsBaseButton.h"       // For EControllersArrowsDirection
+#include "OptionBaseButton.h"       // For EControllersArrowsDirection
 #include "MenuSelectButton.h"
 
 #include "Chaos/UniformGrid.h"
@@ -50,11 +50,12 @@ class SIMULATOR_API UOptionsLibrary : public UBlueprintFunctionLibrary
 	static constexpr FLinearColor OptionsHoveredButtonColor = FLinearColor(255, 165, 0, 1);
 	static constexpr FLinearColor OptionsChosenButtonColor = FLinearColor(0, 255, 0, 1);
 	static constexpr FLinearColor OptionsFailedButtonColor = FLinearColor(255, 0, 0, 1);
-
-	UFUNCTION()
-	static void LoadAssetWith(const FVector &CursorPosition, int32 &IndexOfChosenAsset, const FLinearColor Color);
 	
+	static void LoadAssetWith(const FVector &CursorPosition, int32 &IndexOfChosenAsset, const FLinearColor Color);
 	static bool IsButtonValid(const int32 Index);
+	static FVector3f MoveCursorNormal(const EControllersArrowsDirection &Direction, const FVector &CursorPosition);
+	static FVector3f MoveCursorSpecial(const EControllersArrowsDirection &Direction, const FVector &CursorPosition);
+	
 public:
 	
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")

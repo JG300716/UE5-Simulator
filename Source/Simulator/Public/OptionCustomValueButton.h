@@ -3,18 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "OptionsBaseButton.h"
+#include "OptionBaseButton.h"
 #include "OptionsCustomValueButton.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SIMULATOR_API UOptionsCustomValueButton : public UOptionsBaseButton
+class SIMULATOR_API UOptionCustomValueButton : public UOptionBaseButton
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton | CustomValue")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton | CustomValue")
 	TEnumAsByte<EDriveMode> Value;
 	
 };

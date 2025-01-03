@@ -3,10 +3,10 @@
 
 #include "MenuSelectButton.h"
 
-void UMenuSelectButton::InitializeSelectButton(TArray<UButton*> Buttons, EMenuButtonType Type, FString Name, FString Path)
+void UMenuSelectButton::InitMenuSelectButton(const TArray<UButton*> &Buttons, const EMenuButtonType &Type, FString Name, FString Path)
 {
 	if (Buttons.IsEmpty()) return;
-	InitializeBaseButton(Buttons, Type);
+	InitMenuBaseButton(Buttons, Type);
 	this->MenuButtonName = Name;
 	this->MenuButtonPath = Path;
 }

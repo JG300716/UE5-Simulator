@@ -40,15 +40,30 @@ WheelStructName Wheels;                                                \
 
 DEFINE_VEHICLE_WHEEL_PARTS_STRUCT(BVehicleWheels, bool)
 
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType, Blueprintable)
 struct FVehicleWheels
 {
 	GENERATED_BODY()
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wheels")
 	float FrontLeftWheel;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wheels")
 	float FrontRightWheel;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wheels")
 	float RearLeftWheel;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wheels")
 	float RearRightWheel;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wheels")
+	FString FrontLeftWheelName = "Front Left Wheel";
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wheels")
+	FString FrontRightWheelName = "Front Right Wheel";
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wheels")
+	FString RearLeftWheelName = "Rear Left Wheel";
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wheels")
+	FString RearRightWheelName = "Rear Right Wheel";
+
+	
 };
 
 USTRUCT(BlueprintType)
@@ -57,17 +72,22 @@ struct FVehicle
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vehicle")
 	float Chassis;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vehicle")
 	FVehicleWheels Wheels;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vehicle")
+	FString ChassisName = "Chassis";
 	
 };
 
 UENUM(BlueprintType, Blueprintable, Category = "OptionsButton|Enum")
 enum EDriveMode : uint8
 {
-	AllWheelDrive = 0,
-	FrontWheelDrive = 1,
-	RearWheelDrive = 2
+	AllWheels = 0,
+	FrontWheels = 1,
+	RearWheels = 2
 };
 UENUM(BlueprintType, Blueprintable, Category = "OptionsButton|Enum")
 enum ESettingsType : uint8
@@ -186,6 +206,12 @@ public:
 		return FValue;
 	}
 
+	UFUNCTION(BlueprintCallable, Category = "OptionsButton|Class|Float")
+	FString ReadFloatUnit() const
+	{
+		return " " + Unit;
+	}
+
 	static UOptionFloat* CreateOption(const TUOption<float> &Option)
 	{
 		UOptionFloat* NewOption = NewObject<UOptionFloat>(GetTransientPackage(), UOptionFloat::StaticClass());
@@ -278,6 +304,7 @@ public:
 	FVehicle FVehicleMinValue;
 	FVehicle FVehicleMaxValue;
 	float Step;
+	FString Unit;
 	FString Tooltip;
 	bool IsAffectingOtherOptions;
 
@@ -289,6 +316,7 @@ public:
 		this->FVehicleMinValue = Option.MinValue;
 		this->FVehicleMaxValue = Option.MaxValue;
 		this->Step = Option.Step;
+		this->Unit = Option.Unit;
 		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
 	}
@@ -297,6 +325,12 @@ public:
 	FVehicle ReadVehicleValue() const
 	{
 		return FVehicleValue;
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsButton|Class|FVehicle")
+	FString ReadVehicleUnit() const
+	{
+		return " " + Unit;
 	}
 	
 	static UOptionVehicle* CreateOption(const TUOption<FVehicle> &Option)
@@ -318,6 +352,7 @@ public:
 	FVehicleWheels FVehicleWheelsMinValue;
 	FVehicleWheels FVehicleWheelsMaxValue;
 	float Step;
+	FString Unit;
 	FString Tooltip;
 	bool IsAffectingOtherOptions;
 
@@ -329,6 +364,7 @@ public:
 		this->FVehicleWheelsMinValue = Option.MinValue;
 		this->FVehicleWheelsMaxValue = Option.MaxValue;
 		this->Step = Option.Step;
+		this->Unit = Option.Unit;
 		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
 	}
@@ -340,6 +376,7 @@ public:
 		this->FVehicleWheelsMinValue = ConvertToVehicleWheels(Option.MinValue);
 		this->FVehicleWheelsMaxValue = ConvertToVehicleWheels(Option.MaxValue);
 		this->Step = Option.Step;
+		this->Unit = Option.Unit;
 		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
 	}
@@ -348,6 +385,12 @@ public:
 	FVehicleWheels ReadVehicleWheelsValue() const
 	{
 		return FVehicleWheelsValue;
+	}
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsButton|Class|FVehicleWheels")
+	FString ReadVehicleWheelsUnit() const
+	{
+		return " " + Unit;
 	}
 
 	static UOptionWheels* CreateOption(const TUOption<FVehicleWheels> &Option)
@@ -389,16 +432,14 @@ struct FDefaultBasicUserOption
 	static void Create(TMap<FName, UOptionBase*> &OptionMap)
 	{
 		TUOption<bool> ManualGearboxValues = {Basic, BoolButton, "Manual Gearbox", bDefaultManualGearbox, bDefaultManualGearbox, false, true, 1, "", "Use manual gearbox", true};
-		TUOption<bool> AutomaticGearboxValues = {Basic, BoolButton, "Automatic Gearbox", bDefaultAutomaticGearbox, bDefaultAutomaticGearbox, false, true, 1, "", "Use automatic gearbox", true};
 		TUOption<bool> AutomaticReverseValues = {Basic, BoolButton, "Automatic Reverse", bDefaultAutomaticReverse, bDefaultAutomaticReverse, false, true, 1, "", "Use automatic reverse", true};
-		TUOption<EDriveMode> DriveModeValues = {Basic, CustomValueButton, "Drive Mode", DefaultDriveMode, DefaultDriveMode, EDriveMode::AllWheelDrive, EDriveMode::RearWheelDrive, 1, "", "Select drive mode", true};
+		TUOption<EDriveMode> DriveModeValues = {Basic, CustomValueButton, "Drive Mode", DefaultDriveMode, DefaultDriveMode, EDriveMode::AllWheels, EDriveMode::RearWheels, 1, "", "Select drive mode", true};
 		TUOption<bool> SuspensionEnabledValues = {Basic, BoolButton, "Suspension Enabled", bDefaultSuspensionEnabled, bDefaultSuspensionEnabled, false, true, 1, "", "Enable suspension", true};
 		TUOption<bool> WheelFrictionEnabledValues = {Basic, BoolButton, "Wheel Friction Enabled", bDefaultWheelFrictionEnabled, bDefaultWheelFrictionEnabled, false, true, 1, "", "Enable wheel friction", true};
 		TUOption<bool> TractionControlEnabledValues = {Basic, BoolButton, "Traction Control Enabled", bDefaultTractionControlEnabled, bDefaultTractionControlEnabled, false, true, 1, "", "Enable traction control", true};
 		TUOption<bool> AbsEnabledValues = {Basic, BoolButton, "ABS Enabled", bDefaultAbsEnabled, bDefaultAbsEnabled, false, true, 1, "", "Enable ABS", true};
 
 		UOptionBool* ManualGearbox = UOptionBool::CreateOption(ManualGearboxValues);
-		UOptionBool* AutomaticGearbox =UOptionBool::CreateOption(AutomaticGearboxValues);
 		UOptionBool* AutomaticReverse = UOptionBool::CreateOption(AutomaticReverseValues);
 		UOptionDriveMode* DriveMode = UOptionDriveMode::CreateOption(DriveModeValues);
 		UOptionBool* SuspensionEnabled = UOptionBool::CreateOption(SuspensionEnabledValues);
@@ -407,7 +448,6 @@ struct FDefaultBasicUserOption
 		UOptionBool* AbsEnabled = UOptionBool::CreateOption(AbsEnabledValues);
 
 		OptionMap.Add(FName(ManualGearbox->OptionName), ManualGearbox);
-		OptionMap.Add(FName(AutomaticGearbox->OptionName), AutomaticGearbox);
 		OptionMap.Add(FName(AutomaticReverse->OptionName), AutomaticReverse);
 		OptionMap.Add(FName(DriveMode->OptionName), DriveMode);
 		OptionMap.Add(FName(SuspensionEnabled->OptionName), SuspensionEnabled);
@@ -417,7 +457,6 @@ struct FDefaultBasicUserOption
 		
 	}
 	static constexpr bool bDefaultManualGearbox = false;
-	static constexpr bool bDefaultAutomaticGearbox = true;
 	static constexpr bool bDefaultAutomaticReverse = false;
 	static EDriveMode DefaultDriveMode;
 	static constexpr bool bDefaultSuspensionEnabled = true;

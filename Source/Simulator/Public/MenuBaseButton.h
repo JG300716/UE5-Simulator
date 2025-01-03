@@ -32,7 +32,7 @@ public:
 	void ChangeButtonOutline(const bool bIsOutline, const FLinearColor Color) const;
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsButton")
-	void InitializeBaseButton(TArray<UButton*> Buttons, EMenuButtonType Type);
+	void InitMenuBaseButton(const TArray<UButton*> &Buttons, const EMenuButtonType &Type);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton")
 	TArray<UButton*> MenuButton;

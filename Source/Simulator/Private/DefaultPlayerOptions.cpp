@@ -7,7 +7,7 @@
 
 #include "Blueprint/UserWidget.h"
 
-EDriveMode FDefaultBasicUserOption::DefaultDriveMode = EDriveMode::AllWheelDrive;
+EDriveMode FDefaultBasicUserOption::DefaultDriveMode = EDriveMode::AllWheels;
 UDefaultPlayerOptions* UDefaultPlayerOptions::PlayerOptionsInstance = nullptr;
 TMap<FName, UOptionBase*> UDefaultPlayerOptions::OptionMap;
 

@@ -5,21 +5,22 @@
  */
 #include "MenuBaseButton.h"
 
-void UMenuBaseButton::InitializeBaseButton(TArray<UButton*> Buttons, EMenuButtonType Type)
+void UMenuBaseButton::InitMenuBaseButton(const TArray<UButton*> &Buttons, const EMenuButtonType &Type)
 {
- if (Buttons.IsEmpty()) return;
- this->MenuButton = Buttons;
- this->MenuButtonType = Type;
+	this->AddToRoot();
+	if (Buttons.IsEmpty()) return;
+	this->MenuButton = Buttons;
+	this->MenuButtonType = Type;
 }
 
 void UMenuBaseButton::ChangeButtonOutline(const bool bIsOutline, const FLinearColor Color) const
 {
-  if (MenuButton.IsEmpty()) return;
-  for(auto &Button : MenuButton)
-  {
-    if (Button == nullptr) continue;
-    FButtonStyle Style = Button->GetStyle();
-    Style.Normal.OutlineSettings.Color = bIsOutline ? Color : FLinearColor::Black;
-    Button->SetStyle(Style);
-  }
+	if (MenuButton.IsEmpty()) return;
+	for(auto &Button : MenuButton)
+	{
+		if (Button == nullptr) continue;
+		FButtonStyle Style = Button->GetStyle();
+		Style.Normal.OutlineSettings.Color = bIsOutline ? Color : FLinearColor::Black;
+		Button->SetStyle(Style);
+	}
 }

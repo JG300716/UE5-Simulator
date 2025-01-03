@@ -1,10 +1,11 @@
+
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "OptionBaseButton.h"
-#include "OptionsValueButton.generated.h"
+#include "OptionValueButton.generated.h"
 
 /**
  * 
@@ -16,9 +17,19 @@ class SIMULATOR_API UOptionValueButton : public UOptionBaseButton
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Value")
-	float Value;
+	float FValue;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Value")
+	FString FUnit;
+	
 	UFUNCTION(BlueprintCallable, Category = "OptionButton|Value")
-	void InitOptionValueButton(const TArray<UButton*>& Buttons, const EMenuButtonType& MenuType, const EOptionsButtonType& OptionsType, const FString& Name, const float &Value);
+	void InitOptionValueButton(
+		const TArray<UButton*>& Buttons,
+		const EMenuButtonType MenuType,
+		const EOptionsButtonType& OptionsType,
+		const FString& Name,
+		const float &Value,
+		const FString &Unit
+		 );
 	
 };

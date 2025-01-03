@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "OptionBaseButton.h"
-#include "OptionsCustomValueButton.generated.h"
+#include "OptionCustomValueButton.generated.h"
 
 /**
  * 
@@ -15,6 +15,15 @@ class SIMULATOR_API UOptionCustomValueButton : public UOptionBaseButton
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton | CustomValue")
-	TEnumAsByte<EDriveMode> Value;
+	TEnumAsByte<EDriveMode> CValue;
+
+	UFUNCTION(BlueprintCallable, Category = "OptionButton | CustomValue")
+	void InitOptionCustomValueButton(
+		const TArray<UButton*>& Buttons,
+		const EMenuButtonType MenuType,
+		const EOptionsButtonType& OptionsType,
+		const FString& Name,
+		const EDriveMode &Value
+		);
 	
 };

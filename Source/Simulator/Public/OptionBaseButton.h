@@ -1,11 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MenuBaseButton.h"
 #include "DefaultPlayerOptions.h"
-#include "OptionsBaseButton.generated.h"
+#include "MenuBaseButton.h"
+#include "OptionBaseButton.generated.h"
 
 /**
  * Was made for engineer degree thesis purposes.

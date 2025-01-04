@@ -76,27 +76,26 @@ public:
 	float Chassis;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vehicle")
 	FVehicleWheels Wheels;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vehicle")
 	FString ChassisName = "Chassis";
 	
 };
 
-UENUM(BlueprintType, Blueprintable, Category = "OptionsButton|Enum")
+UENUM(BlueprintType, Blueprintable, Category = "OptionButton|Enum")
 enum EDriveMode : uint8
 {
 	AllWheels = 0,
 	FrontWheels = 1,
 	RearWheels = 2
 };
-UENUM(BlueprintType, Blueprintable, Category = "OptionsButton|Enum")
+UENUM(BlueprintType, Blueprintable, Category = "OptionButton|Enum")
 enum ESettingsType : uint8
 {
 	Basic = 0,
 	Physics = 1,
 	Advance = 2
 };
-UENUM(BlueprintType, Blueprintable, Category = "OptionsButton|Enum")
+UENUM(BlueprintType, Blueprintable, Category = "OptionButton|Enum")
 enum EOptionsButtonType : uint8
 {
 	BoolButton = 0,
@@ -112,16 +111,16 @@ class SIMULATOR_API UOptionBase : public UObject
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerOptions")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Logic Class|Base")
 	TEnumAsByte<ESettingsType> SettingsType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerOptions")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Logic Class|Base")
 	TEnumAsByte<EOptionsButtonType> OptionsButtonType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerOptions")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Logic Class|Base")
 	FString OptionName;
 
-	UFUNCTION(BlueprintCallable, Category = "OptionsButton|Class")
+	UFUNCTION(BlueprintCallable, Category = "OptionButton|Logic Class|Base")
 	void InitializeBase(const ESettingsType &Type, const EOptionsButtonType &OptionType, const FString &Name)
 	{
 		this->AddToRoot();
@@ -200,13 +199,13 @@ public:
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
 	}
 
-	UFUNCTION(BlueprintCallable, Category = "OptionsButton|Class|Float")
+	UFUNCTION(BlueprintCallable, Category = "OptionButton|Logic Class|Float")
 	float ReadFloatValue() const
 	{
 		return FValue;
 	}
 
-	UFUNCTION(BlueprintCallable, Category = "OptionsButton|Class|Float")
+	UFUNCTION(BlueprintCallable, Category = "OptionButton|Logic Class|Float")
 	FString ReadFloatUnit() const
 	{
 		return " " + Unit;
@@ -238,10 +237,9 @@ public:
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
 	}
 
-	UFUNCTION(BlueprintCallable, Category = "OptionsButton|Class|Bool")
+	UFUNCTION(BlueprintCallable, Category = "OptionButton|Logic Class|Bool")
 	bool ReadBoolValue() const
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ReadBoolValue: %d"), BValue);
 		return BValue;
 	}
 
@@ -279,7 +277,7 @@ public:
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
 	}
 	
-	UFUNCTION(BlueprintCallable, Category = "OptionsButton|Class|EDriveMode")
+	UFUNCTION(BlueprintCallable, Category = "OptionButton|Logic Class|EDriveMode")
 	TEnumAsByte<EDriveMode> ReadDriveModeValue() const
 	{
 		return DriveModeValue;
@@ -321,13 +319,13 @@ public:
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
 	}
 
-	UFUNCTION(BlueprintCallable, Category = "OptionsButton|Class|FVehicle")
+	UFUNCTION(BlueprintCallable, Category = "OptionButton|Logic Class|FVehicle")
 	FVehicle ReadVehicleValue() const
 	{
 		return FVehicleValue;
 	}
 
-	UFUNCTION(BlueprintCallable, Category = "OptionsButton|Class|FVehicle")
+	UFUNCTION(BlueprintCallable, Category = "OptionButton|Logic Class|FVehicle")
 	FString ReadVehicleUnit() const
 	{
 		return " " + Unit;
@@ -381,13 +379,13 @@ public:
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
 	}
 
-	UFUNCTION(BlueprintCallable, Category = "OptionsButton|Class|FVehicleWheels")
+	UFUNCTION(BlueprintCallable, Category = "OptionButton|Logic Class|FVehicleWheels")
 	FVehicleWheels ReadVehicleWheelsValue() const
 	{
 		return FVehicleWheelsValue;
 	}
 
-	UFUNCTION(BlueprintCallable, Category = "OptionsButton|Class|FVehicleWheels")
+	UFUNCTION(BlueprintCallable, Category = "OptionButton|Logic Class|FVehicleWheels")
 	FString ReadVehicleWheelsUnit() const
 	{
 		return " " + Unit;

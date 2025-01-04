@@ -7,19 +7,11 @@
 
 #include "IntVectorTypes.h"
 
-TArray<uint8> UOptionsLibrary::Sizes;
-TArray<uint8> UOptionsLibrary::MaxColumns;
+TArray<uint8> UOptionsLibrary::Sizes = {0,0,0};
+TArray<uint8> UOptionsLibrary::MaxColumns = {5,5,1};
 TArray<UMenuBaseButton*> UOptionsLibrary::Buttons;
-int32 UOptionsLibrary::IndexOfChosenVehicle;
+int32 UOptionsLibrary::IndexOfChosenVehicle = -1;
 int32 UOptionsLibrary::IndexOfChosenMap;
-
-void UOptionsLibrary::Initialize(TArray<uint8> TmpSizes, TArray<uint8> TmpMaxColumns, TArray<UMenuBaseButton*> TmpButtons)
-{
-    Sizes = TmpSizes;
-    MaxColumns = TmpMaxColumns;
-    Buttons = TmpButtons;
-    IndexOfChosenVehicle = -1;
-}
 
 int32 UOptionsLibrary::GetSelectedButtonIndex(const FVector CursorPosition)
 {
@@ -137,6 +129,11 @@ FVector3f UOptionsLibrary::MoveCursorNormal(const EControllersArrowsDirection &D
 
 FVector3f UOptionsLibrary::MoveCursorSpecial(const EControllersArrowsDirection &Direction, const FVector &CursorPosition)
 {
+    for(auto &Button : Buttons)
+    {
+        if (Button->MenuButtonType != EMenuButtonType::OptionsButton) continue;
+        Button->ChangeButtonOutline(true, OptionsHoveredButtonColor);
+    }
     return FVector3f(CursorPosition);
 }
 
@@ -254,4 +251,36 @@ void UOptionsLibrary::LoadAssetWith(const FVector &CursorPosition, int32 &IndexO
 bool UOptionsLibrary::IsButtonValid(const int32 Index)
 {
     return Index >= 0 && Index < Buttons.Num() && Buttons[Index] != nullptr;
+}
+
+void UOptionsLibrary::AddToButtons(UMenuBaseButton* Button)
+{
+    Buttons.Add(Button);
+}
+
+TArray<UMenuBaseButton*> UOptionsLibrary::GetButtons()
+{
+    return Buttons;
+}
+
+void UOptionsLibrary::CalculateButtonsDimensions()
+{
+   for(auto &Button : Buttons)
+   {
+       const EMenuButtonType Type = Button->MenuButtonType;
+       switch (Type)
+       {
+       case EMenuButtonType::VehicleButton:
+            Sizes[0]++;
+            break;
+       case EMenuButtonType::MapButton:
+           Sizes[1]++;
+           break;
+       case EMenuButtonType::OptionsButton:
+           Sizes[2]++;
+           break;
+       default:
+           break;
+       }
+   }
 }

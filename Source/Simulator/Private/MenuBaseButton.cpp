@@ -7,7 +7,6 @@
 
 void UMenuBaseButton::InitMenuBaseButton(const TArray<UButton*> &Buttons, const EMenuButtonType &Type)
 {
-	this->AddToRoot();
 	if (Buttons.IsEmpty()) return;
 	this->MenuButton = Buttons;
 	this->MenuButtonType = Type;
@@ -18,7 +17,7 @@ void UMenuBaseButton::ChangeButtonOutline(const bool bIsOutline, const FLinearCo
 	if (MenuButton.IsEmpty()) return;
 	for(auto &Button : MenuButton)
 	{
-		if (Button == nullptr) continue;
+		if (!IsValid(Button)) continue;
 		FButtonStyle Style = Button->GetStyle();
 		Style.Normal.OutlineSettings.Color = bIsOutline ? Color : FLinearColor::Black;
 		Button->SetStyle(Style);

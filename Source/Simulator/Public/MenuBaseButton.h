@@ -12,7 +12,7 @@
  * https://github.com/JG300716
  */
 
-UENUM(BlueprintType, Blueprintable, Category = "OptionsButton")
+UENUM(BlueprintType, Blueprintable, Category = "OptionButton|Enum")
 enum EMenuButtonType : uint8
 {
 	TabButton = 0,
@@ -28,16 +28,16 @@ class SIMULATOR_API UMenuBaseButton : public UButton
 
 public:
 
-	UFUNCTION(BlueprintCallable, Category = "OptionsButton")
+	UFUNCTION(BlueprintCallable, Category = "OptionButton|MenuBase")
 	void ChangeButtonOutline(const bool bIsOutline, const FLinearColor Color) const;
 
-	UFUNCTION(BlueprintCallable, Category = "OptionsButton")
+	UFUNCTION(BlueprintCallable, Category = "OptionButton|MenuBase")
 	void InitMenuBaseButton(const TArray<UButton*> &Buttons, const EMenuButtonType &Type);
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|MenuBase")
 	TArray<UButton*> MenuButton;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|MenuBase")
 	TEnumAsByte<EMenuButtonType> MenuButtonType;
 	
 };

@@ -19,27 +19,27 @@ class SIMULATOR_API UMenuSelectButton : public UMenuBaseButton
 	GENERATED_BODY()
 public:
 	
-	UFUNCTION(BlueprintCallable, Category = "OptionsButton")
+	UFUNCTION(BlueprintCallable, Category = "OptionButton|MenuSelect")
 	void InitMenuSelectButton(const TArray<UButton*> &Buttons, const EMenuButtonType &Type, FString Name, FString Path);
 
 	UFUNCTION()
 	FString VehicleButtonClicked();
 
-	UFUNCTION(BlueprintCallable, Category = "OptionsButton")
+	UFUNCTION(BlueprintCallable, Category = "OptionButton|MenuSelect")
 	void VehicleButtonClickedWrapper();
 
 	UFUNCTION()
 	FString MapButtonClicked();
 
-	UFUNCTION(BlueprintCallable, Category = "OptionsButton")
+	UFUNCTION(BlueprintCallable, Category = "OptionButton|MenuSelect")
 	void MapButtonClickedWrapper();
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|MenuSelect")
 	FString MenuButtonName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|MenuSelect")
 	FString MenuButtonPath;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionsButton")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|MenuSelect")
 	FString AssetObjectPath;
 };

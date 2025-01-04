@@ -4,8 +4,8 @@
 #include "OptionCustomValueButton.h"
 
 
-void UOptionCustomValueButton::InitOptionCustomValueButton(const TArray<UButton*>& Buttons, const EMenuButtonType MenuType, const EOptionsButtonType& OptionsType, const FString& Name, const EDriveMode &Value)
+void UOptionCustomValueButton::InitOptionCustomValueButton(const TArray<UButton*> &Buttons, const EMenuButtonType MenuType, const EOptionsButtonType &OptionsType, const FString &Name, const FString ParentName, const EDriveMode &Value)
 {
-	InitOptionBaseButton(Buttons, MenuType, OptionsType, Name);
+	InitOptionBaseButton(Buttons, MenuType, OptionsType, Name, ParentName);
 	this->CValue = Value;
 }

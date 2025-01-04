@@ -4,9 +4,8 @@
 #include "OptionBoolButton.h"
 
 
-void UOptionBoolButton::InitOptionBoolButton(const TArray<UButton*>& Buttons, const EMenuButtonType MenuType, const EOptionsButtonType& OptionsType, const FString& Name, const bool &Value)
+void UOptionBoolButton::InitOptionBoolButton(const TArray<UButton*> &Buttons, const EMenuButtonType MenuType, const EOptionsButtonType &OptionsType, const FString &Name, const FString ParentName, const bool &Value)
 {
-
-	InitOptionBaseButton(Buttons, MenuType, OptionsType, Name);
+	InitOptionBaseButton(Buttons, MenuType, OptionsType, Name, ParentName);
 	this->BValue = Value;	
 }

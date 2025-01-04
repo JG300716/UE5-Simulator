@@ -17,13 +17,21 @@ class SIMULATOR_API UOptionBaseButton : public UMenuBaseButton
 	GENERATED_BODY()
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Graphic Class")
 	TEnumAsByte<EOptionsButtonType> OptionButtonType;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Graphic Class")
 	FString OptionName;
 
-	UFUNCTION(BlueprintCallable, Category = "OptionButton")
-	void InitOptionBaseButton(const TArray<UButton*> &Buttons, const EMenuButtonType &MenuType, const EOptionsButtonType &OptionsType, const FString &Name);
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Graphic Class")
+	FString ParentOptionName;
+
+	UFUNCTION(BlueprintCallable, Category = "OptionButton|Graphic Class")
+	void InitOptionBaseButton(
+		const TArray<UButton*> &Buttons,
+		const EMenuButtonType MenuType,
+		const EOptionsButtonType &OptionsType,
+		const FString &Name,
+		const FString ParentName
+		);
 };

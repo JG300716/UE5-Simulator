@@ -3,12 +3,11 @@
 
 #include "OptionBaseButton.h"
 
-void UOptionBaseButton::InitOptionBaseButton(const TArray<UButton*>& Buttons, const EMenuButtonType& MenuType, const EOptionsButtonType& OptionsType, const FString& Name)
+void UOptionBaseButton::InitOptionBaseButton(const TArray<UButton*> &Buttons, const EMenuButtonType MenuType, const EOptionsButtonType &OptionsType, const FString &Name, const FString ParentName)
 {
-
 	InitMenuBaseButton(Buttons, MenuType);
 	this->OptionButtonType = OptionsType;
 	this->OptionName = Name;
-	
+	this->ParentOptionName = ParentName;
 }
 

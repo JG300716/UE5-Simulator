@@ -4,26 +4,27 @@
 
 #include "CoreMinimal.h"
 #include "OptionBaseButton.h"
-#include "OptionWheelsButton.generated.h"
+#include "OptionVehicleButton.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SIMULATOR_API UOptionWheelsButton : public UOptionBaseButton
+class SIMULATOR_API UOptionVehicleButton  : public UOptionBaseButton
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Graphic Class|Wheels")
-	FVehicleWheels Wheels;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Graphic Class|Vehicle")
+	FVehicle FVehicleValue;
 
-	UFUNCTION(BlueprintCallable, Category = "OptionButton|Graphic Class|Wheels")
-	void InitOptionWheelsButton(
+	UFUNCTION(BlueprintCallable, Category = "OptionButton|Graphic Class|Vehicle")
+	void InitOptionVehicleButton(
 		const TArray<UButton*> &Buttons,
 		const EMenuButtonType MenuType,
 		const EOptionsButtonType &OptionsType,
 		const FString &Name,
 		const FString ParentName,
-		const FVehicleWheels &Value
+		const FVehicle &Value
 		);
+	
 };

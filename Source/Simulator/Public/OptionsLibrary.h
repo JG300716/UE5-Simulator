@@ -58,9 +58,6 @@ class SIMULATOR_API UOptionsLibrary : public UBlueprintFunctionLibrary
 	
 public:
 	
-	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
-	static void Initialize(TArray<uint8> TmpSizes, TArray<uint8> TmpMaxColumns, TArray<UMenuBaseButton*> TmpButtons);
-
 	UFUNCTION()
 	static int32 GetSelectedButtonIndex(const FVector CursorPosition);
 	
@@ -90,4 +87,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
 	static void FailedToLoadMapAsset(const FVector CursorPosition);
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
+	static void AddToButtons(UMenuBaseButton* Button);
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
+	static TArray<UMenuBaseButton*> GetButtons();
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
+	static void CalculateButtonsDimensions();
 };

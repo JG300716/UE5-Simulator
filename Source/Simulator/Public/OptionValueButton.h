@@ -16,18 +16,19 @@ class SIMULATOR_API UOptionValueButton : public UOptionBaseButton
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Value")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Graphic Class|Value")
 	float FValue;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Value")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Graphic Class|Value")
 	FString FUnit;
 	
-	UFUNCTION(BlueprintCallable, Category = "OptionButton|Value")
+	UFUNCTION(BlueprintCallable, Category = "OptionButton|Graphic Class|Value")
 	void InitOptionValueButton(
-		const TArray<UButton*>& Buttons,
+		const TArray<UButton*> &Buttons,
 		const EMenuButtonType MenuType,
-		const EOptionsButtonType& OptionsType,
-		const FString& Name,
+		const EOptionsButtonType &OptionsType,
+		const FString &Name,
+		const FString ParentName,
 		const float &Value,
 		const FString &Unit
 		 );

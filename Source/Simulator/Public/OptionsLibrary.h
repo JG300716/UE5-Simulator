@@ -9,6 +9,10 @@
 #include "Styling/SlateTypes.h"      // For FButtonStyle
 #include "OptionBaseButton.h"       // For EControllersArrowsDirection
 #include "MenuSelectButton.h"
+#include "OptionBoolButton.h"
+#include "OptionValueButton.h"
+#include "OptionCustomValueButton.h"
+
 
 #include "Chaos/UniformGrid.h"
 
@@ -33,8 +37,8 @@ UENUM(BlueprintType, Blueprintable, Category = "OptionsButton")
 enum EControllersButtonsDirection : uint8
 {
 	TriangleOrY = 0, // Triangle or Y - UP
-	CircleOrB = 1, // Circle or B - DOWN
-	CrossOrA = 2, // Cross or A - LEFT
+	CircleOrB = 1, // Circle or B - LEFT
+	CrossOrA = 2, // Cross or A - DOWN
 	SquareOrX = 3 // Square or X - RIGHT
 };
 
@@ -44,19 +48,20 @@ class SIMULATOR_API UOptionsLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 	static TArray<uint8> Sizes;
 	static TArray<uint8> MaxColumns;
-	static TArray<UMenuBaseButton*> Buttons;
 	static int32 IndexOfChosenVehicle;
 	static int32 IndexOfChosenMap;
-	static constexpr FLinearColor OptionsHoveredButtonColor = FLinearColor(255, 165, 0, 1);
-	static constexpr FLinearColor OptionsChosenButtonColor = FLinearColor(0, 255, 0, 1);
-	static constexpr FLinearColor OptionsFailedButtonColor = FLinearColor(255, 0, 0, 1);
 	
 	static void LoadAssetWith(const FVector &CursorPosition, int32 &IndexOfChosenAsset, const FLinearColor Color);
 	static bool IsButtonValid(const int32 Index);
 	static FVector3f MoveCursorNormal(const EControllersArrowsDirection &Direction, const FVector &CursorPosition);
 	static FVector3f MoveCursorSpecial(const EControllersArrowsDirection &Direction, const FVector &CursorPosition);
-	
+	static void UpdateOptionButtonGraphics(UOptionBaseButton* OptionButton);
+	static void ShouldJumpTheHiddenButtons(const FVector &CursorPosition, int32 &OffsetJump, bool &ShouldJump);
 public:
+	UPROPERTY()
+	TArray<UMenuBaseButton*> Buttons;
+
+	static UOptionsLibrary* GetInstance();
 	
 	UFUNCTION()
 	static int32 GetSelectedButtonIndex(const FVector CursorPosition);
@@ -96,4 +101,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
 	static void CalculateButtonsDimensions();
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
+	static void OptionButtonPressed(UOptionBaseButton* Button, const EControllersButtonsDirection ControllerButton);
 };

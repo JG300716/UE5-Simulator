@@ -124,12 +124,9 @@ void UDefaultPlayerOptions::LogOptionMap()
 	}
 }
 
-void UDefaultPlayerOptions::GetOptionByName(const FName OptionName, UOptionBase* &Option, TEnumAsByte<EOptionsButtonType> &OptionType)
+void UDefaultPlayerOptions::GetOptionByName(const FName OptionName, UOptionBase* &Option, TEnumAsByte<EOptionButtonType> &OptionType)
 {
 	if (!OptionMap.Contains(OptionName)) return;
 	Option = OptionMap[OptionName];
 	OptionType = Option->OptionsButtonType;
-	UE_LOG(LogTemp, Warning, TEXT("Option: %s"), *OptionName.ToString());
-	UE_LOG(LogTemp, Warning, TEXT("Value: %d"), (int8)Option->SettingsType.GetIntValue());
-	UE_LOG(LogTemp, Warning, TEXT("Option Type: %d"), (int8)Option->OptionsButtonType.GetIntValue());
 }

@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "OptionBaseButton.h"
+#include "OptionWheelsButton.h"
 #include "OptionVehicleButton.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SIMULATOR_API UOptionVehicleButton  : public UOptionBaseButton
+class SIMULATOR_API UOptionVehicleButton  : public UOptionWheelsButton
 {
 	GENERATED_BODY()
 public:
@@ -21,7 +21,7 @@ public:
 	void InitOptionVehicleButton(
 		const TArray<UButton*> &Buttons,
 		const EMenuButtonType MenuType,
-		const EOptionsButtonType &OptionsType,
+		const EOptionButtonType &OptionsType,
 		const FString &Name,
 		const FString ParentName,
 		const FVehicle &Value

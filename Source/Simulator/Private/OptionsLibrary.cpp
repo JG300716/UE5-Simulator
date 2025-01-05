@@ -6,12 +6,19 @@
 #include "OptionsLibrary.h"
 
 #include "IntVectorTypes.h"
+#include "OptionWheelsButton.h"
 
 TArray<uint8> UOptionsLibrary::Sizes = {0,0,0};
 TArray<uint8> UOptionsLibrary::MaxColumns = {5,5,1};
-TArray<UMenuBaseButton*> UOptionsLibrary::Buttons;
 int32 UOptionsLibrary::IndexOfChosenVehicle = -1;
 int32 UOptionsLibrary::IndexOfChosenMap;
+
+UOptionsLibrary* UOptionsLibrary::GetInstance()
+{
+    static UOptionsLibrary* Instance = NewObject<UOptionsLibrary>();
+    Instance->AddToRoot(); // Keep it alive
+    return Instance;
+}
 
 int32 UOptionsLibrary::GetSelectedButtonIndex(const FVector CursorPosition)
 {
@@ -33,8 +40,8 @@ int32 UOptionsLibrary::GetSelectedButtonIndex(const FVector CursorPosition)
 UMenuBaseButton* UOptionsLibrary::GetSelectedButton(const FVector CursorPosition)
 {
     const int32 Index = GetSelectedButtonIndex(CursorPosition);
-    if (Index < 0 || Index >= Buttons.Num()) return nullptr; // Invalid index
-    return Buttons[Index];
+    if (Index < 0 || Index >= GetInstance()->Buttons.Num()) return nullptr; // Invalid index
+    return GetInstance()->Buttons[Index];
 }
 
 FVector3f UOptionsLibrary::MoveCursorNormal(const EControllersArrowsDirection &Direction, const FVector &CursorPosition)
@@ -129,12 +136,76 @@ FVector3f UOptionsLibrary::MoveCursorNormal(const EControllersArrowsDirection &D
 
 FVector3f UOptionsLibrary::MoveCursorSpecial(const EControllersArrowsDirection &Direction, const FVector &CursorPosition)
 {
-    for(auto &Button : Buttons)
+    FVector3f NewCursorPosition = FVector3f(CursorPosition);
+
+    const uint8 Page = CursorPosition.Z;
+    const uint8 Columns = MaxColumns[Page]; // Number of columns in the current page
+    const uint8 PageSize = Sizes[Page]; // Size of the current page only
+
+    bool ShouldJump = false;
+    int OffsetJump = 0;
+    
+    switch (Direction)
     {
-        if (Button->MenuButtonType != EMenuButtonType::OptionsButton) continue;
-        Button->ChangeButtonOutline(true, OptionsHoveredButtonColor);
+        default:
+        break;
+        case EControllersArrowsDirection::Up:
+            if (CursorPosition.Y > 0)
+            {
+                ShouldJumpTheHiddenButtons(CursorPosition, OffsetJump, ShouldJump);
+                NewCursorPosition.Y = ShouldJump ? NewCursorPosition.Y - OffsetJump - 1 : NewCursorPosition.Y - 1;
+                if (NewCursorPosition.Y == 0)
+                    NewCursorPosition.X = 0; // Snap to the current tab button
+            }
+            return NewCursorPosition;
+        break;
+        case EControllersArrowsDirection::Down:
+            if (CursorPosition.Y == 0)
+            {
+                NewCursorPosition.Y = 1; // Move to the first row of the grid
+                NewCursorPosition.X = 0; // Snap to the first column
+                return NewCursorPosition;
+            }
+            if (CursorPosition.Y >= FMath::CeilToInt(PageSize / (float)Columns) - 1) return NewCursorPosition; // Already at the bottom row, do nothing
+            ShouldJumpTheHiddenButtons(CursorPosition, OffsetJump, ShouldJump);
+            NewCursorPosition.Y = ShouldJump ? NewCursorPosition.Y + OffsetJump + 1 : NewCursorPosition.Y + 1;
+            return NewCursorPosition;
+        break;
+        case EControllersArrowsDirection::Left:
+        break;
+        case EControllersArrowsDirection::Right:
+        break;
+        
     }
+    
     return FVector3f(CursorPosition);
+}
+
+void UOptionsLibrary::ShouldJumpTheHiddenButtons(const FVector& CursorPosition, int32& OffsetJump, bool& ShouldJump)
+{
+    UOptionBaseButton* Button = Cast<UOptionBaseButton>(GetSelectedButton(CursorPosition));
+    if (!IsValid(Button)) return; // Invalid button
+    
+    switch(Button->OptionButtonType)
+    {
+    case Option_WheelsBoolButton:
+    case Option_WheelsValueButton:
+        OffsetJump = OffsetJump == 0 ? 4 : OffsetJump;
+        [[fallthrough]];
+    case Option_VehicleValueButton:
+        {
+            OffsetJump = OffsetJump == 0 ? 5 : OffsetJump; 
+            UOptionWheelsButton* WheelsButton = Cast<UOptionWheelsButton>(Button);
+            if (!IsValid(WheelsButton)) return ; // Invalid button
+            ShouldJump = WheelsButton->bIsCollapsed;
+            break;
+        }
+    default:
+    case Option_CustomValueButton:
+    case Option_ValueButton:
+    case Option_BoolButton:
+        break;
+    }
 }
 
 
@@ -171,19 +242,19 @@ bool UOptionsLibrary::UpdateSelectedButton(
     // Compute indices for current and previous buttons
     const int32 CurrentIndex = GetSelectedButtonIndex(CurrentCursorPosition);
     const int32 PreviousIndex = GetSelectedButtonIndex(PreviousCursorPosition);
+    TArray<UMenuBaseButton*> AllButtons = GetInstance()->Buttons;
+    if (AllButtons.IsEmpty()) return false;
 
-    if (Buttons.IsEmpty()) return false;
-
-    if (CurrentIndex < 0 || CurrentIndex >= Buttons.Num()) return false;
+    if (CurrentIndex < 0 || CurrentIndex >= AllButtons.Num()) return false;
     // Update buttons if indices are valid
 
-    if (Buttons.IsValidIndex(PreviousIndex) && PreviousIndex != CurrentIndex && PreviousIndex != IndexOfChosenVehicle)
+    if (AllButtons.IsValidIndex(PreviousIndex) && PreviousIndex != CurrentIndex && PreviousIndex != IndexOfChosenVehicle)
     {
-        Buttons[PreviousIndex]->ChangeButtonOutline(false, OptionsHoveredButtonColor); // Remove highlight from the previously selected button
+        AllButtons[PreviousIndex]->ChangeButtonOutline(false, OptionsHoveredButtonColor); // Remove highlight from the previously selected button
     }
-    if (Buttons.IsValidIndex(CurrentIndex) && CurrentIndex != IndexOfChosenVehicle)
+    if (AllButtons.IsValidIndex(CurrentIndex) && CurrentIndex != IndexOfChosenVehicle)
     {
-        Buttons[CurrentIndex]->ChangeButtonOutline(true, OptionsHoveredButtonColor); // Highlight the currently selected button
+        AllButtons[CurrentIndex]->ChangeButtonOutline(true, OptionsHoveredButtonColor); // Highlight the currently selected button
     }
 
     if (abs((CurrentCursorPosition - PreviousCursorPosition).Z) != 1) return false; // Only update if the page has changed
@@ -199,11 +270,11 @@ TArray<UMenuBaseButton*> UOptionsLibrary::AddTabButtons(TArray<UButton*> TabButt
         TArray<UButton*> TmpButtons;
         TmpButtons.Add(TabButtons[i]);
         UMenuBaseButton* Button = NewObject<UMenuBaseButton>(UMenuBaseButton::StaticClass());
-        Button->InitMenuBaseButton(TmpButtons, EMenuButtonType::TabButton);
-        Buttons.Insert(Button, Offset);
+        Button->InitMenuBaseButton(TmpButtons, Menu_TabButton);
+        GetInstance()->Buttons.Insert(Button, Offset);
         Offset += Sizes[i] + 1;
     }
-    return Buttons;
+    return GetInstance()->Buttons;
 }
 
 void UOptionsLibrary::ChangePanelVisibility(TArray<UWidget*> Panels, const FVector CursorPosition, const FVector PreviousCursorPosition)
@@ -243,44 +314,167 @@ void UOptionsLibrary::FailedToLoadMapAsset(const FVector CursorPosition)
 
 void UOptionsLibrary::LoadAssetWith(const FVector &CursorPosition, int32 &IndexOfChosenAsset, const FLinearColor Color)
 {
-    if (IsButtonValid(IndexOfChosenAsset)) Buttons[IndexOfChosenAsset]->ChangeButtonOutline(false, Color);
+    if (IsButtonValid(IndexOfChosenAsset)) GetInstance()->Buttons[IndexOfChosenAsset]->ChangeButtonOutline(false, Color);
     IndexOfChosenAsset = GetSelectedButtonIndex(CursorPosition);
-    if (IsButtonValid(IndexOfChosenAsset)) Buttons[IndexOfChosenAsset]->ChangeButtonOutline(true, Color);
+    if (IsButtonValid(IndexOfChosenAsset)) GetInstance()->Buttons[IndexOfChosenAsset]->ChangeButtonOutline(true, Color);
 }
 
 bool UOptionsLibrary::IsButtonValid(const int32 Index)
 {
-    return Index >= 0 && Index < Buttons.Num() && Buttons[Index] != nullptr;
+    return Index >= 0 && Index < GetInstance()->Buttons.Num() && GetInstance()->Buttons[Index] != nullptr;
 }
 
 void UOptionsLibrary::AddToButtons(UMenuBaseButton* Button)
 {
-    Buttons.Add(Button);
+    GetInstance()->Buttons.Add(Button);
 }
 
 TArray<UMenuBaseButton*> UOptionsLibrary::GetButtons()
 {
-    return Buttons;
+    return GetInstance()->Buttons;
 }
 
 void UOptionsLibrary::CalculateButtonsDimensions()
 {
-   for(auto &Button : Buttons)
+   for(auto &Button : GetInstance()->Buttons)
    {
-       const EMenuButtonType Type = Button->MenuButtonType;
-       switch (Type)
+       if (!IsValid(Button)) continue;
+       switch (Button->MenuButtonType)
        {
-       case EMenuButtonType::VehicleButton:
-            Sizes[0]++;
-            break;
-       case EMenuButtonType::MapButton:
+       case Menu_VehicleButton:
+           Sizes[0]++;
+           break;
+       case Menu_MapButton:
            Sizes[1]++;
            break;
-       case EMenuButtonType::OptionsButton:
+       case Menu_OptionsButton:
            Sizes[2]++;
+           UpdateOptionButtonGraphics(Cast<UOptionBaseButton>(Button));
            break;
        default:
            break;
        }
    }
+}
+
+void UOptionsLibrary::OptionButtonPressed(UOptionBaseButton* Button, const EControllersButtonsDirection ControllerButton)
+{
+    if (!IsValid(Button)) return;
+
+    const EOptionButtonType Type = Button->OptionButtonType;
+
+    FString OptionName = Button->OptionName;
+    FString ParentName = Button->ParentOptionName;
+
+    auto Options = UDefaultPlayerOptions::GetOptionMap();
+    UOptionBase* Option = Options.Contains(FName(OptionName)) ? Options[FName(OptionName)] : Options.Contains(FName(ParentName)) ? Options[FName(ParentName)] : nullptr;
+    if (!IsValid(Option)) return;
+    
+    switch (ControllerButton)
+    {
+            default:
+        case TriangleOrY:
+        case CircleOrB:
+            return;
+        case CrossOrA:
+            // Toggle the value of the option
+            switch (Type)
+            {
+                default:
+                case Option_ValueButton:
+                case Option_CustomValueButton:
+                    return;
+                case Option_WheelsBoolButton:
+                case Option_WheelsValueButton:
+                case Option_VehicleValueButton:
+                    {
+                        UOptionWheelsButton* WheelsButton = Cast<UOptionWheelsButton>(Button);
+                        if (!IsValid(WheelsButton)) return;
+                        WheelsButton->bIsCollapsed = !WheelsButton->bIsCollapsed;
+                    }
+                [[fallthrough]];
+                case Option_BoolButton:
+                    {
+                        TArray<UButton*> buttons = Button->MenuButton;
+                        if (buttons.IsEmpty()) return;
+                        UButton* button = buttons[0];
+                        if (!IsValid(button)) return;
+                        button->OnClicked.Broadcast();
+                        if(Type != Option_BoolButton) break;
+                        UOptionBool* BOption = Cast<UOptionBool>(Option);
+                        if (!IsValid(BOption)) return;
+                        BOption->BValue = !BOption->BValue;
+                    }
+                break;
+            }
+            break;
+        case SquareOrX:
+            // Reset to default value
+            switch (Type)
+            {
+                default:
+                case Option_WheelsBoolButton:
+                case Option_WheelsValueButton:
+                case Option_VehicleValueButton:
+                    return;
+                case Option_ValueButton:
+                    {
+                        UOptionFloat* FOption = Cast<UOptionFloat>(Option);
+                        if (!IsValid(FOption)) return;
+                        FOption->FValue = FOption->FDefaultValue;
+                    }
+                break;   
+                case Option_CustomValueButton:
+                    {
+                        UOptionDriveMode* DOption = Cast<UOptionDriveMode>(Option);
+                        if (!IsValid(DOption)) return;
+                        DOption->DriveModeValue = DOption->DriveModeDefaultValue;
+                    }
+                break;   
+                case Option_BoolButton:
+                    {
+                        UOptionBool* BOption = Cast<UOptionBool>(Button);
+                        if (!IsValid(BOption)) return;
+                        BOption->BValue = BOption->BDefaultValue;
+                    }
+                break;
+            }
+        break;
+    }
+    
+}
+
+void UOptionsLibrary::UpdateOptionButtonGraphics(UOptionBaseButton* OptionButton)
+{
+    if (!IsValid(OptionButton)) return;
+
+    const EOptionButtonType Type = OptionButton->OptionButtonType;
+
+    switch (Type)
+    {
+        default:
+        case Option_VehicleValueButton:
+        case Option_WheelsBoolButton:
+        case Option_WheelsValueButton:
+            return;
+        case Option_BoolButton:
+            {
+                UOptionBoolButton* BButton = Cast<UOptionBoolButton>(OptionButton);
+                if (!IsValid(BButton)) return;
+                BButton->UpdateGraphics();
+            }
+        case Option_ValueButton:
+            {
+                UOptionValueButton* VButton = Cast<UOptionValueButton>(OptionButton);
+                if (!IsValid(VButton)) return;
+                VButton->UpdateGraphics();
+            }
+        case Option_CustomValueButton:
+            {
+                UOptionCustomValueButton* CButton = Cast<UOptionCustomValueButton>(OptionButton);
+                if (!IsValid(CButton)) return;
+                CButton->UpdateGraphics();
+            }
+    }
+    
 }

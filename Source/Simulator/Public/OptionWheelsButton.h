@@ -17,11 +17,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Graphic Class|Wheels")
 	FVehicleWheels Wheels;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Graphic Class|Wheels")
+	bool bIsCollapsed = false;
+	
 	UFUNCTION(BlueprintCallable, Category = "OptionButton|Graphic Class|Wheels")
 	void InitOptionWheelsButton(
 		const TArray<UButton*> &Buttons,
 		const EMenuButtonType MenuType,
-		const EOptionsButtonType &OptionsType,
+		const EOptionButtonType &OptionsType,
 		const FString &Name,
 		const FString ParentName,
 		const FVehicleWheels &Value

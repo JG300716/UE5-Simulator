@@ -81,30 +81,30 @@ public:
 	
 };
 
-UENUM(BlueprintType, Blueprintable, Category = "OptionButton|Enum")
+UENUM(BlueprintType, Category = "OptionButton|Enum")
 enum EDriveMode : uint8
 {
 	AllWheels = 0,
 	FrontWheels = 1,
 	RearWheels = 2
 };
-UENUM(BlueprintType, Blueprintable, Category = "OptionButton|Enum")
+UENUM(BlueprintType, Category = "OptionButton|Enum")
 enum ESettingsType : uint8
 {
 	Basic = 0,
 	Physics = 1,
 	Advance = 2
 };
-UENUM(BlueprintType, Blueprintable, Category = "OptionButton|Enum")
-enum EOptionsButtonType : uint8
+UENUM(BlueprintType)
+enum EOptionButtonType : uint8
 {
-	BoolButton = 0,
-	ValueButton = 1,
-	CustomValueButton = 2,
-	WheelsBoolButton = 3,
-	WheelsValueButton = 4,
-	VehicleValueButton = 5,
-};
+	Option_BoolButton = 0,
+	Option_ValueButton = 1,
+	Option_CustomValueButton = 2,
+	Option_WheelsBoolButton = 3,
+	Option_WheelsValueButton = 4,
+	Option_VehicleValueButton = 5,
+  };
 
 UCLASS(BlueprintType)
 class SIMULATOR_API UOptionBase : public UObject
@@ -115,13 +115,13 @@ public:
 	TEnumAsByte<ESettingsType> SettingsType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Logic Class|Base")
-	TEnumAsByte<EOptionsButtonType> OptionsButtonType;
+	TEnumAsByte<EOptionButtonType> OptionsButtonType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Logic Class|Base")
 	FString OptionName;
 
 	UFUNCTION(BlueprintCallable, Category = "OptionButton|Logic Class|Base")
-	void InitializeBase(const ESettingsType &Type, const EOptionsButtonType &OptionType, const FString &Name)
+	void InitializeBase(const ESettingsType &Type, const EOptionButtonType &OptionType, const FString &Name)
 	{
 		this->AddToRoot();
 		this->OptionName = Name;
@@ -135,7 +135,7 @@ struct TUOption
 {
 public:
 	TEnumAsByte<ESettingsType> OptionType;
-	TEnumAsByte<EOptionsButtonType> OptionsButtonType;
+	TEnumAsByte<EOptionButtonType> OptionsButtonType;
 	FString OptionName;
 	T Value;
 	T DefaultValue;
@@ -148,7 +148,7 @@ public:
 
 	TUOption(
 		const ESettingsType &Type,
-		const EOptionsButtonType &OptionType,
+		const EOptionButtonType &OptionType,
 		const FString &Name,
 		T Value,
 		T DefaultValue,
@@ -429,13 +429,13 @@ struct FDefaultBasicUserOption
 
 	static void Create(TMap<FName, UOptionBase*> &OptionMap)
 	{
-		TUOption<bool> ManualGearboxValues = {Basic, BoolButton, "Manual Gearbox", bDefaultManualGearbox, bDefaultManualGearbox, false, true, 1, "", "Use manual gearbox", true};
-		TUOption<bool> AutomaticReverseValues = {Basic, BoolButton, "Automatic Reverse", bDefaultAutomaticReverse, bDefaultAutomaticReverse, false, true, 1, "", "Use automatic reverse", true};
-		TUOption<EDriveMode> DriveModeValues = {Basic, CustomValueButton, "Drive Mode", DefaultDriveMode, DefaultDriveMode, EDriveMode::AllWheels, EDriveMode::RearWheels, 1, "", "Select drive mode", true};
-		TUOption<bool> SuspensionEnabledValues = {Basic, BoolButton, "Suspension Enabled", bDefaultSuspensionEnabled, bDefaultSuspensionEnabled, false, true, 1, "", "Enable suspension", true};
-		TUOption<bool> WheelFrictionEnabledValues = {Basic, BoolButton, "Wheel Friction Enabled", bDefaultWheelFrictionEnabled, bDefaultWheelFrictionEnabled, false, true, 1, "", "Enable wheel friction", true};
-		TUOption<bool> TractionControlEnabledValues = {Basic, BoolButton, "Traction Control Enabled", bDefaultTractionControlEnabled, bDefaultTractionControlEnabled, false, true, 1, "", "Enable traction control", true};
-		TUOption<bool> AbsEnabledValues = {Basic, BoolButton, "ABS Enabled", bDefaultAbsEnabled, bDefaultAbsEnabled, false, true, 1, "", "Enable ABS", true};
+		TUOption<bool> ManualGearboxValues = {Basic, Option_BoolButton, "Manual Gearbox", bDefaultManualGearbox, bDefaultManualGearbox, false, true, 1, "", "Use manual gearbox", true};
+		TUOption<bool> AutomaticReverseValues = {Basic, Option_BoolButton, "Automatic Reverse", bDefaultAutomaticReverse, bDefaultAutomaticReverse, false, true, 1, "", "Use automatic reverse", true};
+		TUOption<EDriveMode> DriveModeValues = {Basic, Option_CustomValueButton, "Drive Mode", DefaultDriveMode, DefaultDriveMode, EDriveMode::AllWheels, EDriveMode::RearWheels, 1, "", "Select drive mode", true};
+		TUOption<bool> SuspensionEnabledValues = {Basic, Option_BoolButton, "Suspension Enabled", bDefaultSuspensionEnabled, bDefaultSuspensionEnabled, false, true, 1, "", "Enable suspension", true};
+		TUOption<bool> WheelFrictionEnabledValues = {Basic, Option_BoolButton, "Wheel Friction Enabled", bDefaultWheelFrictionEnabled, bDefaultWheelFrictionEnabled, false, true, 1, "", "Enable wheel friction", true};
+		TUOption<bool> TractionControlEnabledValues = {Basic, Option_BoolButton, "Traction Control Enabled", bDefaultTractionControlEnabled, bDefaultTractionControlEnabled, false, true, 1, "", "Enable traction control", true};
+		TUOption<bool> AbsEnabledValues = {Basic, Option_BoolButton, "ABS Enabled", bDefaultAbsEnabled, bDefaultAbsEnabled, false, true, 1, "", "Enable ABS", true};
 
 		UOptionBool* ManualGearbox = UOptionBool::CreateOption(ManualGearboxValues);
 		UOptionBool* AutomaticReverse = UOptionBool::CreateOption(AutomaticReverseValues);
@@ -473,7 +473,7 @@ struct FDefaultPhysicsUserOption
 	static void Create(TMap<FName, UOptionBase*> &OptionMap)
 	{
 		
-		TUOption<FVehicle> VehicleMassesValues = {Physics, VehicleValueButton, "Vehicle Masses",
+		TUOption<FVehicle> VehicleMassesValues = {Physics, Option_VehicleValueButton, "Vehicle Masses",
 		{ DefaultChassisMass, DefaultWheelMass, DefaultWheelMass, DefaultWheelMass, DefaultWheelMass},
 		{ DefaultChassisMass, DefaultWheelMass, DefaultWheelMass, DefaultWheelMass, DefaultWheelMass},
 		{0, 0, 0, 0, 0},
@@ -481,23 +481,23 @@ struct FDefaultPhysicsUserOption
 		10, "kg",
 		"Set the masses of the vehicle parts",
 		false };
-		TUOption<float> HorsePowerValues = {Physics, ValueButton, "Horse Power", DefaultHorsePower, DefaultHorsePower, 0, 1000, 1, "kW", "Set the power of the engine", true };
-		TUOption<float> MaxRpmValues = {Physics, ValueButton, "Max RPM", DefaultMaxRpm, DefaultMaxRpm, 0, 10000, 1, "RPM", "Set the maximum RPM of the engine", true };
-		TUOption<float> MaxTorqueValues = {Physics, ValueButton, "Max Torque", DefaultMaxTorque, DefaultMaxTorque, 0, 1000, 1, "Nm", "Set the maximum torque of the engine", true };
+		TUOption<float> HorsePowerValues = {Physics, Option_ValueButton, "Horse Power", DefaultHorsePower, DefaultHorsePower, 0, 1000, 1, "kW", "Set the power of the engine", true };
+		TUOption<float> MaxRpmValues = {Physics, Option_ValueButton, "Max RPM", DefaultMaxRpm, DefaultMaxRpm, 0, 10000, 1, "RPM", "Set the maximum RPM of the engine", true };
+		TUOption<float> MaxTorqueValues = {Physics, Option_ValueButton, "Max Torque", DefaultMaxTorque, DefaultMaxTorque, 0, 1000, 1, "Nm", "Set the maximum torque of the engine", true };
 		// Ratio of the wheelbase to the track width
-		TUOption<float> AngleRatioValues = {Physics, ValueButton, "Angle Ratio", DefaultAngleRatio, DefaultAngleRatio, 0, 1, 0.1, "", "Set the ratio of the wheelbase to the track width", false };
+		TUOption<float> AngleRatioValues = {Physics, Option_ValueButton, "Angle Ratio", DefaultAngleRatio, DefaultAngleRatio, 0, 1, 0.1, "", "Set the ratio of the wheelbase to the track width", false };
 		// Ratio of front to rear torque distribution, <0.5 means more torque to the front wheels, >0.5 means more torque to the rear wheels
-		TUOption<float> FrontRearSplitValues = {Physics, ValueButton, "Front Rear Split", DefaultFrontRearSplit, DefaultFrontRearSplit, 0, 1, 0.1, "", "Set the ratio of front to rear torque distribution", false };
+		TUOption<float> FrontRearSplitValues = {Physics, Option_ValueButton, "Front Rear Split", DefaultFrontRearSplit, DefaultFrontRearSplit, 0, 1, 0.1, "", "Set the ratio of front to rear torque distribution", false };
 		// Drag coefficient of the vehicle
-		TUOption<float> DragCoefficientValues = {Physics, ValueButton, "Drag Coefficient", DefaultDragCoefficient, DefaultDragCoefficient, 0, 1, 0.1, "", "Set the drag coefficient of the vehicle", false };
+		TUOption<float> DragCoefficientValues = {Physics, Option_ValueButton, "Drag Coefficient", DefaultDragCoefficient, DefaultDragCoefficient, 0, 1, 0.1, "", "Set the drag coefficient of the vehicle", false };
 		// Rolling resistance coefficient of the vehicle
-		TUOption<float> DownForceCoefficientValues = {Physics, ValueButton, "Down Force Coefficient", DefaultDownForceCoefficient, DefaultDownForceCoefficient, 0, 1, 0.1, "", "Set the down force coefficient of the vehicle", false };
-		TUOption<float> AutomaticGearboxUpShiftRpmValues = { Physics, ValueButton, "Automatic Gearbox Up Shift RPM", DefaultAutomaticGearboxUpShiftRpm, DefaultAutomaticGearboxUpShiftRpm, 0, 10000, 1, "RPM", "Set the RPM at which the automatic gearbox will upshift", false };
-		TUOption<float> AutomaticGearboxDownShiftRpmValues = {Physics, ValueButton, "Automatic Gearbox Down Shift RPM", DefaultAutomaticGearboxDownShiftRpm, DefaultAutomaticGearboxDownShiftRpm, 0, 10000, 1, "RPM", "Set the RPM at which the automatic gearbox will downshift", false };
-		TUOption<float> GearboxChangeTimeValues = {Physics, ValueButton, "Gearbox Change Time", DefaultGearboxChangeTime, DefaultGearboxChangeTime, 0, 10, 0.1, "s", "Set the time it takes to change gears", false };
-		TUOption<float> GearboxTransmissionEfficiencyValues = {Physics, ValueButton, "Gearbox Transmission Efficiency", DefaultGearboxTransmissionEfficiency, DefaultGearboxTransmissionEfficiency, 0, 1, 0.1, "", "Set the efficiency of the gearbox transmission", false };
-		TUOption<float> MaxWheelsSteeringAngleValues = {Physics, ValueButton, "Max Wheels Steering Angle", DefaultMaxWheelsSteeringAngle, DefaultMaxWheelsSteeringAngle, 0, 90, 1, "deg", "Set the maximum steering angle of the wheels", false };
-		TUOption<FVehicleWheels> WheelsFrictionForceMultiplierValues = {Physics, WheelsValueButton, "Wheels Friction Force Multiplier",
+		TUOption<float> DownForceCoefficientValues = {Physics, Option_ValueButton, "Down Force Coefficient", DefaultDownForceCoefficient, DefaultDownForceCoefficient, 0, 1, 0.1, "", "Set the down force coefficient of the vehicle", false };
+		TUOption<float> AutomaticGearboxUpShiftRpmValues = { Physics, Option_ValueButton, "Automatic Gearbox Up Shift RPM", DefaultAutomaticGearboxUpShiftRpm, DefaultAutomaticGearboxUpShiftRpm, 0, 10000, 1, "RPM", "Set the RPM at which the automatic gearbox will upshift", false };
+		TUOption<float> AutomaticGearboxDownShiftRpmValues = {Physics, Option_ValueButton, "Automatic Gearbox Down Shift RPM", DefaultAutomaticGearboxDownShiftRpm, DefaultAutomaticGearboxDownShiftRpm, 0, 10000, 1, "RPM", "Set the RPM at which the automatic gearbox will downshift", false };
+		TUOption<float> GearboxChangeTimeValues = {Physics, Option_ValueButton, "Gearbox Change Time", DefaultGearboxChangeTime, DefaultGearboxChangeTime, 0, 10, 0.1, "s", "Set the time it takes to change gears", false };
+		TUOption<float> GearboxTransmissionEfficiencyValues = {Physics, Option_ValueButton, "Gearbox Transmission Efficiency", DefaultGearboxTransmissionEfficiency, DefaultGearboxTransmissionEfficiency, 0, 1, 0.1, "", "Set the efficiency of the gearbox transmission", false };
+		TUOption<float> MaxWheelsSteeringAngleValues = {Physics, Option_ValueButton, "Max Wheels Steering Angle", DefaultMaxWheelsSteeringAngle, DefaultMaxWheelsSteeringAngle, 0, 90, 1, "deg", "Set the maximum steering angle of the wheels", false };
+		TUOption<FVehicleWheels> WheelsFrictionForceMultiplierValues = {Physics, Option_WheelsValueButton, "Wheels Friction Force Multiplier",
 			{ DefaultWheelsFrictionForceMultiplier, DefaultWheelsFrictionForceMultiplier,DefaultWheelsFrictionForceMultiplier,DefaultWheelsFrictionForceMultiplier },
 			{ DefaultWheelsFrictionForceMultiplier, DefaultWheelsFrictionForceMultiplier,DefaultWheelsFrictionForceMultiplier,DefaultWheelsFrictionForceMultiplier },
 			{ 0, 0, 0, 0 },
@@ -505,13 +505,13 @@ struct FDefaultPhysicsUserOption
 			0.1, "",
 			"Set the friction force multiplier of the wheels",
 			false };
-		TUOption<float> SuspensionMaxRaiseValues = {Physics, ValueButton, "Suspension Max Raise", DefaultSuspensionMaxRaise, DefaultSuspensionMaxRaise, 0, 100, 1, "cm", "Set the maximum raise of the suspension", false };
-		TUOption<float> SuspensionMaxDropValues = {Physics, ValueButton, "Suspension Max Drop", DefaultSuspensionMaxDrop, DefaultSuspensionMaxDrop, 0, 100, 1, "cm", "Set the maximum drop of the suspension", false };
-		TUOption<float> SuspensionDumpRatioValues = {Physics, ValueButton, "Suspension Dump Ratio", DefaultSuspensionDumpRatio, DefaultSuspensionDumpRatio, 0, 1, 0.1, "", "Set the dump ratio of the suspension", false };
-		TUOption<float> SuspensionSpringRatioValues = {Physics, ValueButton, "Suspension Spring Ratio", DefaultSuspensionSpringRatio, DefaultSuspensionSpringRatio, 0, 1000, 1, "", "Set the spring ratio of the suspension", false };
-		TUOption<float> SuspensionPreloadValues = {Physics, ValueButton, "Suspension Preload", DefaultSuspensionPreload, DefaultSuspensionPreload, 0, 100, 1, "cm", "Set the preload of the suspension", false };
-		TUOption<float> SuspensionSmoothnessValues = {Physics, ValueButton, "Suspension Smoothness", DefaultSuspensionSmoothness, DefaultSuspensionSmoothness, 0, 10, 0.1, "", "Set the smoothness of the suspension", false };
-		TUOption<FVehicleWheels> WheelsBrakeTorqueValues = {Physics, WheelsValueButton, "Wheels Brake Torque",
+		TUOption<float> SuspensionMaxRaiseValues = {Physics, Option_ValueButton, "Suspension Max Raise", DefaultSuspensionMaxRaise, DefaultSuspensionMaxRaise, 0, 100, 1, "cm", "Set the maximum raise of the suspension", false };
+		TUOption<float> SuspensionMaxDropValues = {Physics, Option_ValueButton, "Suspension Max Drop", DefaultSuspensionMaxDrop, DefaultSuspensionMaxDrop, 0, 100, 1, "cm", "Set the maximum drop of the suspension", false };
+		TUOption<float> SuspensionDumpRatioValues = {Physics, Option_ValueButton, "Suspension Dump Ratio", DefaultSuspensionDumpRatio, DefaultSuspensionDumpRatio, 0, 1, 0.1, "", "Set the dump ratio of the suspension", false };
+		TUOption<float> SuspensionSpringRatioValues = {Physics, Option_ValueButton, "Suspension Spring Ratio", DefaultSuspensionSpringRatio, DefaultSuspensionSpringRatio, 0, 1000, 1, "", "Set the spring ratio of the suspension", false };
+		TUOption<float> SuspensionPreloadValues = {Physics, Option_ValueButton, "Suspension Preload", DefaultSuspensionPreload, DefaultSuspensionPreload, 0, 100, 1, "cm", "Set the preload of the suspension", false };
+		TUOption<float> SuspensionSmoothnessValues = {Physics, Option_ValueButton, "Suspension Smoothness", DefaultSuspensionSmoothness, DefaultSuspensionSmoothness, 0, 10, 0.1, "", "Set the smoothness of the suspension", false };
+		TUOption<FVehicleWheels> WheelsBrakeTorqueValues = {Physics, Option_WheelsValueButton, "Wheels Brake Torque",
 			{ DefaultFrontWheelsBrakeTorque, DefaultRearWheelsBrakeTorque, DefaultFrontWheelsBrakeTorque, DefaultRearWheelsBrakeTorque },
 			{ DefaultFrontWheelsBrakeTorque, DefaultRearWheelsBrakeTorque, DefaultFrontWheelsBrakeTorque, DefaultRearWheelsBrakeTorque },
 			{ 0, 0, 0, 0 },
@@ -519,7 +519,7 @@ struct FDefaultPhysicsUserOption
 			10, "Nm",
 			"Set the brake torque of the wheels",
 			false };
-		TUOption<FVehicleWheels> WheelsHandBrakeTorqueValues = {Physics, WheelsValueButton, "Wheels Hand Brake Torque",
+		TUOption<FVehicleWheels> WheelsHandBrakeTorqueValues = {Physics, Option_WheelsValueButton, "Wheels Hand Brake Torque",
 			{ DefaultFrontWheelsHandBrakeTorque, DefaultRearWheelsHandBrakeTorque, DefaultFrontWheelsHandBrakeTorque, DefaultRearWheelsHandBrakeTorque },
 			{ DefaultFrontWheelsHandBrakeTorque, DefaultRearWheelsHandBrakeTorque, DefaultFrontWheelsHandBrakeTorque, DefaultRearWheelsHandBrakeTorque },
 			{ 0, 0, 0, 0 },
@@ -613,7 +613,7 @@ struct FDefaultAdvanceUserOption
 	
 	static void Create(TMap<FName, UOptionBase*> &OptionMap)
 	{
-		TUOption<BVehicleWheels> WheelsAffectedByBrakesValues = {Advance, WheelsBoolButton, "Wheels Affected By Brakes",
+		TUOption<BVehicleWheels> WheelsAffectedByBrakesValues = {Advance, Option_WheelsBoolButton, "Wheels Affected By Brakes",
 				DefaultWheelsAffectedByBrakes,
 				DefaultWheelsAffectedByBrakes,
 				{ false, false, false, false },
@@ -622,7 +622,7 @@ struct FDefaultAdvanceUserOption
 				"Set which wheels are affected by the brakes",
 				true };
 		
-		TUOption<BVehicleWheels> WheelsAffectedByHandBrakesValues = {Advance, WheelsBoolButton, "Wheels Affected By Hand Brakes",
+		TUOption<BVehicleWheels> WheelsAffectedByHandBrakesValues = {Advance, Option_WheelsBoolButton, "Wheels Affected By Hand Brakes",
 			DefaultWheelsAffectedByHandBrakes,
 			DefaultWheelsAffectedByHandBrakes,
 			{ false, false, false, false },
@@ -630,7 +630,7 @@ struct FDefaultAdvanceUserOption
 			1, "",
 			"Set which wheels are affected by the hand brakes",
 			true };
-		TUOption<BVehicleWheels> WheelsAffectedByEngineValues = {Advance, WheelsBoolButton, "Wheels Affected By Engine",
+		TUOption<BVehicleWheels> WheelsAffectedByEngineValues = {Advance, Option_WheelsBoolButton, "Wheels Affected By Engine",
 			DefaultWheelsAffectedByEngine,
 			DefaultWheelsAffectedByEngine,
 			{ false, false, false, false },
@@ -639,7 +639,7 @@ struct FDefaultAdvanceUserOption
 			"Set which wheels are affected by the engine",
 			false };
 		
-		TUOption<BVehicleWheels> WheelsAffectedBySteeringValues = {Advance, WheelsBoolButton, "Wheels Affected By Steering",
+		TUOption<BVehicleWheels> WheelsAffectedBySteeringValues = {Advance, Option_WheelsBoolButton, "Wheels Affected By Steering",
 			DefaultWheelsAffectedBySteering,
 			DefaultWheelsAffectedBySteering,
 			{ false, false, false, false },
@@ -647,7 +647,7 @@ struct FDefaultAdvanceUserOption
 			1, "",
 			"Set which wheels are affected by the steering",
 			true };
-		TUOption<BVehicleWheels> WheelsSuspensionEnabledValues = {Advance, WheelsBoolButton, "Wheels Suspension Enabled",
+		TUOption<BVehicleWheels> WheelsSuspensionEnabledValues = {Advance, Option_WheelsBoolButton, "Wheels Suspension Enabled",
 			DefaultWheelsSuspensionEnabled,
 			DefaultWheelsSuspensionEnabled,
 			{ false, false, false, false },
@@ -718,7 +718,7 @@ public:
 	static TMap<FName, UOptionBase*> GetOptionMap();
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerOptions")
-	static void GetOptionByName(const FName OptionName, UOptionBase* &Option, TEnumAsByte<EOptionsButtonType> &OptionType);
+	static void GetOptionByName(const FName OptionName, UOptionBase* &Option, TEnumAsByte<EOptionButtonType> &OptionType);
 	
 	UFUNCTION(BlueprintCallable, Category = "PlayerOptions")
 	static void LogOptionMap();

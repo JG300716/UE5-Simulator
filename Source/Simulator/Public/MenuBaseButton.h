@@ -12,14 +12,18 @@
  * https://github.com/JG300716
  */
 
-UENUM(BlueprintType, Blueprintable, Category = "OptionButton|Enum")
+UENUM(BlueprintType)
 enum EMenuButtonType : uint8
 {
-	TabButton = 0,
-	VehicleButton = 1,
-	MapButton = 2,
-	OptionsButton = 3,
+	Menu_TabButton = 0,
+	Menu_VehicleButton = 1,
+	Menu_MapButton = 2,
+	Menu_OptionsButton = 3,
 };
+
+static constexpr FLinearColor OptionsHoveredButtonColor = FLinearColor(255, 165, 0, 1);
+static constexpr FLinearColor OptionsChosenButtonColor = FLinearColor(0, 255, 0, 1);
+static constexpr FLinearColor OptionsFailedButtonColor = FLinearColor(255, 0, 0, 1);
 
 UCLASS(BlueprintType, Blueprintable)
 class SIMULATOR_API UMenuBaseButton : public UButton

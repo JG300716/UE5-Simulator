@@ -115,7 +115,7 @@ public:
 	TEnumAsByte<ESettingsType> SettingsType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Logic Class|Base")
-	TEnumAsByte<EOptionButtonType> EOptionsButtonType;
+	TEnumAsByte<EOptionButtonType> BaseOptionButtonType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Logic Class|Base")
 	FString OptionName;
@@ -125,7 +125,7 @@ public:
 	{
 		this->AddToRoot();
 		this->OptionName = Name;
-		this->EOptionsButtonType = OptionType;
+		this->BaseOptionButtonType = OptionType;
 		this->SettingsType = Type;
 	}
 };
@@ -688,16 +688,10 @@ class SIMULATOR_API UDefaultPlayerOptions : public UObject
 	bool bUseDefaultPhysicsUserOption = true;
 	bool bUseDefaultAdvanceUserOption = true;
 
-	const FString BasicPath = "DefaultPlayerOptions.json";
-
-	UOptionBase* GetOption(const FName OptionName);
-	int UpdateBasicOptionValue(const FString& OptionName);
-	int UpdatePhysicsOptionValue(const FString& OptionName, const float& Value);
-	int UpdateAdvanceOptionValue(const FString& OptionName, const UINT8 WheelIndex);
-
 	static TMap<FName, UOptionBase*> OptionMap;
 public:
 	UDefaultPlayerOptions();
+	static UOptionBase* GetOption(const FName OptionName);
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerOptions")
 	static UDefaultPlayerOptions* GetPlayerOptionsInstance();
@@ -707,13 +701,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PlayerOptions")
 	void PrintOptionMap();
 	
-	UFUNCTION(BlueprintCallable, Category = "PlayerOptions")
-	int UpdateOptionValue(const ESettingsType OptionType, const FString& OptionName, const float& Value, const uint8 WheelIndex = 0);
-	UFUNCTION(BlueprintCallable, Category = "PlayerOptions")
-	bool TryLoadUserOption(const FString& Path);
-	UFUNCTION(BlueprintCallable, Category = "PlayerOptions")
-	bool TrySaveUserOption(const FString& Path);
-
 	UFUNCTION(BlueprintCallable, Category = "PlayerOptions")
 	static TMap<FName, UOptionBase*> GetOptionMap();
 

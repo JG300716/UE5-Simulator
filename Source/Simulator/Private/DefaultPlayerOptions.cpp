@@ -40,77 +40,13 @@ void UDefaultPlayerOptions::PrintOptionMap()
 	}
 }
 
-
-int UDefaultPlayerOptions::UpdateOptionValue(const ESettingsType OptionType, const FString& OptionName, const float& Value, const UINT8 WheelIndex)
-{
-	switch(OptionType)
-	{
-	case ESettingsType::Basic:
-		return UpdateBasicOptionValue(OptionName);
-	case ESettingsType::Physics:
-		return UpdatePhysicsOptionValue(OptionName, Value);
-	case ESettingsType::Advance:
-		return UpdateAdvanceOptionValue(OptionName, WheelIndex);
-	default:
-		return -1;
-	}
-
-}
-
-int UDefaultPlayerOptions::UpdateBasicOptionValue(const FString& OptionName)
-{
-	TUOption<bool>* const Option = reinterpret_cast<TUOption<bool>*>(GetOption(FName(OptionName)));
-	if (Option == nullptr) return -1;
-	const bool NewValue = !Option->Value;
-	Option->Value = NewValue;
-
-	return NewValue;
-}
-
-int UDefaultPlayerOptions::UpdatePhysicsOptionValue(const FString& OptionName, const float& Value)
-{
-	TUOption<float>* const Option = reinterpret_cast<TUOption<float>*>(GetOption(FName(OptionName)));
-	if (Option == nullptr) return -1;
-	const float NewValue = Option->Value + Value * Option->Step;
-	if (Option->MaxValue < NewValue || Option->MinValue > NewValue) return -1;
-	Option->Value = NewValue;
-	return NewValue;
-}
-
-int UDefaultPlayerOptions::UpdateAdvanceOptionValue(const FString& OptionName, const UINT8 WheelIndex)
-{
-	TUOption<BVehicleWheels*>const * const Option =  reinterpret_cast<TUOption<BVehicleWheels*>* const>(GetOption(FName(OptionName)));
-	if (Option == nullptr) return -1;
-	bool NewValue;
-	switch (WheelIndex)
-	{
-	case 0: NewValue = Option->Value->FrontLeftWheel = !Option->Value->FrontLeftWheel; break;
-	case 1: NewValue = Option->Value->FrontRightWheel = !Option->Value->FrontRightWheel; break;
-	case 2: NewValue = Option->Value->RearLeftWheel = !Option->Value->RearLeftWheel; break;
-	case 3: NewValue = Option->Value->RearRightWheel = !Option->Value->RearRightWheel; break;
-	default: return -1; // Invalid WheelIndex
-	}
-	return NewValue;
-}
-
 UOptionBase* UDefaultPlayerOptions::GetOption(const FName OptionName)
 {
 	return OptionMap.Contains(OptionName) ? OptionMap[OptionName] : nullptr;
 }
 
-bool UDefaultPlayerOptions::TrySaveUserOption(const FString& Path)
-{
-	return true;	
-}
-
-bool UDefaultPlayerOptions::TryLoadUserOption(const FString& Path)
-{
-	return true;
-}
-
 TMap<FName, UOptionBase*> UDefaultPlayerOptions::GetOptionMap()
 {
-	UE_LOG(LogTemp, Warning, TEXT("GetOptionMap"));
 	return OptionMap;
 }
 
@@ -120,7 +56,7 @@ void UDefaultPlayerOptions::LogOptionMap()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Option: %s"), *name.Key.ToString());
 		UE_LOG(LogTemp, Warning, TEXT("Value: %d"), (int8)name.Value->SettingsType.GetIntValue());
-		UE_LOG(LogTemp, Warning, TEXT("Option Type: %d"), (int8)name.Value->EOptionsButtonType.GetIntValue());
+		UE_LOG(LogTemp, Warning, TEXT("Option Type: %d"), (int8)name.Value->BaseOptionButtonType.GetIntValue());
 	}
 }
 
@@ -128,5 +64,5 @@ void UDefaultPlayerOptions::GetOptionByName(const FName OptionName, UOptionBase*
 {
 	if (!OptionMap.Contains(OptionName)) return;
 	Option = OptionMap[OptionName];
-	OptionType = Option->EOptionsButtonType;
+	OptionType = Option->BaseOptionButtonType;
 }

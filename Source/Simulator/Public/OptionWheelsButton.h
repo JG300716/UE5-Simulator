@@ -18,7 +18,7 @@ public:
 	FVehicleWheels Wheels;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Graphic Class|Wheels")
-	bool bIsCollapsed = false;
+	bool bIsCollapsed = true;
 	
 	UFUNCTION(BlueprintCallable, Category = "OptionButton|Graphic Class|Wheels")
 	void InitOptionWheelsButton(

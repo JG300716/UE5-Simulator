@@ -21,12 +21,11 @@ void UOptionValueButton::UpdateGraphics()
 	{
 		if (!IsValid(Button)) continue;
 		FButtonStyle Style = Button->GetStyle();
-		Style.Normal.OutlineSettings.Color = FLinearColor::Black;
+		Style.Normal.OutlineSettings.Color = FLinearColor::White;
 		Button->SetStyle(Style);
 	}
 	if (!IsValid(FValueText)) return;
 	FString Text = FString::Printf(FValue > 10 ? L"%.0f" : L"%.1f", FValue) + (FUnit != "" ? " " + FUnit : "");
 	FText ValueText = FText::FromString(Text);
 	FValueText->SetText(ValueText);
-
 }

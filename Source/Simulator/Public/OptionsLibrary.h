@@ -16,6 +16,8 @@
 
 #include "Chaos/UniformGrid.h"
 
+#include "Components/ScrollBox.h"
+
 #include "OptionsLibrary.generated.h"
 
 /**
@@ -56,11 +58,27 @@ class SIMULATOR_API UOptionsLibrary : public UBlueprintFunctionLibrary
 	static FVector3f MoveCursorNormal(const EControllersArrowsDirection &Direction, const FVector &CursorPosition);
 	static FVector3f MoveCursorSpecial(const EControllersArrowsDirection &Direction, const FVector &CursorPosition);
 	static void UpdateOptionButtonGraphics(UOptionBaseButton* OptionButton);
+	static int32 CalculateJumpOffset(const EOptionButtonType &OptionType);
+	static UOptionBaseButton* GetButtonByName(const FString &Name);
+	static void UpdateScrollBar(const FVector &CursorPosition, const FVector &PreviousCursorPosition);
 	static void ShouldJumpTheHiddenButtons(const FVector &CursorPosition, int32 &OffsetJump, bool &ShouldJump);
+	static void UpdateBoolButton(UOptionBoolButton* BoolButton);
+	static void UpdateIfThisIsAValueButton(const FVector &CursorPosition, const EControllersArrowsDirection &Direction);
+	static void UpdateValueButton(UOptionValueButton* ValueButton, const EControllersArrowsDirection &Direction);
+	static void UpdateCustomValueButton(UOptionCustomValueButton* CustomValueButton, const EControllersArrowsDirection &Direction);
 public:
 	UPROPERTY()
 	TArray<UMenuBaseButton*> Buttons;
 
+	UPROPERTY()
+	UTextBlock* OptionsToolTipText;
+
+	UPROPERTY()
+	UScrollBox* OptionsScrollBox;
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
+	static void Initialize(UTextBlock* ToolTipTextTmp, UScrollBox* ScrollBoxTmp);
+	
 	static UOptionsLibrary* GetInstance();
 	
 	UFUNCTION()
@@ -99,6 +117,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
 	static TArray<UMenuBaseButton*> GetButtons();
 
+	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
+	static void CleanButtons();
+	
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
 	static void CalculateButtonsDimensions();
 

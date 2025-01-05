@@ -15,11 +15,12 @@ void UMenuBaseButton::InitMenuBaseButton(const TArray<UButton*> &Buttons, const 
 void UMenuBaseButton::ChangeButtonOutline(const bool bIsOutline, const FLinearColor Color) const
 {
 	if (MenuButton.IsEmpty()) return;
-	for(auto &Button : MenuButton)
+	const EMenuButtonType Type = MenuButtonType;
+	for (auto* Button : MenuButton)
 	{
-		if (!IsValid(Button)) continue;
+		if (!IsValid(Button)) continue; // Check if the Button is valid
 		FButtonStyle Style = Button->GetStyle();
-		Style.Normal.OutlineSettings.Color = bIsOutline ? Color : FLinearColor::Black;
+		Style.Normal.OutlineSettings.Color = bIsOutline ? Color : Type == Menu_OptionsButton ? FLinearColor::White : FLinearColor::Black;
 		Button->SetStyle(Style);
 	}
 }

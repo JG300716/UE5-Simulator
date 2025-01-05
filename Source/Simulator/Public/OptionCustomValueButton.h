@@ -30,10 +30,8 @@ public:
 	void InitOptionCustomValueButton(
 		const TArray<UButton*> &Buttons,
 		const EMenuButtonType MenuType,
-		const EOptionButtonType &OptionsType,
-		const FString &Name,
+		const UOptionDriveMode* Option,
 		const FString ParentName,
-		const EDriveMode &Value,
 		UTextBlock* ValueText
 		);
 

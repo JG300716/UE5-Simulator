@@ -10,10 +10,11 @@ TArray<FText> UOptionCustomValueButton::DriveModeTexts =
 		FText::FromString(TEXT("Rear Wheels"))
 	};
 
-void UOptionCustomValueButton::InitOptionCustomValueButton(const TArray<UButton*> &Buttons, const EMenuButtonType MenuType, const EOptionButtonType &OptionsType, const FString &Name, const FString ParentName, const EDriveMode &Value, UTextBlock* ValueText)
+void UOptionCustomValueButton::InitOptionCustomValueButton(const TArray<UButton*> &Buttons, const EMenuButtonType MenuType, const UOptionDriveMode* Option, const FString ParentName, UTextBlock* ValueText)
 {
-	InitOptionBaseButton(Buttons, MenuType, OptionsType, Name, ParentName);
-	this->CValue = Value;
+	if (!IsValid(Option)) return;
+	InitOptionBaseButton(Buttons, MenuType, Option->BaseOptionButtonType, Option->OptionName, ParentName);
+	this->CValue = Option->DriveModeValue;
 	this->CValueText = ValueText;
 }
 
@@ -25,7 +26,7 @@ void UOptionCustomValueButton::UpdateGraphics()
 	{
 		if (!IsValid(Button)) continue;
 		FButtonStyle Style = Button->GetStyle();
-		Style.Normal.OutlineSettings.Color = FLinearColor::Black;
+		Style.Normal.OutlineSettings.Color = FLinearColor::White;
 		Button->SetStyle(Style);
 	}
 	if (!IsValid(CValueText)) return;

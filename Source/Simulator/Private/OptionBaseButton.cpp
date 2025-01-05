@@ -6,7 +6,7 @@
 void UOptionBaseButton::InitOptionBaseButton(const TArray<UButton*> &Buttons, const EMenuButtonType MenuType, const EOptionButtonType &OptionsType, const FString &Name, const FString ParentName)
 {
 	InitMenuBaseButton(Buttons, MenuType);
-	this->OptionButtonType = OptionsType;
+	this->OptionButtonEype = OptionsType;
 	this->OptionName = Name;
 	this->ParentOptionName = ParentName;
 }

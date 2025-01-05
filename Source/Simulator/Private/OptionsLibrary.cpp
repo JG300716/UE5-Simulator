@@ -183,10 +183,16 @@ FVector3f UOptionsLibrary::MoveCursorSpecial(const EControllersArrowsDirection &
 
 void UOptionsLibrary::ShouldJumpTheHiddenButtons(const FVector& CursorPosition, int32& OffsetJump, bool& ShouldJump)
 {
-    UOptionBaseButton* Button = Cast<UOptionBaseButton>(GetSelectedButton(CursorPosition));
+    UMenuBaseButton* Button = Cast<UMenuBaseButton>(GetSelectedButton(CursorPosition));
     if (!IsValid(Button)) return; // Invalid button
+
+    const EMenuButtonType MenuType = Button->MenuButtonType;
+    if (MenuType != Menu_OptionsButton) return; // Only check for options buttons
+
+    UOptionBaseButton* OptionButton = Cast<UOptionBaseButton>(Button);
+    if (!IsValid(OptionButton)) return; // Invalid button
     
-    switch(Button->OptionButtonType)
+    switch(OptionButton->OptionButtonEype)
     {
     case Option_WheelsBoolButton:
     case Option_WheelsValueButton:
@@ -195,7 +201,7 @@ void UOptionsLibrary::ShouldJumpTheHiddenButtons(const FVector& CursorPosition, 
     case Option_VehicleValueButton:
         {
             OffsetJump = OffsetJump == 0 ? 5 : OffsetJump; 
-            UOptionWheelsButton* WheelsButton = Cast<UOptionWheelsButton>(Button);
+            UOptionWheelsButton* WheelsButton = Cast<UOptionWheelsButton>(OptionButton);
             if (!IsValid(WheelsButton)) return ; // Invalid button
             ShouldJump = WheelsButton->bIsCollapsed;
             break;
@@ -246,6 +252,7 @@ bool UOptionsLibrary::UpdateSelectedButton(
     if (AllButtons.IsEmpty()) return false;
 
     if (CurrentIndex < 0 || CurrentIndex >= AllButtons.Num()) return false;
+    if (PreviousIndex < 0 || PreviousIndex >= AllButtons.Num()) return false;
     // Update buttons if indices are valid
 
     if (AllButtons.IsValidIndex(PreviousIndex) && PreviousIndex != CurrentIndex && PreviousIndex != IndexOfChosenVehicle)
@@ -361,7 +368,7 @@ void UOptionsLibrary::OptionButtonPressed(UOptionBaseButton* Button, const ECont
 {
     if (!IsValid(Button)) return;
 
-    const EOptionButtonType Type = Button->OptionButtonType;
+    const EOptionButtonType Type = Button->OptionButtonEype;
 
     FString OptionName = Button->OptionName;
     FString ParentName = Button->ParentOptionName;
@@ -448,7 +455,7 @@ void UOptionsLibrary::UpdateOptionButtonGraphics(UOptionBaseButton* OptionButton
 {
     if (!IsValid(OptionButton)) return;
 
-    const EOptionButtonType Type = OptionButton->OptionButtonType;
+    const EOptionButtonType Type = OptionButton->OptionButtonEype;
 
     switch (Type)
     {

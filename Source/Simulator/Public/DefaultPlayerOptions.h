@@ -115,7 +115,7 @@ public:
 	TEnumAsByte<ESettingsType> SettingsType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Logic Class|Base")
-	TEnumAsByte<EOptionButtonType> OptionsButtonType;
+	TEnumAsByte<EOptionButtonType> EOptionsButtonType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Logic Class|Base")
 	FString OptionName;
@@ -125,7 +125,7 @@ public:
 	{
 		this->AddToRoot();
 		this->OptionName = Name;
-		this->OptionsButtonType = OptionType;
+		this->EOptionsButtonType = OptionType;
 		this->SettingsType = Type;
 	}
 };

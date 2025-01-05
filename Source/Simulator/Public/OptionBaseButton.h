@@ -18,7 +18,7 @@ class SIMULATOR_API UOptionBaseButton : public UMenuBaseButton
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Graphic Class")
-	TEnumAsByte<EOptionButtonType> OptionButtonType;
+	TEnumAsByte<EOptionButtonType> OptionButtonEype;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Graphic Class")
 	FString OptionName;

@@ -7,11 +7,17 @@ APawn* URunSimulationLibrary::SpawnedVehicle = nullptr;
 ACameraActor* URunSimulationLibrary::SimulationCamera = nullptr;
 bool URunSimulationLibrary::bSimulationInitialized = false;
 
-void URunSimulationLibrary::StartSimulation()
+void URunSimulationLibrary::StartSimulation(UWorld* World)
 {
-    UE_LOG(LogTemp, Warning, TEXT("StartSimulation"));
+    if (!World)
+    {
+        UE_LOG(LogTemp, Error, TEXT("No valid World in StartSimulation"));
+        return;
+    }
 
-    bSimulationInitialized = false;
+    bSimulationInitialized = true;
+    StartSimulationInternal();
+
 }
 
 void URunSimulationLibrary::StartSimulationInternal()
@@ -118,16 +124,5 @@ void URunSimulationLibrary::PossessVehicle(APawn* Vehicle)
 
 void URunSimulationLibrary::SimulationTick(float DeltaTime)
 {
-    if (!bSimulationInitialized)
-    {
-        UWorld* World = GEngine->GetWorld();
-        if (!World)
-        {
-            UE_LOG(LogTemp, Error, TEXT("No valid World in StartSimulation"));
-            return;
-        }
-        StartSimulationInternal();
-    }
-    
 }
 

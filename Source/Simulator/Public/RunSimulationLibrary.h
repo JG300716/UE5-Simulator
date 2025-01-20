@@ -18,7 +18,7 @@ class SIMULATOR_API URunSimulationLibrary : public UBlueprintFunctionLibrary
 public:
 	// Main function to start the simulation
 	UFUNCTION(BlueprintCallable, Category = "Simulation")
-	static void StartSimulation();
+	static void StartSimulation(UWorld* World);
 
 	// Function to spawn the vehicle at player start
 	UFUNCTION(BlueprintCallable, Category = "Simulation")

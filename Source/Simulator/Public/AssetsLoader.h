@@ -24,8 +24,8 @@ public:
 	static TArray<FString> GetFoldersInDirectory(const FString& DirectoryPath);
 	
 	UFUNCTION(BlueprintCallable, Category = "FileSystem")
-	static TSoftClassPtr<AMyCar> LoadVehicleAsset(const FString& AssetPath, bool &Success);
+	static void LoadVehicleAsset(const FString& AssetPath, bool &Success);
 
 	UFUNCTION(BlueprintCallable, Category = "FileSystem")
-	static FString LoadMapAsset(const FString& AssetPath, bool &Success);
+	static void LoadMapAsset(const FString& AssetPath, bool &Success);
 };

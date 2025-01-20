@@ -13,6 +13,8 @@ class SIMULATOR_API URunSimulationLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
+	static void StartSimulationInternal();
+
 public:
 	// Main function to start the simulation
 	UFUNCTION(BlueprintCallable, Category = "Simulation")
@@ -38,4 +40,5 @@ private:
 	// Static properties to store references
 	static APawn* SpawnedVehicle;
 	static ACameraActor* SimulationCamera;
+	static bool bSimulationInitialized;
 };

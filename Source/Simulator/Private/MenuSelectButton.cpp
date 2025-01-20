@@ -14,7 +14,7 @@ void UMenuSelectButton::InitMenuSelectButton(const TArray<UButton*> &Buttons, co
 FString UMenuSelectButton::VehicleButtonClicked()
 {
 	// Example path:
-	// "/Game/Simulator/Cars/FinalModels/Schevrolet/Schevrolet_Object.Schevrolet_Object_C"
+	// "/Game/Simulator/Cars/FinalModels/Chevrolet/Chevrolet_Object.Chevrolet_Object_C"
 	
 	FString Result = MenuButtonPath;
 	Result = Result.RightChop(MenuButtonPath.Find(TEXT("/Content/")));
@@ -33,12 +33,12 @@ void UMenuSelectButton::VehicleButtonClickedWrapper()
 FString UMenuSelectButton::MapButtonClicked()
 {
 	// Example path:
-	// "/Game/Simulator/Maps/Racetrack/Racetrack_Object"
+	// "/Game/Simulator/Maps/Racetrack/Racetrack_Map"
 	
 	FString Result = MenuButtonPath;
 	Result = Result.RightChop(MenuButtonPath.Find(TEXT("/Content/")));
 	Result.ReplaceInline(TEXT("Content"), TEXT("Game"));
-	const FString AssetName = MenuButtonName + TEXT("_Object");
+	const FString AssetName = MenuButtonName + TEXT("_Map");
 	Result = Result / AssetName + TEXT(".") + AssetName + TEXT("_C");
 	UE_LOG(LogTemp, Warning, TEXT("MapButtonClicked: %s"), *Result);
 	return  Result;

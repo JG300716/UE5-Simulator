@@ -29,41 +29,40 @@ TArray<FString> UAssetsLoader::GetFoldersInDirectory(const FString& DirectoryPat
     return FolderPaths;
 }
 
-//
-// void ListFilesInDirectory()
-// {
-//     // Directory you want to scan (change this path to match your directory)
-//     FString DirectoryPath = TEXT("/Game/Simulator/Cars/FinalModels/Schevrolet/");
-//
-//     // Get the Asset Registry Module
-//     FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
-//     IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
-//
-//     // Get all assets in the directory (this returns all asset metadata)
-//     TArray<FAssetData> AssetDataArray;
-//     AssetRegistry.GetAssetsByPath(FName(*DirectoryPath), AssetDataArray);
-//
-//     // Log each file in the directory
-//     for (const FAssetData& AssetData : AssetDataArray)
-//     {
-//         FString AssetName = AssetData.AssetName.ToString();
-//         FString AssetPath = AssetData.ObjectPath.ToString();
-//
-//         // You can process the asset here as needed
-//         UE_LOG(LogTemp, Log, TEXT("Asset found: %s at Path: %s"), *AssetName, *AssetPath);
-//     }
-//
-//     // Optionally, handle if no assets were found
-//     if (AssetDataArray.Num() == 0)
-//     {
-//         UE_LOG(LogTemp, Warning, TEXT("No assets found in the directory: %s"), *DirectoryPath);
-//     }
-// }
+
+void ListFilesInDirectory(const FString& DirectoryPath)
+{
+    // Directory you want to scan (change this path to match your directory)
+
+    // Get the Asset Registry Module
+    FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+    IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
+
+    // Get all assets in the directory (this returns all asset metadata)
+    TArray<FAssetData> AssetDataArray;
+    AssetRegistry.GetAssetsByPath(FName(*DirectoryPath), AssetDataArray);
+
+    // Log each file in the directory
+    for (const FAssetData& AssetData : AssetDataArray)
+    {
+        FString AssetName = AssetData.AssetName.ToString();
+        FString AssetPath = AssetData.ObjectPath.ToString();
+
+        // You can process the asset here as needed
+        UE_LOG(LogTemp, Log, TEXT("Asset found: %s at Path: %s"), *AssetName, *AssetPath);
+    }
+
+    // Optionally, handle if no assets were found
+    if (AssetDataArray.Num() == 0)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("No assets found in the directory: %s"), *DirectoryPath);
+    }
+}
 
 TSoftClassPtr<AMyCar> UAssetsLoader::LoadVehicleAsset(const FString& AssetPath, bool &Success)
 {
    // Example path:
-   // "/Game/Simulator/Cars/FinalModels/Schevrolet/Schevrolet_Object.Schevrolet_Object_C"
+   // "/Game/Simulator/Cars/FinalModels/Chevrolet/Chevrolet_Object.Chevrolet_Object_C"
     TSoftClassPtr<AMyCar> Asset = TSoftClassPtr<AMyCar>(FSoftObjectPath(AssetPath));
     Success = Asset.IsValid();
     if (Success) {
@@ -71,6 +70,7 @@ TSoftClassPtr<AMyCar> UAssetsLoader::LoadVehicleAsset(const FString& AssetPath, 
     } else {
         UE_LOG(LogTemp, Error, TEXT("Asset could not be loaded from %s."), *AssetPath);
     }
+    //ListFilesInDirectory("/Game/Simulator/Cars/FinalModels/Chevrolet/");
 
     return Asset;
 }

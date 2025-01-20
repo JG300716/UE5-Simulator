@@ -12,18 +12,14 @@
 TArray<uint8> UOptionsLibrary::Sizes = {0,0,0};
 TArray<uint8> UOptionsLibrary::MaxColumns = {5,5,1};
 int32 UOptionsLibrary::IndexOfChosenVehicle = -1;
-int32 UOptionsLibrary::IndexOfChosenMap;
+int32 UOptionsLibrary::IndexOfChosenMap = -1;
 
 void UOptionsLibrary::Initialize(UTextBlock* ToolTipTextTmp, UScrollBox* ScrollBoxTmp)
 {
     CleanButtons();
-    UE_LOG(LogTemp, Warning, TEXT("Log1"));
     if (IsValid(ToolTipTextTmp)) GetInstance()->OptionsToolTipText = ToolTipTextTmp;
-    UE_LOG(LogTemp, Warning, TEXT("Log2"));
     if (IsValid(ScrollBoxTmp)) GetInstance()->OptionsScrollBox = ScrollBoxTmp;
-    UE_LOG(LogTemp, Warning, TEXT("Log3"));
 }
-
 
 UOptionsLibrary* UOptionsLibrary::GetInstance()
 {
@@ -32,7 +28,7 @@ UOptionsLibrary* UOptionsLibrary::GetInstance()
     return Instance;
 }
 
-int32 UOptionsLibrary::GetSelectedButtonIndex(const FVector CursorPosition)
+int32 UOptionsLibrary::GetSelectedButtonIndex(const FVector &CursorPosition)
 {
     const uint32 Page = CursorPosition.Z;
     uint32 PageOffset = 0;
@@ -45,14 +41,15 @@ int32 UOptionsLibrary::GetSelectedButtonIndex(const FVector CursorPosition)
     {
         PageOffset += Sizes[i];
     }
-    return Page + PageOffset + RowOffset + ColumnOffset;
+    const int32 Index = Page + PageOffset + RowOffset + ColumnOffset;
+    if (Index >= GetInstance()->Buttons.Num()) return -1; // Invalid index
+    return Index;
 }
-
 
 UMenuBaseButton* UOptionsLibrary::GetSelectedButton(const FVector CursorPosition)
 {
     const int32 Index = GetSelectedButtonIndex(CursorPosition);
-    if (Index < 0 || Index >= GetInstance()->Buttons.Num()) return nullptr; // Invalid index
+    if (!IsButtonValid(Index)) return nullptr; // Invalid index
     return GetInstance()->Buttons[Index];
 }
 
@@ -167,66 +164,124 @@ FVector3f UOptionsLibrary::MoveCursorSpecial(const EControllersArrowsDirection &
                 NewCursorPosition.Y = NewCursorPosition.Y - 1;
                 ShouldJumpTheHiddenButtons(FVector(NewCursorPosition), OffsetJump, ShouldJump);
                 NewCursorPosition.Y = ShouldJump ? NewCursorPosition.Y - OffsetJump : NewCursorPosition.Y;
+                UpdateToolTipText(FVector(NewCursorPosition));
                 UpdateScrollBar(FVector(NewCursorPosition), CursorPosition);
             }
-            return NewCursorPosition;
-        break;
+            break;
         case Down:
             if (CursorPosition.Y == 0)
             {
                 NewCursorPosition.Y = 1; // Move to the first row of the grid
-                return NewCursorPosition;
+                UpdateToolTipText(FVector(NewCursorPosition));
+                UpdateScrollBar(FVector(NewCursorPosition), CursorPosition);
+                break;
             }
-            if (CursorPosition.Y >= FMath::CeilToInt(PageSize / (float)Columns)) return NewCursorPosition; // Already at the bottom row, do nothing
+            if (CursorPosition.Y >= FMath::CeilToInt(PageSize / (float)Columns)) break; // Already at the bottom row, do nothing
             ShouldJumpTheHiddenButtons(CursorPosition, OffsetJump, ShouldJump);
             NewCursorPosition.Y = ShouldJump ? NewCursorPosition.Y + OffsetJump + 1 : NewCursorPosition.Y + 1;
+            UpdateToolTipText(FVector(NewCursorPosition));
             UpdateScrollBar(FVector(NewCursorPosition), CursorPosition);
-            return NewCursorPosition;
-        break;
+            break;
         case Left:
             if (CursorPosition.Y == 0)
             {
                 NewCursorPosition.Z--;  // Move to the previous tab
-                return NewCursorPosition;
+                break;
             }
             [[fallthrough]];
         case Right:
             UpdateIfThisIsAValueButton(CursorPosition, Direction);
-            return NewCursorPosition;
-            
-        break;
+            break;
         
     }
     
-    return FVector3f(CursorPosition);
+    return NewCursorPosition;
 }
 
 void UOptionsLibrary::UpdateScrollBar(const FVector& CursorPosition, const FVector& PreviousCursorPosition)
 {
-    if (!IsValid(GetInstance()->OptionsScrollBox)) return; // Ensure the scroll box is valid
+    if (!IsValid(GetInstance()->OptionsScrollBox)) return;
 
     const int32 TotalVisibleButtons = 6;
-    const float ScrollOffsetStep = 60.f;
+    const float ScrollOffsetStep = 106.f;
 
-    const int32 CurrentIndex = GetSelectedButtonIndex(CursorPosition) - 3 - Sizes[0] - Sizes[1];
-    
+    // Get current button index
+    const int32 RawCurrentIndex = GetSelectedButtonIndex(CursorPosition) - 3 - Sizes[0] - Sizes[1];
+    if (RawCurrentIndex < 0) return;
+    // Initialize accumulator for skipped buttons due to collapse
+    int32 TotalSkippedButtons = 0;
+    int32 AdjustedCurrentIndex = RawCurrentIndex;
+
+    // Store the original cursor position components
+    const float BaseX = CursorPosition.X;
+    const float BaseZ = CursorPosition.Z;
+
+    // Check each button's state up to the current index
+    for (int32 i = 0; i < RawCurrentIndex; ++i)
+    {
+        int32 OffsetJump = 0;
+        bool ShouldJump = false;
+        
+        // Calculate the position for the button we're checking
+        // We need to offset from the current selected button's position
+        FVector ButtonPosition(
+            BaseX,
+            i,
+            BaseZ
+        );
+        
+        // Check if this button is collapsed
+        ShouldJumpTheHiddenButtons(ButtonPosition, OffsetJump, ShouldJump);
+        
+        // If button is collapsed, adjust our counts
+        if (ShouldJump)
+        {
+            i += OffsetJump;
+            TotalSkippedButtons += OffsetJump;
+            AdjustedCurrentIndex -= OffsetJump;
+        }
+
+    }
+
     const float ScrollOffset = GetInstance()->OptionsScrollBox->GetScrollOffset();
     const float VisibleStartIndex = ScrollOffset / ScrollOffsetStep;
     const float VisibleEndIndex = VisibleStartIndex + TotalVisibleButtons;
 
-    // Check if the button is outside the visible range
-    if (CurrentIndex < VisibleStartIndex || CurrentIndex >= VisibleEndIndex)
+    // Check if the adjusted button position is outside the visible range
+    if (AdjustedCurrentIndex - 1 < VisibleStartIndex || AdjustedCurrentIndex >= VisibleEndIndex)
     {
-        // Calculate the new scroll offset
-        float NewScrollOffset = (CurrentIndex - TotalVisibleButtons) * ScrollOffsetStep;
-        NewScrollOffset = FMath::Clamp(NewScrollOffset, 0.0f, 
+        // Calculate new scroll offset considering collapsed buttons
+        float NewScrollOffset = (AdjustedCurrentIndex - 2) * ScrollOffsetStep;
+        
+        // Ensure we don't go negative
+        NewScrollOffset = FMath::Max(0.0f, NewScrollOffset);
+        
+        // Clamp to valid range
+        NewScrollOffset = FMath::Min(NewScrollOffset, 
             GetInstance()->OptionsScrollBox->GetScrollOffsetOfEnd());
-
+        
         // Update the scroll box position
         GetInstance()->OptionsScrollBox->SetScrollOffset(NewScrollOffset);
     }
 }
 
+void UOptionsLibrary::UpdateToolTipText(const FVector& CursorPosition)
+{
+    if(CursorPosition.Y == 0)
+    {
+        GetInstance()->OptionsToolTipText->SetText(FText::FromString(""));
+        return;
+    }
+    int32 Index = GetSelectedButtonIndex(CursorPosition);
+    if (!IsButtonValid(Index)) return;
+    UOptionBaseButton* Button = static_cast<UOptionBaseButton*>(GetInstance()->Buttons[Index]);
+    FString Name = Button->OptionName;
+    if(Button->ParentOptionName != "") Name = Button->ParentOptionName;
+    UOptionBase* Option = UDefaultPlayerOptions::GetOption(FName(Name));
+    if (Option == nullptr) return;
+    FString ToolTip = Option->OptionTooltip;
+    GetInstance()->OptionsToolTipText->SetText(FText::FromString(ToolTip));
+}
 
 int32 UOptionsLibrary::CalculateJumpOffset(const EOptionButtonType& OptionType)
 {
@@ -532,8 +587,8 @@ bool UOptionsLibrary::UpdateSelectedButton(
     TArray<UMenuBaseButton*> AllButtons = GetInstance()->Buttons;
     if (AllButtons.IsEmpty()) return false;
 
-    if (CurrentIndex < 0 || CurrentIndex >= AllButtons.Num()) return false;
-    if (PreviousIndex < 0 || PreviousIndex >= AllButtons.Num()) return false;
+    if (!IsButtonValid(CurrentIndex)) return false;
+    if (!IsButtonValid(PreviousIndex)) return false;
     // Update buttons if indices are valid
 
     if (AllButtons.IsValidIndex(PreviousIndex) && PreviousIndex != CurrentIndex && PreviousIndex != IndexOfChosenVehicle)
@@ -564,6 +619,10 @@ TArray<UMenuBaseButton*> UOptionsLibrary::AddTabButtons(TArray<UButton*> TabButt
         GetInstance()->Buttons.Insert(Button, Offset);
         Offset += Sizes[i] + 1;
     }
+
+    if (IsButtonValid(IndexOfChosenVehicle)) GetInstance()->Buttons[IndexOfChosenVehicle]->ChangeButtonOutline(true, OptionsChosenButtonColor);
+    if (IsButtonValid(IndexOfChosenMap)) GetInstance()->Buttons[IndexOfChosenMap]->ChangeButtonOutline(true, OptionsChosenButtonColor);
+    
     return GetInstance()->Buttons;
 }
 

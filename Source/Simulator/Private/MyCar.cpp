@@ -66,9 +66,6 @@ void AMyCar::BeginPlay()
 	}
 }
 
-
-
-
 // Called every frame
 void AMyCar::Tick(float DeltaTime)
 {
@@ -87,4 +84,9 @@ UCustomChaosWheeledVehicleMovementComponent* AMyCar::GetMyCarVehicleMovementComp
 {
 	UE_LOG(LogTemp, Warning, TEXT("GetMyCarVehicleMovementComponent is %p."), CustomChaosWheeledVehicleMovementComponent.Get());
 	return CustomChaosWheeledVehicleMovementComponent;
+}
+
+void AMyCar::SetUpOptions()
+{
+	
 }

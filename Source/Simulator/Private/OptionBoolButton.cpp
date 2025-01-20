@@ -18,7 +18,6 @@ void UOptionBoolButton::UpdateGraphics()
 	if (MenuButton.IsEmpty()) return;
 	
 	UTexture2D *Texture = BValue ? OnTexture : OffTexture;
-	UE_LOG(LogTemp, Warning, TEXT("BValue: %d"), BValue);
 	if (!IsValid(Texture)) return;
 	for(auto &Button : MenuButton)
 	{

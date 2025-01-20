@@ -51,6 +51,10 @@
 				"Android",
 				"VisionOS"
 			]
+		},
+		{
+			"Name": "YawVR",
+			"Enabled": true
 		}
 	]
 }

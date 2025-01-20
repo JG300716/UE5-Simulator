@@ -104,7 +104,7 @@ enum EOptionButtonType : uint8
 	Option_WheelsBoolButton = 3,
 	Option_WheelsValueButton = 4,
 	Option_VehicleValueButton = 5,
-  };
+};
 
 UCLASS(BlueprintType)
 class SIMULATOR_API UOptionBase : public UObject
@@ -120,13 +120,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Logic Class|Base")
 	FString OptionName;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OptionButton|Logic Class|Base")
+	FString OptionTooltip;
+	
 	UFUNCTION(BlueprintCallable, Category = "OptionButton|Logic Class|Base")
-	void InitializeBase(const ESettingsType &Type, const EOptionButtonType &OptionType, const FString &Name)
+	void InitializeBase(const ESettingsType &Type, const EOptionButtonType &OptionType, const FString &Name, const FString &Tooltip)
 	{
 		this->AddToRoot();
 		this->OptionName = Name;
 		this->BaseOptionButtonType = OptionType;
 		this->SettingsType = Type;
+		this->OptionTooltip = Tooltip;
 	}
 };
 template <typename T>
@@ -188,14 +192,13 @@ public:
 	bool IsAffectingOtherOptions;
 	void Initialize(const TUOption<float> &Option)
 	{
-		InitializeBase(Option.OptionType, Option.OptionsButtonType, Option.OptionName);
+		InitializeBase(Option.OptionType, Option.OptionsButtonType, Option.OptionName, Option.Tooltip);
 		this->FValue = Option.Value;
 		this->FDefaultValue = Option.DefaultValue;
 		this->FMinValue = Option.MinValue;
 		this->FMaxValue = Option.MaxValue;
 		this->Step = Option.Step;
 		this->Unit = Option.Unit;
-		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
 	}
 
@@ -230,10 +233,9 @@ public:
 	bool IsAffectingOtherOptions;
 	void Initialize(const TUOption<bool> &Option)
 	{
-		InitializeBase(Option.OptionType, Option.OptionsButtonType, Option.OptionName);
+		InitializeBase(Option.OptionType, Option.OptionsButtonType, Option.OptionName, Option.Tooltip);
 		this->BValue = Option.Value;
 		this->BDefaultValue = Option.DefaultValue;
-		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
 	}
 
@@ -267,13 +269,12 @@ public:
 	bool IsAffectingOtherOptions;
 	void Initialize(const TUOption<EDriveMode> &Option)
 	{
-		InitializeBase(Option.OptionType, Option.OptionsButtonType, Option.OptionName);
+		InitializeBase(Option.OptionType, Option.OptionsButtonType, Option.OptionName, Option.Tooltip);
 		this->DriveModeValue = Option.Value;
 		this->DriveModeDefaultValue = Option.DefaultValue;
 		this->DriveModeMinValue = Option.MinValue;
 		this->DriveModeMaxValue = Option.MaxValue;
 		this->Step = Option.Step;
-		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
 	}
 	
@@ -303,19 +304,17 @@ public:
 	FVehicle FVehicleMaxValue;
 	float Step;
 	FString Unit;
-	FString Tooltip;
 	bool IsAffectingOtherOptions;
 
 	void Initialize(const TUOption<FVehicle> &Option)
 	{
-		InitializeBase(Option.OptionType, Option.OptionsButtonType, Option.OptionName);
+		InitializeBase(Option.OptionType, Option.OptionsButtonType, Option.OptionName, Option.Tooltip);
 		this->FVehicleValue = Option.Value;
 		this->FVehicleDefaultValue = Option.DefaultValue;
 		this->FVehicleMinValue = Option.MinValue;
 		this->FVehicleMaxValue = Option.MaxValue;
 		this->Step = Option.Step;
 		this->Unit = Option.Unit;
-		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
 	}
 
@@ -356,26 +355,24 @@ public:
 
 	void Initialize(const TUOption<FVehicleWheels> &Option)
 	{
-		InitializeBase(Option.OptionType, Option.OptionsButtonType, Option.OptionName);
+		InitializeBase(Option.OptionType, Option.OptionsButtonType, Option.OptionName, Option.Tooltip);
 		this->FVehicleWheelsValue = Option.Value;
 		this->FVehicleWheelsDefaultValue = Option.DefaultValue;
 		this->FVehicleWheelsMinValue = Option.MinValue;
 		this->FVehicleWheelsMaxValue = Option.MaxValue;
 		this->Step = Option.Step;
 		this->Unit = Option.Unit;
-		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
 	}
 	void Initialize(const TUOption<BVehicleWheels> &Option)
 	{
-		InitializeBase(Option.OptionType, Option.OptionsButtonType, Option.OptionName);
+		InitializeBase(Option.OptionType, Option.OptionsButtonType, Option.OptionName, Option.Tooltip);
 		this->FVehicleWheelsValue = ConvertToVehicleWheels(Option.Value);
 		this->FVehicleWheelsDefaultValue = ConvertToVehicleWheels(Option.DefaultValue);
 		this->FVehicleWheelsMinValue = ConvertToVehicleWheels(Option.MinValue);
 		this->FVehicleWheelsMaxValue = ConvertToVehicleWheels(Option.MaxValue);
 		this->Step = Option.Step;
 		this->Unit = Option.Unit;
-		this->Tooltip = Option.Tooltip;
 		this->IsAffectingOtherOptions = Option.IsAffectingOtherOptions;
 	}
 
@@ -481,7 +478,7 @@ struct FDefaultPhysicsUserOption
 		10, "kg",
 		"Set the masses of the vehicle parts",
 		false };
-		TUOption<float> HorsePowerValues = {Physics, Option_ValueButton, "Horse Power", DefaultHorsePower, DefaultHorsePower, 0, 1000, 1, "kW", "Set the power of the engine", true };
+		TUOption<float> HorsePowerValues = {Physics, Option_ValueButton, "Horse Power", DefaultHorsePower, DefaultHorsePower, 0, 1000, 1, "kW", "Set the power of the engine, [kW]", true };
 		TUOption<float> MaxRpmValues = {Physics, Option_ValueButton, "Max RPM", DefaultMaxRpm, DefaultMaxRpm, 0, 10000, 1, "RPM", "Set the maximum RPM of the engine", true };
 		TUOption<float> MaxTorqueValues = {Physics, Option_ValueButton, "Max Torque", DefaultMaxTorque, DefaultMaxTorque, 0, 1000, 1, "Nm", "Set the maximum torque of the engine", true };
 		// Ratio of the wheelbase to the track width

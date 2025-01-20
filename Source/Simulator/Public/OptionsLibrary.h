@@ -61,6 +61,7 @@ class SIMULATOR_API UOptionsLibrary : public UBlueprintFunctionLibrary
 	static int32 CalculateJumpOffset(const EOptionButtonType &OptionType);
 	static UOptionBaseButton* GetButtonByName(const FString &Name);
 	static void UpdateScrollBar(const FVector &CursorPosition, const FVector &PreviousCursorPosition);
+	static void UpdateToolTipText(const FVector &CursorPosition);
 	static void ShouldJumpTheHiddenButtons(const FVector &CursorPosition, int32 &OffsetJump, bool &ShouldJump);
 	static void UpdateBoolButton(UOptionBoolButton* BoolButton);
 	static void UpdateIfThisIsAValueButton(const FVector &CursorPosition, const EControllersArrowsDirection &Direction);
@@ -82,7 +83,7 @@ public:
 	static UOptionsLibrary* GetInstance();
 	
 	UFUNCTION()
-	static int32 GetSelectedButtonIndex(const FVector CursorPosition);
+	static int32 GetSelectedButtonIndex(const FVector &CursorPosition);
 	
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
 	static UMenuBaseButton* GetSelectedButton( const FVector CursorPosition);

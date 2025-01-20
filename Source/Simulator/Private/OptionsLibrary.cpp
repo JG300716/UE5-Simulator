@@ -9,6 +9,8 @@
 #include "OptionVehicleButton.h"
 #include "OptionWheelsButton.h"
 
+#include "Kismet/GameplayStatics.h"
+
 TArray<uint8> UOptionsLibrary::Sizes = {0,0,0};
 TArray<uint8> UOptionsLibrary::MaxColumns = {5,5,1};
 int32 UOptionsLibrary::IndexOfChosenVehicle = -1;
@@ -923,4 +925,70 @@ void UOptionsLibrary::UpdateOptionButtonGraphics(UOptionBaseButton* OptionButton
             }
     }
     
+}
+
+void UOptionsLibrary::TryToStartGame(UUserWidget* WidgetContext)
+{
+    UE_LOG(LogTemp, Warning, TEXT("TryToStartGame"));
+    UE_LOG(LogTemp, Warning, TEXT("IndexOfChosenVehicle: %d"), IndexOfChosenVehicle);
+    UE_LOG(LogTemp, Warning, TEXT("IndexOfChosenMap: %d"), IndexOfChosenMap);
+
+    if (IndexOfChosenVehicle < 0 || IndexOfChosenMap < 0) return;
+
+    if (!WidgetContext)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Invalid widget context"));
+        return;
+    }
+
+    UWorld* World = WidgetContext->GetWorld();
+    if (!World)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Invalid world context from widget"));
+        return;
+    }
+
+    UE_LOG(LogTemp, Warning, TEXT("World context obtained successfully"));
+
+    // Load the game mode class
+    const FString GameModePath = TEXT("/Game/Simulator/GameMode/Race.Race_C");
+    UClass* GameModeClass = StaticLoadClass(AGameModeBase::StaticClass(), nullptr, *GameModePath);
+
+    if (!GameModeClass)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to load GameMode class from path: %s"), *GameModePath);
+        return;
+    }
+
+    UMenuSelectButton* VehicleButton = Cast<UMenuSelectButton>(GetInstance()->Buttons[IndexOfChosenVehicle]);
+    if (!IsValid(VehicleButton)) return;
+
+    const FString VehiclePath = VehicleButton->AssetObjectPath;
+    UE_LOG(LogTemp, Warning, TEXT("Vehicle Path: %s"), *VehiclePath);
+    UClass* VehicleClass = StaticLoadClass(APawn::StaticClass(), nullptr, *VehiclePath);
+
+    if (!VehicleClass)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to load Vehicle class from path: %s"), *VehiclePath);
+        return;
+    }
+
+    FString Options;
+    Options.Appendf(TEXT("?Game=%s?DefaultPawnClass=%s"), *GameModeClass->GetPathName(), *VehicleClass->GetPathName());
+
+    UMenuSelectButton* MapButton = Cast<UMenuSelectButton>(GetInstance()->Buttons[IndexOfChosenMap]);
+    if (!IsValid(MapButton)) return;
+
+    const FString& MapPath = MapButton->AssetObjectPath;
+    UGameplayStatics::OpenLevel(World, *MapPath, true, Options);
+}
+
+UClass* UOptionsLibrary::GetChosenVehicleClass()
+{
+    if (IndexOfChosenVehicle < 0) return nullptr;
+    UMenuSelectButton* VehicleButton = Cast<UMenuSelectButton>(GetInstance()->Buttons[IndexOfChosenVehicle]);
+    if (!IsValid(VehicleButton)) return nullptr;
+    const FString VehiclePath = VehicleButton->AssetObjectPath;
+    UClass* VehicleClass = StaticLoadClass(APawn::StaticClass(), nullptr, *VehiclePath);
+    return VehicleClass;
 }

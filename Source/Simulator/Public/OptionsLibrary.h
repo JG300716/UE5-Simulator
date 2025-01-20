@@ -12,7 +12,8 @@
 #include "OptionBoolButton.h"
 #include "OptionValueButton.h"
 #include "OptionCustomValueButton.h"
-
+#include "GameFramework/GameModeBase.h"
+#include "Engine/World.h"
 
 #include "Chaos/UniformGrid.h"
 
@@ -126,4 +127,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
 	static void OptionButtonPressed(UOptionBaseButton* Button, const EControllersButtonsDirection ControllerButton);
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
+	static void TryToStartGame(UUserWidget* WidgetContext);
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
+	static UClass* GetChosenVehicleClass();
 };

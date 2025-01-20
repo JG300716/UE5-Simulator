@@ -9,6 +9,19 @@ void UMenuSelectButton::InitMenuSelectButton(const TArray<UButton*> &Buttons, co
 	InitMenuBaseButton(Buttons, Type);
 	this->MenuButtonName = Name;
 	this->MenuButtonPath = Path;
+
+	switch(Type)
+	{
+		case Menu_VehicleButton:
+			AssetObjectPath = VehicleButtonClicked();
+            break;
+		case Menu_MapButton:
+            AssetObjectPath = MapButtonClicked();
+            break;
+		default:
+			break;
+	}
+	
 }
 
 FString UMenuSelectButton::VehicleButtonClicked()
@@ -21,13 +34,13 @@ FString UMenuSelectButton::VehicleButtonClicked()
 	Result.ReplaceInline(TEXT("Content"), TEXT("Game"));
 	const FString AssetName = MenuButtonName + TEXT("_Object");
 	Result = Result / AssetName + TEXT(".") + AssetName + TEXT("_C");
-	UE_LOG(LogTemp, Warning, TEXT("VehicleButtonClicked: %s"), *Result);
 	return  Result;
 }
 
 void UMenuSelectButton::VehicleButtonClickedWrapper()
 {
 	AssetObjectPath = VehicleButtonClicked();
+	UE_LOG(LogTemp, Warning, TEXT("VehicleButtonClickedWrapper: %s"), *AssetObjectPath);
 }
 
 FString UMenuSelectButton::MapButtonClicked()
@@ -40,7 +53,6 @@ FString UMenuSelectButton::MapButtonClicked()
 	Result.ReplaceInline(TEXT("Content"), TEXT("Game"));
 	const FString AssetName = MenuButtonName + TEXT("_Map");
 	Result = Result / AssetName + TEXT(".") + AssetName + TEXT("_C");
-	UE_LOG(LogTemp, Warning, TEXT("MapButtonClicked: %s"), *Result);
 	return  Result;
 }
 

@@ -28,7 +28,7 @@ public:
 
 	// Function to possess the spawned vehicle
 	UFUNCTION(BlueprintCallable, Category = "Simulation")
-	static void PossessVehicle(AMyCar* Vehicle);
+	static void PossessVehicle(UWorld* World, AMyCar* Vehicle);
 
 	// Tick function for simulation updates
 	UFUNCTION(BlueprintCallable, Category = "Simulation")

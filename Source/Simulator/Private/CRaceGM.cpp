@@ -11,8 +11,6 @@ void ACRaceGM::BeginPlay()
 {
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Warning, TEXT("BeginPlay called"));
-	// Add a delay before calling StartSimulation
-	// This ensures everything in the world has been initialized.
 	if (!GetWorld()) return;
 	UE_LOG(LogTemp, Warning, TEXT("GetWorld()"));
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ACRaceGM::StartSimulation, 0.1f, false);
@@ -24,13 +22,9 @@ void ACRaceGM::StartSimulation()
 	UWorld* World = GetWorld();
 	if (World)
 	{
-		DefaultPawnClass = UOptionsLibrary::GetChosenVehicleClass();
-		UE_LOG(LogTemp, Warning, TEXT("DefaultPawnClass set"));
+		URunSimulationLibrary::StartSimulation(World);
 		
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("No valid world found in StartSimulation"));
 	}
 	UE_LOG(LogTemp, Warning, TEXT("StartSimulation finished"));
 }
+

@@ -14,58 +14,28 @@ void URunSimulationLibrary::StartSimulation(UWorld* World)
         UE_LOG(LogTemp, Error, TEXT("No valid World in StartSimulation"));
         return;
     }
-    AGameModeBase* GameMode = World->GetAuthGameMode();
-    if (!GameMode)
-    {
-        UE_LOG(LogTemp, Error, TEXT("No valid GameMode"));
-        return;
-    }
 
+    SpawnVehicle(World);
+    
     UE_LOG(LogTemp, Warning, TEXT("Vehicle spawned"));
 
     //InitializeVehicleSettings(SpawnedVehicle);
-    //PossessVehicle(SpawnedVehicle);
+    PossessVehicle(World, SpawnedVehicle);
 
 }
 
 void URunSimulationLibrary::SpawnVehicle(UWorld* World)
 {
-    // Get the vehicle class from OptionsLibrary
+    if (!World) return;
     UClass* VehicleClass = UOptionsLibrary::GetChosenVehicleClass();
     if (!VehicleClass) return;
-
-    if (!World) return;
-    
-    // Get world context through game mode
-    AGameModeBase* GameMode = Cast<AGameModeBase>(World->GetAuthGameMode());
-    if (!GameMode) return;
-
-    // Log the vehicle class name for debugging
-    UE_LOG(LogTemp, Warning, TEXT("Attempting to spawn vehicle class: %s"), *VehicleClass->GetName());
-
-    // Find player start location
     AActor* PlayerStart = UGameplayStatics::GetActorOfClass(World, APlayerStart::StaticClass());
     if (!PlayerStart) return;
-
-    // Log player start location
-    UE_LOG(LogTemp, Warning, TEXT("Found PlayerStart at location: %s"), *PlayerStart->GetActorLocation().ToString());
-
-    // Set spawn parameters
     FActorSpawnParameters SpawnParams;
     SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-    SpawnParams.Owner = GameMode;
-    
-    // Get transform from player start
+    SpawnParams.Owner = PlayerStart;
     FTransform SpawnTransform = PlayerStart->GetTransform();
-
-    // Spawn the vehicle
     SpawnedVehicle = World->SpawnActor<AMyCar>(VehicleClass, SpawnTransform, SpawnParams);
-    
-    if (!SpawnedVehicle) return;
-
-    SpawnedVehicle->SetUpMyCarVehicleMovementComponent(SpawnedVehicle->GetMyCarVehicleMovementComponent());
-    
-    UE_LOG(LogTemp, Log, TEXT("Successfully spawned vehicle at player start"));
 }
 
 void URunSimulationLibrary::InitializeVehicleSettings(AMyCar* Vehicle)
@@ -74,26 +44,14 @@ void URunSimulationLibrary::InitializeVehicleSettings(AMyCar* Vehicle)
 	UE_LOG(LogTemp, Warning, TEXT("InitializeVehicleSettings"));
 }
 
-void URunSimulationLibrary::PossessVehicle(AMyCar* Vehicle)
+void URunSimulationLibrary::PossessVehicle(UWorld* World, AMyCar* Vehicle)
 {
-	if (!Vehicle) return;
-
-    const FString PlayerControllerPath = TEXT("/Game/Simulator/Cars/VehiclePlayerController1.VehiclePlayerController1_C");
-	
-    // Load the PlayerController Blueprint class dynamically
-    UClass* NewPlayerControllerClass = StaticLoadClass(APlayerController::StaticClass(), nullptr, *PlayerControllerPath);
-    
-    if (!NewPlayerControllerClass)
-    {
-        UE_LOG(LogTemp, Error, TEXT("Failed to load PlayerController class from path: %s"), *PlayerControllerPath);
-        return;
-    }
-    
-    // Get the player controller
-    APlayerController* PlayerController = NewPlayerControllerClass->GetDefaultObject<APlayerController>();
+    const FString ControllerPath = TEXT("/Game/Simulator/Cars/VehiclePlayerController1.VehiclePlayerController1_C");
+    UClass* PlayerControllerClass = StaticLoadClass(APlayerController::StaticClass(), nullptr, *ControllerPath);
+    APlayerController* PlayerController = World->SpawnActor<APlayerController>(PlayerControllerClass);
     if (!PlayerController) return;
     PlayerController->Possess(Vehicle);
-    UE_LOG(LogTemp, Log, TEXT("Possessed vehicle"));
+    //UGameplayStatics::GetPlayerController(World, 0)->SetViewTarget(Vehicle);
     
 }
 

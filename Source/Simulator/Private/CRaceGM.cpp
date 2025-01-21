@@ -5,6 +5,13 @@
 
 ACRaceGM::ACRaceGM()
 {
+	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerBP(TEXT("/Game/Simulator/Cars/VehiclePlayerController1.VehiclePlayerController1_C"));
+	if (PlayerControllerBP.Succeeded())
+	{
+		PlayerControllerClass = PlayerControllerBP.Class;
+	}
+
+	DefaultPawnClass = AMyCar::StaticClass();
 }
 
 void ACRaceGM::BeginPlay()

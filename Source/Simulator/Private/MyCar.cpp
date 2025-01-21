@@ -64,6 +64,7 @@ void AMyCar::BeginPlay()
 			UE_LOG(LogTemp, Warning, TEXT("Torque curve is empty during BeginPlay."));
 		}
 	}
+	
 }
 
 // Called every frame

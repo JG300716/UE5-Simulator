@@ -37,6 +37,7 @@ public:
 private:
 	// Static properties to store references
 	static AMyCar* SpawnedVehicle;
+	static AController* PlayerVehicleController;
 	static ACameraActor* SimulationCamera;
 	static bool bSimulationInitialized;
 };

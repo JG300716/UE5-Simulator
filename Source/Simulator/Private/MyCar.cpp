@@ -86,6 +86,11 @@ UCustomChaosWheeledVehicleMovementComponent* AMyCar::GetMyCarVehicleMovementComp
 	return CustomChaosWheeledVehicleMovementComponent;
 }
 
+void AMyCar::SetUpMyCarVehicleMovementComponent(UCustomChaosWheeledVehicleMovementComponent* Component)
+{
+	CustomChaosWheeledVehicleMovementComponent = Component;
+}
+
 void AMyCar::SetUpOptions()
 {
 	

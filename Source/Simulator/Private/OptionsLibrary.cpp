@@ -951,7 +951,7 @@ void UOptionsLibrary::TryToStartGame(UUserWidget* WidgetContext)
     UE_LOG(LogTemp, Warning, TEXT("World context obtained successfully"));
 
     // Load the game mode class
-    const FString GameModePath = TEXT("/Game/Simulator/GameMode/Race.Race_C");
+    const FString GameModePath = TEXT("/Script/Simulator.CRaceGM");
     UClass* GameModeClass = StaticLoadClass(AGameModeBase::StaticClass(), nullptr, *GameModePath);
 
     if (!GameModeClass)

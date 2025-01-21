@@ -13,8 +13,6 @@ class SIMULATOR_API URunSimulationLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
-	static void StartSimulationInternal();
-
 public:
 	// Main function to start the simulation
 	UFUNCTION(BlueprintCallable, Category = "Simulation")
@@ -22,15 +20,15 @@ public:
 
 	// Function to spawn the vehicle at player start
 	UFUNCTION(BlueprintCallable, Category = "Simulation")
-	static void SpawnVehicle();
+	static void SpawnVehicle(UWorld* World);
 
 	// Function to initialize vehicle settings
 	UFUNCTION(BlueprintCallable, Category = "Simulation")
-	static void InitializeVehicleSettings(APawn* Vehicle);
+	static void InitializeVehicleSettings(AMyCar* Vehicle);
 
 	// Function to possess the spawned vehicle
 	UFUNCTION(BlueprintCallable, Category = "Simulation")
-	static void PossessVehicle(APawn* Vehicle);
+	static void PossessVehicle(AMyCar* Vehicle);
 
 	// Tick function for simulation updates
 	UFUNCTION(BlueprintCallable, Category = "Simulation")
@@ -38,7 +36,7 @@ public:
 
 private:
 	// Static properties to store references
-	static APawn* SpawnedVehicle;
+	static AMyCar* SpawnedVehicle;
 	static ACameraActor* SimulationCamera;
 	static bool bSimulationInitialized;
 };

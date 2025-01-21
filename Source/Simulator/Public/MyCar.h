@@ -63,5 +63,8 @@ public:
 	UCustomChaosWheeledVehicleMovementComponent* GetMyCarVehicleMovementComponent() const;
 
 	UFUNCTION(BlueprintCallable, Category="MyFunctions|WheeledVehicleMovement")
+	void SetUpMyCarVehicleMovementComponent(UCustomChaosWheeledVehicleMovementComponent* Component);
+	
+	UFUNCTION(BlueprintCallable, Category="MyFunctions|WheeledVehicleMovement")
 	void SetUpOptions();
 };

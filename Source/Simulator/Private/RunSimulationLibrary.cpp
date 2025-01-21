@@ -3,7 +3,7 @@
 
 #include "RunSimulationLibrary.h"
 
-APawn* URunSimulationLibrary::SpawnedVehicle = nullptr;
+AMyCar* URunSimulationLibrary::SpawnedVehicle = nullptr;
 ACameraActor* URunSimulationLibrary::SimulationCamera = nullptr;
 bool URunSimulationLibrary::bSimulationInitialized = false;
 
@@ -14,24 +14,6 @@ void URunSimulationLibrary::StartSimulation(UWorld* World)
         UE_LOG(LogTemp, Error, TEXT("No valid World in StartSimulation"));
         return;
     }
-
-    bSimulationInitialized = true;
-    StartSimulationInternal();
-
-}
-
-void URunSimulationLibrary::StartSimulationInternal()
-{
-    // This will be called after a short delay
-    UE_LOG(LogTemp, Warning, TEXT("StartSimulation Internal"));
-
-    UWorld* World = GEngine->GetWorld();
-    if (!World)
-    {
-        UE_LOG(LogTemp, Error, TEXT("No valid World in StartSimulation"));
-        return;
-    }
-
     AGameModeBase* GameMode = World->GetAuthGameMode();
     if (!GameMode)
     {
@@ -39,54 +21,31 @@ void URunSimulationLibrary::StartSimulationInternal()
         return;
     }
 
-    SpawnVehicle();
     UE_LOG(LogTemp, Warning, TEXT("Vehicle spawned"));
 
-    if (!SpawnedVehicle)
-    {
-        UE_LOG(LogTemp, Error, TEXT("Failed to spawn vehicle"));
-        return;
-    }
+    //InitializeVehicleSettings(SpawnedVehicle);
+    //PossessVehicle(SpawnedVehicle);
 
-    InitializeVehicleSettings(SpawnedVehicle);
-    PossessVehicle(SpawnedVehicle);
 }
 
-void URunSimulationLibrary::SpawnVehicle()
+void URunSimulationLibrary::SpawnVehicle(UWorld* World)
 {
     // Get the vehicle class from OptionsLibrary
     UClass* VehicleClass = UOptionsLibrary::GetChosenVehicleClass();
-    if (!VehicleClass)
-    {
-        UE_LOG(LogTemp, Error, TEXT("Failed to get vehicle class from OptionsLibrary"));
-        return;
-    }
+    if (!VehicleClass) return;
 
-    // Get world context through game mode
-    AGameModeBase* GameMode = Cast<AGameModeBase>(GEngine->GetWorld()->GetAuthGameMode());
-    if (!GameMode)
-    {
-        UE_LOG(LogTemp, Error, TEXT("Invalid GameMode"));
-        return;
-    }
+    if (!World) return;
     
-    UWorld* World = GameMode->GetWorld();
-    if (!World)
-    {
-        UE_LOG(LogTemp, Error, TEXT("Invalid World Context"));
-        return;
-    }
+    // Get world context through game mode
+    AGameModeBase* GameMode = Cast<AGameModeBase>(World->GetAuthGameMode());
+    if (!GameMode) return;
 
     // Log the vehicle class name for debugging
     UE_LOG(LogTemp, Warning, TEXT("Attempting to spawn vehicle class: %s"), *VehicleClass->GetName());
 
     // Find player start location
     AActor* PlayerStart = UGameplayStatics::GetActorOfClass(World, APlayerStart::StaticClass());
-    if (!PlayerStart)
-    {
-        UE_LOG(LogTemp, Error, TEXT("No PlayerStart found in level"));
-        return;
-    }
+    if (!PlayerStart) return;
 
     // Log player start location
     UE_LOG(LogTemp, Warning, TEXT("Found PlayerStart at location: %s"), *PlayerStart->GetActorLocation().ToString());
@@ -100,29 +59,46 @@ void URunSimulationLibrary::SpawnVehicle()
     FTransform SpawnTransform = PlayerStart->GetTransform();
 
     // Spawn the vehicle
-    SpawnedVehicle = World->SpawnActor<APawn>(VehicleClass, SpawnTransform, SpawnParams);
+    SpawnedVehicle = World->SpawnActor<AMyCar>(VehicleClass, SpawnTransform, SpawnParams);
     
-    if (!SpawnedVehicle)
-    {
-        UE_LOG(LogTemp, Error, TEXT("Failed to spawn vehicle"));
-        return;
-    }
+    if (!SpawnedVehicle) return;
 
+    SpawnedVehicle->SetUpMyCarVehicleMovementComponent(SpawnedVehicle->GetMyCarVehicleMovementComponent());
+    
     UE_LOG(LogTemp, Log, TEXT("Successfully spawned vehicle at player start"));
 }
 
-void URunSimulationLibrary::InitializeVehicleSettings(APawn* Vehicle)
+void URunSimulationLibrary::InitializeVehicleSettings(AMyCar* Vehicle)
 {
 	// Set the vehicle's initial settings
 	UE_LOG(LogTemp, Warning, TEXT("InitializeVehicleSettings"));
 }
 
-void URunSimulationLibrary::PossessVehicle(APawn* Vehicle)
+void URunSimulationLibrary::PossessVehicle(AMyCar* Vehicle)
 {
+	if (!Vehicle) return;
+
+    const FString PlayerControllerPath = TEXT("/Game/Simulator/Cars/VehiclePlayerController1.VehiclePlayerController1_C");
 	
+    // Load the PlayerController Blueprint class dynamically
+    UClass* NewPlayerControllerClass = StaticLoadClass(APlayerController::StaticClass(), nullptr, *PlayerControllerPath);
+    
+    if (!NewPlayerControllerClass)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to load PlayerController class from path: %s"), *PlayerControllerPath);
+        return;
+    }
+    
+    // Get the player controller
+    APlayerController* PlayerController = NewPlayerControllerClass->GetDefaultObject<APlayerController>();
+    if (!PlayerController) return;
+    PlayerController->Possess(Vehicle);
+    UE_LOG(LogTemp, Log, TEXT("Possessed vehicle"));
+    
 }
 
 void URunSimulationLibrary::SimulationTick(float DeltaTime)
 {
+    
 }
 

@@ -36,7 +36,6 @@ AMyCar::AMyCar(const FObjectInitializer& ObjectInitializer)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("TorqueCurve RichCurve is null in constructor."));
 		}
-		CustomChaosWheeledVehicleMovementComponent->SetDriveMode(DrivableMode);
 	}
 	else
 	{
@@ -64,7 +63,7 @@ void AMyCar::BeginPlay()
 			UE_LOG(LogTemp, Warning, TEXT("Torque curve is empty during BeginPlay."));
 		}
 	}
-	
+	StartingLocation = GetActorLocation();
 }
 
 // Called every frame
@@ -92,7 +91,18 @@ void AMyCar::SetUpMyCarVehicleMovementComponent(UCustomChaosWheeledVehicleMoveme
 	CustomChaosWheeledVehicleMovementComponent = Component;
 }
 
+void AMyCar::SetupVRReferences(USceneComponent* CameraRoot, UCameraComponent* Camera)
+{
+	if (!CameraRoot || !Camera) return;
+	this->VRCameraRoot = CameraRoot;
+	this->VRCamera = Camera;
+	UE_LOG(LogTemp, Warning, TEXT("VRCameraRoot: %p, VRCamera: %p"), VRCameraRoot, VRCamera);
+
+	this->VRCamera->Activate();
+}
+
 void AMyCar::SetUpOptions()
 {
-	
+	bIsAutomaticTransmission = false;
 }
+

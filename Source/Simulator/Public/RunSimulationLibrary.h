@@ -22,6 +22,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Simulation")
 	static void SpawnVehicle(UWorld* World);
 
+	UFUNCTION(BlueprintCallable, Category = "Simulation")
+	static void ConnectVRCameraPawn(USceneComponent* CameraRoot, UCameraComponent* Camera);
+	
 	// Function to initialize vehicle settings
 	UFUNCTION(BlueprintCallable, Category = "Simulation")
 	static void InitializeVehicleSettings(AMyCar* Vehicle);
@@ -38,6 +41,5 @@ private:
 	// Static properties to store references
 	static AMyCar* SpawnedVehicle;
 	static AController* PlayerVehicleController;
-	static ACameraActor* SimulationCamera;
 	static bool bSimulationInitialized;
 };

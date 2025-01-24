@@ -5,7 +5,6 @@
 
 AMyCar* URunSimulationLibrary::SpawnedVehicle = nullptr;
 AController* URunSimulationLibrary::PlayerVehicleController = nullptr;
-ACameraActor* URunSimulationLibrary::SimulationCamera = nullptr;
 bool URunSimulationLibrary::bSimulationInitialized = false;
 
 void URunSimulationLibrary::StartSimulation(UWorld* World)
@@ -17,12 +16,11 @@ void URunSimulationLibrary::StartSimulation(UWorld* World)
     }
 
     SpawnVehicle(World);
-    
     UE_LOG(LogTemp, Warning, TEXT("Vehicle spawned"));
 
-    //InitializeVehicleSettings(SpawnedVehicle);
     PossessVehicle(World, SpawnedVehicle);
-
+    InitializeVehicleSettings(SpawnedVehicle);
+    
 }
 
 void URunSimulationLibrary::SpawnVehicle(UWorld* World)
@@ -39,8 +37,18 @@ void URunSimulationLibrary::SpawnVehicle(UWorld* World)
     SpawnedVehicle = World->SpawnActor<AMyCar>(VehicleClass, SpawnTransform, SpawnParams);
 }
 
+void URunSimulationLibrary::ConnectVRCameraPawn(USceneComponent* CameraRoot, UCameraComponent* Camera)
+{
+    if (!SpawnedVehicle) return;
+        SpawnedVehicle->SetupVRReferences(CameraRoot, Camera);   
+}
+
+
 void URunSimulationLibrary::InitializeVehicleSettings(AMyCar* Vehicle)
 {
+    if (!SpawnedVehicle) return;
+    SpawnedVehicle->SetUpOptions();
+    
 	// Set the vehicle's initial settings
 	UE_LOG(LogTemp, Warning, TEXT("InitializeVehicleSettings"));
 }
@@ -53,44 +61,22 @@ void URunSimulationLibrary::PossessVehicle(UWorld* World, AMyCar* Vehicle)
         return;
     }
 
-    const FString ControllerPath = TEXT("/Game/Simulator/Cars/VehiclePlayerController1.VehiclePlayerController1_C");
-    UClass* PlayerControllerClass = Cast<UClass>(StaticLoadObject(UClass::StaticClass(), nullptr, *ControllerPath));
-
-    if (!PlayerControllerClass)
+    // Get the existing player controller instead of creating a new one
+    APlayerController* ExistingController = UGameplayStatics::GetPlayerController(World, 0);
+    
+    if (!ExistingController)
     {
-        UE_LOG(LogTemp, Error, TEXT("Failed to load player controller class from path: %s"), *ControllerPath);
+        UE_LOG(LogTemp, Error, TEXT("No existing player controller found"));
         return;
     }
 
-    // Create a new player with a specified index
-    APlayerController* NewController = Cast<APlayerController>(
-        UGameplayStatics::CreatePlayer(World, 0, true) 
-    );
+    // Unpossess current pawn if any
+    ExistingController->UnPossess();
 
-    if (!NewController)
-    {
-        UE_LOG(LogTemp, Error, TEXT("Failed to create new player controller"));
-        return;
-    }
+    // Possess the new vehicle
+    ExistingController->Possess(Vehicle);
 
-    // Verify if the correct controller class is used
-    if (!NewController->IsA(PlayerControllerClass))
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Replacing default controller with custom one"));
-        NewController->UnPossess();
-        NewController->Destroy();
-        
-        NewController = World->SpawnActor<APlayerController>(PlayerControllerClass);
-        if (!NewController)
-        {
-            UE_LOG(LogTemp, Error, TEXT("Failed to spawn custom player controller"));
-            return;
-        }
-    }
-
-    NewController->Possess(Vehicle);
-
-    UE_LOG(LogTemp, Warning, TEXT("Successfully possessed vehicle with custom player controller"));
+    UE_LOG(LogTemp, Warning, TEXT("Successfully possessed vehicle with existing player controller"));
 }
 
 void URunSimulationLibrary::SimulationTick(float DeltaTime)

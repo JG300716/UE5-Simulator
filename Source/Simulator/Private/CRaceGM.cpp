@@ -11,7 +11,7 @@ ACRaceGM::ACRaceGM()
 		PlayerControllerClass = PlayerControllerBP.Class;
 	}
 
-	DefaultPawnClass = AMyCar::StaticClass();
+    DefaultPawnClass = nullptr;
 }
 
 void ACRaceGM::BeginPlay()

@@ -28,6 +28,18 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+	USceneComponent* VRCameraRoot;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+	UCameraComponent* VRCamera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Vehicle|Options")
+	bool bIsAutomaticTransmission;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Vehicle")
+	FVector StartingLocation;
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -39,31 +51,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category="Domyślne", meta=(MultiLine="true"))
 	TObjectPtr<UCustomChaosWheeledVehicleMovementComponent> CustomChaosWheeledVehicleMovementComponent;
 
-	/** Please add a variable description */
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category="Domyślne")
-	FVector StartingPosition;
-
-	/** Please add a variable description */
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category="Domyślne")
-	bool CurrentState;
-
-	/** Please add a variable description */
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category="Domyślne")
-	bool PreviousState;
-
-	/** Please add a variable description */
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category="Domyślne")
-	bool bIsAutomaticTransmission = true;
-
-	/** Please add a variable description */
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category="Domyślne")
-	double DrivableMode = 0;
-
 	UFUNCTION(BlueprintCallable, Category="MyFunctions|WheeledVehicleMovement")
 	UCustomChaosWheeledVehicleMovementComponent* GetMyCarVehicleMovementComponent() const;
 
 	UFUNCTION(BlueprintCallable, Category="MyFunctions|WheeledVehicleMovement")
 	void SetUpMyCarVehicleMovementComponent(UCustomChaosWheeledVehicleMovementComponent* Component);
+
+	UFUNCTION(BlueprintCallable, Category = "VR")
+	void SetupVRReferences(USceneComponent* CameraRoot, UCameraComponent* Camera);
 	
 	UFUNCTION(BlueprintCallable, Category="MyFunctions|WheeledVehicleMovement")
 	void SetUpOptions();

@@ -11,7 +11,8 @@ ACRaceGM::ACRaceGM()
 		PlayerControllerClass = PlayerControllerBP.Class;
 	}
 
-    DefaultPawnClass = nullptr;
+	DefaultPawnClass = nullptr;
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 void ACRaceGM::BeginPlay()
@@ -33,5 +34,12 @@ void ACRaceGM::StartSimulation()
 		
 	}
 	UE_LOG(LogTemp, Warning, TEXT("StartSimulation finished"));
+	bSimulatorInitialized = true;
 }
 
+void ACRaceGM::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	if (!bSimulatorInitialized) return;
+	URunSimulationLibrary::SimulationTick(DeltaSeconds);
+}

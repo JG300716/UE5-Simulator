@@ -27,7 +27,10 @@ protected:
 	// Function to start simulation
 	void StartSimulation();
 
+	virtual void Tick(float DeltaSeconds) override;
+	
 private:
 	// Timer handle for delayed start of simulation (if needed)
 	FTimerHandle TimerHandle;
+	bool bSimulatorInitialized = false;
 };

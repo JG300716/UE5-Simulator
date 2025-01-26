@@ -11,9 +11,9 @@ AMyCar::AMyCar(const FObjectInitializer& ObjectInitializer)
 {
 	// Initialize the custom movement component
 	CustomChaosWheeledVehicleMovementComponent = Cast<UCustomChaosWheeledVehicleMovementComponent>(GetVehicleMovementComponent());
-	UE_LOG(LogTemp, Warning, TEXT("AMyCar is %p."), CustomChaosWheeledVehicleMovementComponent.Get());
+	UE_LOG(LogTemp, Warning, TEXT("AMyCar() | AMyCar is %p."), this);
+	UE_LOG(LogTemp, Warning, TEXT("AMyCar() | CustomChaosWheeledVehicleMovementComponent is %p."), CustomChaosWheeledVehicleMovementComponent.Get());
 	GetMesh()->SetCenterOfMass(FVector(0.0f, 0.0f, -50.0f)); // Adjust Z value to lower the center of mass
-	UE_LOG(LogTemp, Warning, TEXT("IsGravityEnabled: %s."), GetMesh()->IsGravityEnabled() ? TEXT("true") : TEXT("false"));
 	if (CustomChaosWheeledVehicleMovementComponent != nullptr)
 	{
 		// Access and set up the Engine Setup
@@ -82,7 +82,6 @@ void AMyCar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 UCustomChaosWheeledVehicleMovementComponent* AMyCar::GetMyCarVehicleMovementComponent() const
 {
-	UE_LOG(LogTemp, Warning, TEXT("GetMyCarVehicleMovementComponent is %p."), CustomChaosWheeledVehicleMovementComponent.Get());
 	return CustomChaosWheeledVehicleMovementComponent;
 }
 
@@ -96,9 +95,15 @@ void AMyCar::SetupVRReferences(USceneComponent* CameraRoot, UCameraComponent* Ca
 	if (!CameraRoot || !Camera) return;
 	this->VRCameraRoot = CameraRoot;
 	this->VRCamera = Camera;
-	UE_LOG(LogTemp, Warning, TEXT("VRCameraRoot: %p, VRCamera: %p"), VRCameraRoot, VRCamera);
+	UE_LOG(LogTemp, Warning, TEXT("SetupVRReferences | AMyCar %p: VRCameraRoot %p, VRCamera %p"), this, this->VRCameraRoot, this->VRCamera);
 
-	this->VRCamera->Activate();
+	VRCameraRoot->SetRelativeLocationAndRotation(
+	  FVector(0.0f, 0.0f, 50.0f),  // Adjust vertical offset
+	  FRotator(0.0f, 0.0f, 0.0f)   // Reset rotation
+	);
+
+	VRCamera->AttachToComponent(VRCameraRoot, FAttachmentTransformRules::KeepRelativeTransform);
+	VRCamera->Activate();
 }
 
 void AMyCar::SetUpOptions()

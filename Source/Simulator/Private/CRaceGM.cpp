@@ -18,10 +18,21 @@ ACRaceGM::ACRaceGM()
 void ACRaceGM::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Log player controller details
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	if (PC)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Player Controller: %p"), PC);
+		UE_LOG(LogTemp, Warning, TEXT("Player Controller Class: %s"), 
+		    *PC->GetClass()->GetName());
+	}
+	
 	UE_LOG(LogTemp, Warning, TEXT("BeginPlay called"));
 	if (!GetWorld()) return;
 	UE_LOG(LogTemp, Warning, TEXT("GetWorld()"));
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ACRaceGM::StartSimulation, 0.1f, false);
+	
 }
 
 void ACRaceGM::StartSimulation()

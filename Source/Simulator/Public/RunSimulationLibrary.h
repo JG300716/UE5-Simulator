@@ -6,6 +6,7 @@
 #include "Camera/CameraActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "OptionsLibrary.h"
+#include "CMyVRPawn.h"
 #include "RunSimulationLibrary.generated.h"
 
 UCLASS()
@@ -41,7 +42,10 @@ public:
 	static void SpawnVehicle(UWorld* World);
 
 	UFUNCTION(BlueprintCallable, Category = "Simulation")
-	static void AssignVRCameraPawn(USceneComponent* CameraRoot, UCameraComponent* Camera);
+	static UCameraComponent* SpawnVRCamera(UWorld* World);
+
+	UFUNCTION(BlueprintCallable, Category = "Simulation")
+	static void AssignVRCameraPawn(USceneComponent* CameraRoot);
 	
 	// Function to initialize vehicle settings
 	UFUNCTION(BlueprintCallable, Category = "Simulation")

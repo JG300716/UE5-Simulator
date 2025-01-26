@@ -28,8 +28,8 @@ void URunSimulationLibrary::StartSimulation(UWorld* World)
     }
 
     SpawnVehicle(World);
-    UE_LOG(LogTemp, Warning, TEXT("Vehicle spawned"));
     ConnectVrCamera();
+    UE_LOG(LogTemp, Warning, TEXT("Vehicle spawned"));
     PossessVehicle(World, SpawnedVehicle);
     InitializeVehicleSettings(SpawnedVehicle);
     UE_LOG(LogTemp, Warning, TEXT("StartSimulation | AMyCar %p: AMyCar->VRCameraRoot %p, AMyCar->VRCamera %p"), SpawnedVehicle, SpawnedVehicle->GetVRCameraRoot(), SpawnedVehicle->GetVRCamera());
@@ -50,11 +50,28 @@ void URunSimulationLibrary::SpawnVehicle(UWorld* World)
     SpawnedVehicle = World->SpawnActor<AMyCar>(VehicleClass, SpawnTransform, SpawnParams);
 }
 
-void URunSimulationLibrary::AssignVRCameraPawn(USceneComponent* CameraRoot, UCameraComponent* Camera)
+UCameraComponent* URunSimulationLibrary::SpawnVRCamera(UWorld* World)
 {
+    UE_LOG(LogTemp, Warning, TEXT("SpawnVRCamera"));
+    if (!World) return nullptr;
+    UCameraComponent* Camera = NewObject<UCameraComponent>(UCameraComponent::StaticClass());
+    if (!Camera) return nullptr;
+    UE_LOG(LogTemp, Warning, TEXT("SpawnVRCamera | Camera: %p"), Camera);
+    Camera->RegisterComponent();
+    Camera->SetRelativeTransform(FTransform(FRotator(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f)));
+    Camera->SetFieldOfView(90.0f);
+    Camera->SetAutoActivate(true);
+    return Camera;
+}
+
+void URunSimulationLibrary::AssignVRCameraPawn(USceneComponent* CameraRoot)
+{
+    if (!CameraRoot) return;
+    UCameraComponent* Camera = SpawnVRCamera(CameraRoot->GetWorld());
     if (!CameraRoot || !Camera) return;
     VRCameraRoot = CameraRoot;
     VRCamera = Camera;
+    UE_LOG(LogTemp, Warning, TEXT("AssignVRCameraPawn | CameraRoot: %p, Camera: %p"), CameraRoot, Camera);
 }
 
 void URunSimulationLibrary::ConnectVrCamera()
@@ -96,6 +113,9 @@ void URunSimulationLibrary::PossessVehicle(UWorld* World, AMyCar* Vehicle)
 
     // Possess the new vehicle
     ExistingController->Possess(Vehicle);
+
+    //ExistingController->AutoManageActiveCameraTarget(Vehicle);
+   
 
     UE_LOG(LogTemp, Warning, TEXT("Successfully possessed vehicle with existing player controller"));
 }

@@ -5,6 +5,8 @@
 
 #include "AssetTypeCategories.h"
 
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values
 AMyCar::AMyCar(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer.SetDefaultSubobjectClass<UCustomChaosWheeledVehicleMovementComponent>(VehicleMovementComponentName))
@@ -41,7 +43,6 @@ AMyCar::AMyCar(const FObjectInitializer& ObjectInitializer)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CustomChaosWheeledVehicleMovementComponent is null in constructor."));
 	}
-	ResetCameraTransform();
 }
 void AMyCar::BeginPlay()
 {
@@ -65,6 +66,9 @@ void AMyCar::BeginPlay()
 		}
 	}
 	StartingLocation = GetActorLocation();
+
+	// Comprehensive camera component investigation
+	UE_LOG(LogTemp, Warning, TEXT("Car BeginPlay Camera Investigation"));
 }
 
 // Called every frame
@@ -73,6 +77,40 @@ void AMyCar::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	//int speed = CustomChaosWheeledVehicleMovementComponent->GetForwardSpeed();
 	//UE_LOG(LogTemp, Warning, TEXT("Speed: %d"), speed);
+
+	// Log every 60 frames (approximately every second)
+	static int TickCounter = 0;
+	TickCounter++;
+
+	if (TickCounter % 60 == 0 && VRCameraRoot && VRCamera)
+	{
+		// Camera Relative Transform Debug
+		FVector CameraLocation = VRCamera->GetComponentLocation();
+		FRotator CameraRotation = VRCamera->GetComponentRotation();
+        
+		// VR Camera Root Relative Transform Debug
+		FVector RootLocation = VRCameraRoot->GetComponentLocation();
+		FRotator RootRotation = VRCameraRoot->GetComponentRotation();
+
+		// Vehicle Relative Transform Debug
+		FVector VehicleLocation = GetActorLocation();
+		FRotator VehicleRotation = GetActorRotation();
+
+		UE_LOG(LogTemp, Warning, TEXT("Camera Debug Relative - Location: %s, Rotation: %s"), 
+		    *CameraLocation.ToString(), *CameraRotation.ToString());
+        
+		UE_LOG(LogTemp, Warning, TEXT("Camera Root Debug Relative - Location: %s, Rotation: %s"), 
+		    *RootLocation.ToString(), *RootRotation.ToString());
+
+		UE_LOG(LogTemp, Warning, TEXT("Vehicle Debug Relative - Location: %s, Rotation: %s"),
+			*VehicleLocation.ToString(), *VehicleRotation.ToString());
+
+		// Optional: Check if camera is actually enabled
+		bool bIsCameraEnabled = VRCamera->IsActive();
+		UE_LOG(LogTemp, Warning, TEXT("Camera Enabled: %s"), 
+		    bIsCameraEnabled ? TEXT("TRUE") : TEXT("FALSE"));
+	}
+	
 }
 
 // Called to bind functionality to input
@@ -95,24 +133,13 @@ void AMyCar::SetupVRReferences(USceneComponent* CameraRoot, UCameraComponent* Ca
 {
 	if (!CameraRoot || !Camera) return;
 
-	VRCameraRoot = CameraRoot;
-	VRCamera = Camera;
-	
-	ResetCameraTransform();
-	
-	// Explicitly set world transform, not just relative
-	FTransform VehicleTrans = GetActorTransform();
-	FVector SeatOffset = VehicleTrans.TransformVector(FVector(0, 0, 50)); // Vehicle-local offset
-    
-	VRCameraRoot->SetWorldLocationAndRotation(
-	    VehicleTrans.GetLocation() + SeatOffset,
-	    VehicleTrans.GetRotation()
-	);
+	this->VRCameraRoot = CameraRoot;
+	this->VRCamera = Camera;
 
-	// Force camera orientation
-	VRCamera->SetWorldRotation(VehicleTrans.GetRotation());
-    
-	VRCamera->AttachToComponent(VRCameraRoot, FAttachmentTransformRules::KeepWorldTransform);
+	UE_LOG(LogTemp, Warning, TEXT("SetupVRReferences | CameraRoot: %p, Camera: %p"), CameraRoot, Camera);
+	
+	// Set relative location to zero explicitly
+	VRCamera->AttachToComponent(VRCameraRoot, FAttachmentTransformRules::KeepRelativeTransform);
 	VRCamera->Activate();
 }
 

@@ -41,6 +41,7 @@ AMyCar::AMyCar(const FObjectInitializer& ObjectInitializer)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("CustomChaosWheeledVehicleMovementComponent is null in constructor."));
 	}
+	ResetCameraTransform();
 }
 void AMyCar::BeginPlay()
 {
@@ -93,17 +94,36 @@ void AMyCar::SetUpMyCarVehicleMovementComponent(UCustomChaosWheeledVehicleMoveme
 void AMyCar::SetupVRReferences(USceneComponent* CameraRoot, UCameraComponent* Camera)
 {
 	if (!CameraRoot || !Camera) return;
-	this->VRCameraRoot = CameraRoot;
-	this->VRCamera = Camera;
-	UE_LOG(LogTemp, Warning, TEXT("SetupVRReferences | AMyCar %p: VRCameraRoot %p, VRCamera %p"), this, this->VRCameraRoot, this->VRCamera);
 
-	VRCameraRoot->SetRelativeLocationAndRotation(
-	  FVector(0.0f, 0.0f, 50.0f),  // Adjust vertical offset
-	  FRotator(0.0f, 0.0f, 0.0f)   // Reset rotation
+	VRCameraRoot = CameraRoot;
+	VRCamera = Camera;
+	
+	ResetCameraTransform();
+	
+	// Explicitly set world transform, not just relative
+	FTransform VehicleTrans = GetActorTransform();
+	FVector SeatOffset = VehicleTrans.TransformVector(FVector(0, 0, 50)); // Vehicle-local offset
+    
+	VRCameraRoot->SetWorldLocationAndRotation(
+	    VehicleTrans.GetLocation() + SeatOffset,
+	    VehicleTrans.GetRotation()
 	);
 
-	VRCamera->AttachToComponent(VRCameraRoot, FAttachmentTransformRules::KeepRelativeTransform);
+	// Force camera orientation
+	VRCamera->SetWorldRotation(VehicleTrans.GetRotation());
+    
+	VRCamera->AttachToComponent(VRCameraRoot, FAttachmentTransformRules::KeepWorldTransform);
 	VRCamera->Activate();
+}
+
+void AMyCar::ResetCameraTransform()
+{
+	if (VRCameraRoot && VRCamera)
+	{
+		FTransform VehicleTrans = GetActorTransform();
+		VRCameraRoot->SetWorldTransform(VehicleTrans);
+		VRCamera->SetWorldRotation(VehicleTrans.GetRotation());
+	}
 }
 
 void AMyCar::SetUpOptions()

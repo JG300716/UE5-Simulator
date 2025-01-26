@@ -60,11 +60,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "VR")
 	void SetupVRReferences(USceneComponent* CameraRoot, UCameraComponent* Camera);
 
-	UFUNCTION(BlueprintCallable, Category="Vehicle")
+	UFUNCTION(BlueprintCallable, Category="VR")
 	UCameraComponent* GetVRCamera() const { return VRCamera; }
 
-	UFUNCTION(BlueprintCallable, Category="Vehicle")
+	UFUNCTION(BlueprintCallable, Category="VR")
 	USceneComponent* GetVRCameraRoot() const { return VRCameraRoot; }
+
+	UFUNCTION(BlueprintCallable, Category="VR")
+	void ResetCameraTransform();
 	
 	UFUNCTION(BlueprintCallable, Category="MyFunctions|WheeledVehicleMovement")
 	void SetUpOptions();

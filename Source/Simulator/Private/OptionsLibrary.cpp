@@ -5,6 +5,7 @@
  */
 #include "OptionsLibrary.h"
 
+#include "CRaceGM.h"
 #include "IntVectorTypes.h"
 #include "OptionVehicleButton.h"
 #include "OptionWheelsButton.h"
@@ -948,18 +949,6 @@ void UOptionsLibrary::TryToStartGame(UUserWidget* WidgetContext)
         return;
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("World context obtained successfully"));
-
-    // Load the game mode class
-    const FString GameModePath = TEXT("/Script/Simulator.CRaceGM");
-    UClass* GameModeClass = StaticLoadClass(AGameModeBase::StaticClass(), nullptr, *GameModePath);
-
-    if (!GameModeClass)
-    {
-        UE_LOG(LogTemp, Error, TEXT("Failed to load GameMode class from path: %s"), *GameModePath);
-        return;
-    }
-
     UMenuSelectButton* VehicleButton = Cast<UMenuSelectButton>(GetInstance()->Buttons[IndexOfChosenVehicle]);
     if (!IsValid(VehicleButton)) return;
 
@@ -973,6 +962,26 @@ void UOptionsLibrary::TryToStartGame(UUserWidget* WidgetContext)
         return;
     }
 
+    // Load the game mode class
+    const FString GameModePath = TEXT("/Script/Simulator.CRaceGM");
+    UClass* GameModeClass = StaticLoadClass(AGameModeBase::StaticClass(), nullptr, *GameModePath);
+
+    if (!GameModeClass)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to load GameMode class from path: %s"), *GameModePath);
+        return;
+    }
+
+    // Cast to the specific GameMode class
+    ACRaceGM* GameModeInstance = Cast<ACRaceGM>(GameModeClass->GetDefaultObject());
+    if (!GameModeInstance)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to cast GameMode to ACRaceGM"));
+        return;
+    }
+
+    GameModeInstance->DefaultPawnClass = VehicleClass;
+    
     FString Options;
     Options.Appendf(TEXT("?Game=%s?DefaultPawnClass=%s"), *GameModeClass->GetPathName(), *VehicleClass->GetPathName());
 
@@ -991,4 +1000,12 @@ UClass* UOptionsLibrary::GetChosenVehicleClass()
     const FString VehiclePath = VehicleButton->AssetObjectPath;
     UClass* VehicleClass = StaticLoadClass(APawn::StaticClass(), nullptr, *VehiclePath);
     return VehicleClass;
+}
+
+FString UOptionsLibrary::GetChosenVehicleName()
+{
+    if (IndexOfChosenVehicle < 0) return FString();
+    UMenuSelectButton* VehicleButton = Cast<UMenuSelectButton>(GetInstance()->Buttons[IndexOfChosenVehicle]);
+    if (!IsValid(VehicleButton)) return FString();
+    return VehicleButton->MenuButtonName;
 }

@@ -10,8 +10,8 @@ ACRaceGM::ACRaceGM()
 	{
 		PlayerControllerClass = PlayerControllerBP.Class;
 	}
-
 	DefaultPawnClass = nullptr;
+	bStartPlayersAsSpectators = false;
 	PrimaryActorTick.bCanEverTick = true;
 }
 

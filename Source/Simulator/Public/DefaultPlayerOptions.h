@@ -573,7 +573,7 @@ struct FDefaultPhysicsUserOption
 	}
 	
 	static constexpr float DefaultChassisMass = 1000.0f;
-	static constexpr float DefaultWheelMass = 250.0f;
+	static constexpr float DefaultWheelMass = 30.0f;
 	static constexpr float DefaultHorsePower = 685.8f;
 	static constexpr float DefaultMaxRpm = 6000.0f;
 	static constexpr float DefaultMaxTorque = 600.0f;
@@ -644,32 +644,22 @@ struct FDefaultAdvanceUserOption
 			1, "",
 			"Set which wheels are affected by the steering",
 			true };
-		TUOption<BVehicleWheels> WheelsSuspensionEnabledValues = {Advance, Option_WheelsBoolButton, "Wheels Suspension Enabled",
-			DefaultWheelsSuspensionEnabled,
-			DefaultWheelsSuspensionEnabled,
-			{ false, false, false, false },
-			{ true, true, true, true },
-			1, "",
-			"Set which wheels have the suspension enabled",
-			true };
 
 		UOptionWheels* WheelsAffectedByBrakes = UOptionWheels::CreateOption(WheelsAffectedByBrakesValues);
 		UOptionWheels* WheelsAffectedByHandBrakes = UOptionWheels::CreateOption(WheelsAffectedByHandBrakesValues);
 		UOptionWheels* WheelsAffectedByEngine = UOptionWheels::CreateOption(WheelsAffectedByEngineValues);
 		UOptionWheels* WheelsAffectedBySteering = UOptionWheels::CreateOption(WheelsAffectedBySteeringValues);
-		UOptionWheels* WheelsSuspensionEnabled = UOptionWheels::CreateOption(WheelsSuspensionEnabledValues);
 		
 		OptionMap.Add(FName(WheelsAffectedByBrakes->OptionName), WheelsAffectedByBrakes);
 		OptionMap.Add(FName(WheelsAffectedByHandBrakes->OptionName), WheelsAffectedByHandBrakes);
 		OptionMap.Add(FName(WheelsAffectedByEngine->OptionName), WheelsAffectedByEngine);
 		OptionMap.Add(FName(WheelsAffectedBySteering->OptionName), WheelsAffectedBySteering);
-		OptionMap.Add(FName(WheelsSuspensionEnabled->OptionName), WheelsSuspensionEnabled);
 		
 	}
 	
 	static constexpr BVehicleWheels DefaultWheelsAffectedByBrakes = { false, false, false, false };
 	static constexpr BVehicleWheels DefaultWheelsAffectedByHandBrakes = { false, false, false, false };
-	static constexpr BVehicleWheels DefaultWheelsAffectedByEngine = { true, true, true, true };
+	static constexpr BVehicleWheels DefaultWheelsAffectedByEngine = { false, true, false, true };
 	static constexpr BVehicleWheels DefaultWheelsAffectedBySteering = { true, false, true, false };
 	static constexpr BVehicleWheels DefaultWheelsSuspensionEnabled = { true, true, true, true };
 	

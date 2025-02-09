@@ -9,17 +9,6 @@
 UCustomChaosWheeledVehicleMovementComponent::UCustomChaosWheeledVehicleMovementComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	// Ensure the torque curve is initialized
-	EngineSetup.TorqueCurve.GetRichCurve()->Reset();
-	EngineSetup.TorqueCurve.GetRichCurve()->AddKey(0.0f, 400.0f);    // (RPM, Torque) at 0 RPM
-	EngineSetup.TorqueCurve.GetRichCurve()->AddKey(1500.0f, 500.0f); // Torque at 1500 RPM
-	EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3500.0f, 400.0f); // Torque at 3500 RPM
-	EngineSetup.TorqueCurve.GetRichCurve()->AddKey(6000.0f, 200.0f); // Torque at 6000 RPM
-
-	EngineSetup.MaxRPM = 6000.0f;
-	EngineSetup.MaxTorque = 600.0f;
-	
-	PrimaryComponentTick.bCanEverTick = true;
 }
 
 
@@ -64,19 +53,4 @@ int UCustomChaosWheeledVehicleMovementComponent::SetDriveMode(int Type)
 	return DriveMode;
 }
 
-bool UCustomChaosWheeledVehicleMovementComponent::ToggleAutoTransmission()
-{
-	bToggleAutoTransmission = !bToggleAutoTransmission;
-	if (bToggleAutoTransmission)
-	{
-		TransmissionType = Chaos::ETransmissionType::Automatic;
-		bReverseAsBrake = true;
-	}
-	else
-	{
-		TransmissionType = Chaos::ETransmissionType::Manual;
-		bReverseAsBrake = false;
-	}
-	return bToggleAutoTransmission;
-}
 

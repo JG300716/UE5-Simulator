@@ -42,10 +42,7 @@ public:
 	static void SpawnVehicle(UWorld* World);
 
 	UFUNCTION(BlueprintCallable, Category = "Simulation")
-	static UCameraComponent* SpawnVRCamera(UWorld* World);
-
-	UFUNCTION(BlueprintCallable, Category = "Simulation")
-	static void AssignVRCameraPawn(USceneComponent* CameraRoot);
+	static void GetSpawnedVehicle(UWorld* World);
 	
 	// Function to initialize vehicle settings
 	UFUNCTION(BlueprintCallable, Category = "Simulation")
@@ -59,6 +56,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Simulation")
 	static void SimulationTick(float DeltaTime);
 
+	UFUNCTION(BlueprintCallable, Category = "Simulation")
+	static void PrintMovementPointer(UChaosWheeledVehicleMovementComponent* Component);
+
 private:
 	static bool IsVREnabled;
 	static bool IsMenuOpen;
@@ -66,12 +66,8 @@ private:
 	// Static properties to store references
 	static AMyCar* SpawnedVehicle;
 	static AController* PlayerVehicleController;
-	static USceneComponent* VRCameraRoot;
-	static UCameraComponent* VRCamera;
 	static bool bSimulationInitialized;
 	static bool bVRCameraConnected;
 
 	static void ResetSimulationValues();
-	static void ConnectVrCamera();
-	
 };

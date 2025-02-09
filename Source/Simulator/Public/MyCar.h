@@ -27,47 +27,31 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-	USceneComponent* VRCameraRoot;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-	UCameraComponent* VRCamera;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Vehicle|Options")
-	bool bIsAutomaticTransmission;
+public:	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Vehicle")
 	FVector StartingLocation;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category="Vehicle", meta=(MultiLine="true"))
+	TObjectPtr<UChaosWheeledVehicleMovementComponent> TMPMyChaosWheeledVehicleMovementComponent;
 	
-public:	
+	UFUNCTION(BlueprintCallable, Category="Vehicle|Movement")
+	void GearUp();
+
+	UFUNCTION(BlueprintCallable, Category="Vehicle|Movement")
+	void GearDown();
+	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	/** Please add a variable description */
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category="Domyślne", meta=(MultiLine="true"))
-	TObjectPtr<UCustomChaosWheeledVehicleMovementComponent> CustomChaosWheeledVehicleMovementComponent;
+	UFUNCTION(BlueprintCallable, Category="MyFunctions|WheeledVehicleMovement")
+	UChaosWheeledVehicleMovementComponent* GetMyCarVehicleMovementComponent() const;
 
 	UFUNCTION(BlueprintCallable, Category="MyFunctions|WheeledVehicleMovement")
-	UCustomChaosWheeledVehicleMovementComponent* GetMyCarVehicleMovementComponent() const;
-
-	UFUNCTION(BlueprintCallable, Category="MyFunctions|WheeledVehicleMovement")
-	void SetUpMyCarVehicleMovementComponent(UCustomChaosWheeledVehicleMovementComponent* Component);
-
-	UFUNCTION(BlueprintCallable, Category = "VR")
-	void SetupVRReferences(USceneComponent* CameraRoot, UCameraComponent* Camera);
-
-	UFUNCTION(BlueprintCallable, Category="VR")
-	UCameraComponent* GetVRCamera() const { return VRCamera; }
-
-	UFUNCTION(BlueprintCallable, Category="VR")
-	USceneComponent* GetVRCameraRoot() const { return VRCameraRoot; }
-
-	UFUNCTION(BlueprintCallable, Category="VR")
-	void ResetCameraTransform();
+	void SetUpMyCarVehicleMovementComponent(UChaosWheeledVehicleMovementComponent* Component);
 	
 	UFUNCTION(BlueprintCallable, Category="MyFunctions|WheeledVehicleMovement")
 	void SetUpOptions();

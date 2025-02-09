@@ -32,10 +32,6 @@
 			"Enabled": true
 		},
 		{
-			"Name": "ChaosVehiclesPlugin",
-			"Enabled": true
-		},
-		{
 			"Name": "HPMotionController",
 			"Enabled": true,
 			"SupportedTargetPlatforms": [
@@ -54,6 +50,10 @@
 		},
 		{
 			"Name": "YawVR",
+			"Enabled": true
+		},
+		{
+			"Name": "ChaosVehiclesPlugin",
 			"Enabled": true
 		}
 	]

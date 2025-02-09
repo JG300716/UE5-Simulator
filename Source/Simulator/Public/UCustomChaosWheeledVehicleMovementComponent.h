@@ -27,7 +27,4 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	UFUNCTION(BlueprintCallable, Category = "MYFunctions|WheeledVehicleMovement")
 	int SetDriveMode(int Type);
-	
-	UFUNCTION(BlueprintCallable, Category = "MYFunctions|WheeledVehicleMovement")
-	bool ToggleAutoTransmission();
 };

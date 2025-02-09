@@ -11,8 +11,6 @@ AMyCar* URunSimulationLibrary::SpawnedVehicle = nullptr;
 AController* URunSimulationLibrary::PlayerVehicleController = nullptr;
 bool URunSimulationLibrary::bSimulationInitialized = false;
 bool URunSimulationLibrary::bVRCameraConnected = false;
-USceneComponent* URunSimulationLibrary::VRCameraRoot = nullptr;
-UCameraComponent* URunSimulationLibrary::VRCamera = nullptr;
 bool URunSimulationLibrary::IsVREnabled = false;
 bool URunSimulationLibrary::IsMenuOpen = false;
 bool URunSimulationLibrary::IsOptionOpen = false;
@@ -28,57 +26,50 @@ void URunSimulationLibrary::StartSimulation(UWorld* World)
     }
 
     SpawnVehicle(World);
-    ConnectVrCamera();
+    //GetSpawnedVehicle(World);
     UE_LOG(LogTemp, Warning, TEXT("Vehicle spawned"));
     PossessVehicle(World, SpawnedVehicle);
-    InitializeVehicleSettings(SpawnedVehicle);
-    UE_LOG(LogTemp, Warning, TEXT("StartSimulation | AMyCar %p: AMyCar->VRCameraRoot %p, AMyCar->VRCamera %p"), SpawnedVehicle, SpawnedVehicle->GetVRCameraRoot(), SpawnedVehicle->GetVRCamera());
+    //InitializeVehicleSettings(SpawnedVehicle);
+    UE_LOG(LogTemp, Warning, TEXT("StartSimulation | AMyCar %p"), SpawnedVehicle);
     bSimulationInitialized = true;
 }
 
 void URunSimulationLibrary::SpawnVehicle(UWorld* World)
 {
     if (!World) return;
+
+    // Load the Blueprint class
     UClass* VehicleClass = UOptionsLibrary::GetChosenVehicleClass();
-    if (!VehicleClass) return;
+    if (!VehicleClass)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to load vehicle BP class!"));
+        return;
+    }
+
+    UE_LOG(LogTemp, Warning, TEXT("Vehicle Class: %s"), *VehicleClass->GetName());
+    UE_LOG(LogTemp, Warning, TEXT("Vehicle Path: %s"), *VehicleClass->GetPathName());
+    // Find Player Start
     AActor* PlayerStart = UGameplayStatics::GetActorOfClass(World, APlayerStart::StaticClass());
-    if (!PlayerStart) return;
+    if (!PlayerStart)
+    {
+        UE_LOG(LogTemp, Error, TEXT("No PlayerStart found."));
+        return;
+    }
+
     FActorSpawnParameters SpawnParams;
     SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-    SpawnParams.Owner = PlayerStart;
+
+    // Use AActor instead of specific class
     FTransform SpawnTransform = PlayerStart->GetTransform();
-    SpawnedVehicle = World->SpawnActor<AMyCar>(VehicleClass, SpawnTransform, SpawnParams);
+    AActor* SpawnedActor = World->SpawnActor<AActor>(VehicleClass, SpawnTransform, SpawnParams);
+    if (!SpawnedActor) return;
+    SpawnedVehicle = Cast<AMyCar>(SpawnedActor);
 }
 
-UCameraComponent* URunSimulationLibrary::SpawnVRCamera(UWorld* World)
+void URunSimulationLibrary::GetSpawnedVehicle(UWorld* World)
 {
-    UE_LOG(LogTemp, Warning, TEXT("SpawnVRCamera"));
-    if (!World) return nullptr;
-    UCameraComponent* Camera = NewObject<UCameraComponent>(UCameraComponent::StaticClass());
-    if (!Camera) return nullptr;
-    UE_LOG(LogTemp, Warning, TEXT("SpawnVRCamera | Camera: %p"), Camera);
-    Camera->RegisterComponent();
-    Camera->SetRelativeTransform(FTransform(FRotator(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f)));
-    Camera->SetFieldOfView(90.0f);
-    Camera->SetAutoActivate(true);
-    return Camera;
-}
-
-void URunSimulationLibrary::AssignVRCameraPawn(USceneComponent* CameraRoot)
-{
-    if (!CameraRoot) return;
-    UCameraComponent* Camera = SpawnVRCamera(CameraRoot->GetWorld());
-    if (!CameraRoot || !Camera) return;
-    VRCameraRoot = CameraRoot;
-    VRCamera = Camera;
-    UE_LOG(LogTemp, Warning, TEXT("AssignVRCameraPawn | CameraRoot: %p, Camera: %p"), CameraRoot, Camera);
-}
-
-void URunSimulationLibrary::ConnectVrCamera()
-{
-    if (!SpawnedVehicle || !VRCameraRoot || !VRCamera) return;
-    SpawnedVehicle->SetupVRReferences(VRCameraRoot, VRCamera);
-    bVRCameraConnected = true;
+    if (!World) return;
+    SpawnedVehicle = Cast<AMyCar>(UGameplayStatics::GetPlayerPawn(World, 0));
 }
 
 
@@ -131,8 +122,6 @@ void URunSimulationLibrary::ResetSimulationValues()
     PlayerVehicleController = nullptr;
     bSimulationInitialized = false;
     bVRCameraConnected = false;
-    VRCameraRoot = nullptr;
-    VRCamera = nullptr;
 }
 
 void URunSimulationLibrary::SetVREnabled(bool bEnabled)
@@ -164,3 +153,12 @@ bool URunSimulationLibrary::GetOptionOpen()
 {
     return IsOptionOpen;
 }
+
+void URunSimulationLibrary::PrintMovementPointer(UChaosWheeledVehicleMovementComponent* Component)
+{
+    if (!Component) return;
+    UE_LOG(LogTemp, Warning, TEXT("Movement Pointer: %p"), Component);
+    if (!SpawnedVehicle) return;
+    UE_LOG(LogTemp, Warning, TEXT("My Vehicle Movement Pointer: %p"), SpawnedVehicle->GetMyCarVehicleMovementComponent());
+}
+

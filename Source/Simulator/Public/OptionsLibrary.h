@@ -133,4 +133,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
 	static UClass* GetChosenVehicleClass();
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
+	static FString GetChosenVehicleName();
 };

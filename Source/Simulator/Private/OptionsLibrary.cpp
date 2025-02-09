@@ -995,6 +995,8 @@ void UOptionsLibrary::TryToStartGame(UUserWidget* WidgetContext)
 UClass* UOptionsLibrary::GetChosenVehicleClass()
 {
     if (IndexOfChosenVehicle < 0) return nullptr;
+    if(GetInstance()->Buttons.IsEmpty()) return nullptr;
+    if (IndexOfChosenVehicle >= GetInstance()->Buttons.Num()) return nullptr;
     UMenuSelectButton* VehicleButton = Cast<UMenuSelectButton>(GetInstance()->Buttons[IndexOfChosenVehicle]);
     if (!IsValid(VehicleButton)) return nullptr;
     const FString VehiclePath = VehicleButton->AssetObjectPath;

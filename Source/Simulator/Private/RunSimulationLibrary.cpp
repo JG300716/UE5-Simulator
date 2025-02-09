@@ -25,8 +25,8 @@ void URunSimulationLibrary::StartSimulation(UWorld* World)
         return;
     }
 
-    SpawnVehicle(World);
-    //GetSpawnedVehicle(World);
+    //SpawnVehicle(World);
+    GetSpawnedVehicle(World);
     UE_LOG(LogTemp, Warning, TEXT("Vehicle spawned"));
     PossessVehicle(World, SpawnedVehicle);
     //InitializeVehicleSettings(SpawnedVehicle);
@@ -39,7 +39,7 @@ void URunSimulationLibrary::SpawnVehicle(UWorld* World)
     if (!World) return;
 
     // Load the Blueprint class
-    UClass* VehicleClass = UOptionsLibrary::GetChosenVehicleClass();
+    UClass* VehicleClass = World->GetAuthGameMode()->DefaultPawnClass;
     if (!VehicleClass)
     {
         UE_LOG(LogTemp, Error, TEXT("Failed to load vehicle BP class!"));

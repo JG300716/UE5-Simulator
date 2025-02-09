@@ -6,7 +6,6 @@
 #include "Camera/CameraActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "OptionsLibrary.h"
-#include "CMyVRPawn.h"
 #include "RunSimulationLibrary.generated.h"
 
 UCLASS()

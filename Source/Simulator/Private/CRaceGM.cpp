@@ -10,9 +10,13 @@ ACRaceGM::ACRaceGM()
 	{
 		PlayerControllerClass = PlayerControllerBP.Class;
 	}
-	DefaultPawnClass = nullptr;
+	DefaultPawnClass = UOptionsLibrary::GetChosenVehicleClass();
+	if (DefaultPawnClass != nullptr) UE_LOG(LogTemp, Warning, TEXT("DefaultPawnClass: %s"), *DefaultPawnClass->GetName());
 	bStartPlayersAsSpectators = false;
 	PrimaryActorTick.bCanEverTick = true;
+	bAllowTickBeforeBeginPlay = true;
+	bAllowReceiveTickEventOnDedicatedServer = true;
+	SetTickGroup(ETickingGroup::TG_PrePhysics);
 }
 
 void ACRaceGM::BeginPlay()

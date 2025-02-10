@@ -2,9 +2,6 @@
 
 
 #include "RunSimulationLibrary.h"
-
-#include "DetailLayoutBuilder.h"
-
 #include "Blueprint/WidgetBlueprintLibrary.h"
 
 AMyCar* URunSimulationLibrary::SpawnedVehicle = nullptr;

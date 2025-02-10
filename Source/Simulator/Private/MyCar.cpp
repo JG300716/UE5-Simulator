@@ -3,7 +3,6 @@
 
 #include "MyCar.h"
 
-#include "AssetTypeCategories.h"
 #include "DefaultPlayerOptions.h"
 #include "OptionsLibrary.h"
 
@@ -34,9 +33,9 @@ AMyCar::AMyCar(const FObjectInitializer& ObjectInitializer)
 void AMyCar::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Warning, TEXT("AMyCar::BeginPlay()"));
-	UE_LOG(LogTemp, Warning, TEXT("2VehicleMovementComp: %p"), this->GetVehicleMovementComponent());
-	UE_LOG(LogTemp, Warning, TEXT("2MyChaosVehicleMovementComp: %p"), TMPMyChaosWheeledVehicleMovementComponent.Get());
+	//UE_LOG(LogTemp, Warning, TEXT("AMyCar::BeginPlay()"));
+	//UE_LOG(LogTemp, Warning, TEXT("2VehicleMovementComp: %p"), this->GetVehicleMovementComponent());
+	//UE_LOG(LogTemp, Warning, TEXT("2MyChaosVehicleMovementComp: %p"), TMPMyChaosWheeledVehicleMovementComponent.Get());
 
 	// TArray<FName> WheelBones = { FName(TEXT("FL")), FName(TEXT("FR")), FName(TEXT("RL")), FName(TEXT("RR")) };
 	// TArray<UClass*> WheelBlueprintClasses;
@@ -274,19 +273,19 @@ void AMyCar::PostInitializeComponents()
 	Super::PostInitializeComponents();
 	//InitializeVehiclePhysics();
 
-	if(TMPMyChaosWheeledVehicleMovementComponent)
-	{
-		if(!IsValid(GetMesh())) return;
-		if(!IsValid(GetMesh()->GetPhysicsAsset())) return;
-		UE_LOG(LogTemp, Warning, TEXT("Physics Asset: %s"), *GetMesh()->GetPhysicsAsset()->GetName());
-		UE_LOG(LogTemp, Warning, TEXT("Chassis Mass: %f"), TMPMyChaosWheeledVehicleMovementComponent->Mass);
-		UE_LOG(LogTemp, Warning, TEXT("1Mesh Mass: %f"), GetMesh()->CalculateMass(FName("Root")));
-		UE_LOG(LogTemp, Warning, TEXT("2Mesh Mass: %f"), GetMesh()->GetMass());
-		UE_LOG(LogTemp, Warning, TEXT("Init Tick"));
-		UE_LOG(LogTemp, Warning, TEXT("Is Gravity Enabled: %s"), GetMesh()->IsGravityEnabled() ? TEXT("true") : TEXT("false"));
-		UE_LOG(LogTemp, Warning, TEXT("Is Simulating Physics: %s"), GetMesh()->IsSimulatingPhysics(FName("Root")) ? TEXT("true") : TEXT("false"));
-		UE_LOG(LogTemp, Warning, TEXT("Animation class: %s"), *GetMesh()->AnimClass->GetName());
-	}
+	// if(TMPMyChaosWheeledVehicleMovementComponent)
+	// {
+	// 	if(!IsValid(GetMesh())) return;
+	// 	if(!IsValid(GetMesh()->GetPhysicsAsset())) return;
+	// 	UE_LOG(LogTemp, Warning, TEXT("Physics Asset: %s"), *GetMesh()->GetPhysicsAsset()->GetName());
+	// 	UE_LOG(LogTemp, Warning, TEXT("Chassis Mass: %f"), TMPMyChaosWheeledVehicleMovementComponent->Mass);
+	// 	UE_LOG(LogTemp, Warning, TEXT("1Mesh Mass: %f"), GetMesh()->CalculateMass(FName("Root")));
+	// 	UE_LOG(LogTemp, Warning, TEXT("2Mesh Mass: %f"), GetMesh()->GetMass());
+	// 	UE_LOG(LogTemp, Warning, TEXT("Init Tick"));
+	// 	UE_LOG(LogTemp, Warning, TEXT("Is Gravity Enabled: %s"), GetMesh()->IsGravityEnabled() ? TEXT("true") : TEXT("false"));
+	// 	UE_LOG(LogTemp, Warning, TEXT("Is Simulating Physics: %s"), GetMesh()->IsSimulatingPhysics(FName("Root")) ? TEXT("true") : TEXT("false"));
+	// 	UE_LOG(LogTemp, Warning, TEXT("Animation class: %s"), *GetMesh()->AnimClass->GetName());
+	// }
 }
 
 // Called to bind functionality to input

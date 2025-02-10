@@ -63,7 +63,6 @@ public:
 	int connectionTimeoutCurrent;
 
 	
-
     //Motion related properties
     TiltLimits tiltLimits;
     float YawLimit;

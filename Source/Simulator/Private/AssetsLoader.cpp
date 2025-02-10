@@ -46,7 +46,7 @@ void ListFilesInDirectory(const FString& DirectoryPath)
     for (const FAssetData& AssetData : AssetDataArray)
     {
         FString AssetName = AssetData.AssetName.ToString();
-        FString AssetPath = AssetData.ObjectPath.ToString();
+        FString AssetPath = AssetData.GetSoftObjectPath().ToString();
 
         // You can process the asset here as needed
         UE_LOG(LogTemp, Log, TEXT("Asset found: %s at Path: %s"), *AssetName, *AssetPath);

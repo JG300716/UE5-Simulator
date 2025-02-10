@@ -22,22 +22,22 @@ public:
 	AMyCar(const FObjectInitializer& ObjectInitializer);
 
 	bool bPhysicsInitialized = false;
-	int32 PhysicsInitRetryCount = 0;
-	const int32 MaxPhysicsInitRetries = 5;
-	FTimerHandle PhysicsInitTimerHandle;
-	
-	void InitializeVehiclePhysics();
-	void SetupMeshPhysics();
-	bool ValidatePhysicsSetup() const;
-	void DelayedPhysicsInit();
+	// int32 PhysicsInitRetryCount = 0;
+	// const int32 MaxPhysicsInitRetries = 5;
+	// FTimerHandle PhysicsInitTimerHandle;
+	//
+	// void InitializeVehiclePhysics();
+	// void SetupMeshPhysics();
+	// bool ValidatePhysicsSetup() const;
+	// void DelayedPhysicsInit();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	virtual void PostInitializeComponents() override;
 
-	UFUNCTION(BlueprintCallable, Category = "Vehicle")
-	void ForcePhysicsInit();
+	//UFUNCTION(BlueprintCallable, Category = "Vehicle")
+	//void ForcePhysicsInit();
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Vehicle")
 	FVector StartingLocation;

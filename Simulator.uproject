@@ -49,10 +49,6 @@
 			]
 		},
 		{
-			"Name": "YawVR",
-			"Enabled": true
-		},
-		{
 			"Name": "ChaosVehiclesPlugin",
 			"Enabled": true
 		}

@@ -451,7 +451,7 @@ struct FDefaultBasicUserOption
 		OptionMap.Add(FName(AbsEnabled->OptionName), AbsEnabled);
 		
 	}
-	static constexpr bool bDefaultManualGearbox = false;
+	static constexpr bool bDefaultManualGearbox = true;
 	static constexpr bool bDefaultAutomaticReverse = false;
 	static EDriveMode DefaultDriveMode;
 	static constexpr bool bDefaultSuspensionEnabled = true;

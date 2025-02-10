@@ -47,6 +47,22 @@ void AMyCar::BeginPlay()
 	// 	return;
 	// }
 	//
+	// FString PathToPhysicalAsset = FString::Printf(TEXT("/Game/Simulator/Cars/FinalModels/%s/PA_%s_Object"), *VehicleName, *VehicleName);
+	// if(!GetMesh()) return;
+	// // Attempt to load the Physics Asset from the specified path
+	// UPhysicsAsset* PhysicsAsset = Cast<UPhysicsAsset>(StaticLoadObject(UPhysicsAsset::StaticClass(), nullptr, *PathToPhysicalAsset));
+	//
+	// if (PhysicsAsset)
+	// {
+	// 	// Set the loaded Physics Asset on the skeletal mesh component
+	// 	GetMesh()->SetPhysicsAsset(PhysicsAsset);
+	// 	UE_LOG(LogTemp, Warning, TEXT("Successfully set physical asset: %s"), *PathToPhysicalAsset);
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Error, TEXT("Failed to load physical asset at path: %s"), *PathToPhysicalAsset);
+	// }
+
 	// for (const FName& BoneName : WheelBones)
 	// {
 	// 	// Construct the dynamic path to the Blueprint
@@ -272,7 +288,6 @@ void AMyCar::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	//InitializeVehiclePhysics();
-
 	// if(TMPMyChaosWheeledVehicleMovementComponent)
 	// {
 	// 	if(!IsValid(GetMesh())) return;

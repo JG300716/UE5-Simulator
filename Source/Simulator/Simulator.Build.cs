@@ -16,7 +16,9 @@ public class Simulator : ModuleRules
 			"ChaosVehicles",
 			"Slate",   
 			"SlateCore",
-			"UMG"
+			"UMG",
+			"Sockets",
+			"Networking",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "AvalancheModifiers" });

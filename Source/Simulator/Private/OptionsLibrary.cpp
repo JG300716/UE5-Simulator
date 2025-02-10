@@ -987,6 +987,7 @@ void UOptionsLibrary::TryToStartGame(UUserWidget* WidgetContext)
 
     UMenuSelectButton* MapButton = Cast<UMenuSelectButton>(GetInstance()->Buttons[IndexOfChosenMap]);
     if (!IsValid(MapButton)) return;
+    GEngine->Exec(World, TEXT("t.MaxFPS 90"));
 
     const FString& MapPath = MapButton->AssetObjectPath;
     UGameplayStatics::OpenLevel(World, *MapPath, true, Options);

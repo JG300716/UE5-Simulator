@@ -1,6 +1,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ChaosWheeledVehicleMovementComponent.h"
+
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerStart.h"
 #include "Camera/CameraActor.h"
@@ -35,22 +37,7 @@ public:
 	// Main function to start the simulation
 	UFUNCTION(BlueprintCallable, Category = "Simulation")
 	static void StartSimulation(UWorld* World);
-
-	// Function to spawn the vehicle at player start
-	UFUNCTION(BlueprintCallable, Category = "Simulation")
-	static void SpawnVehicle(UWorld* World);
-
-	UFUNCTION(BlueprintCallable, Category = "Simulation")
-	static void GetSpawnedVehicle(UWorld* World);
 	
-	// Function to initialize vehicle settings
-	UFUNCTION(BlueprintCallable, Category = "Simulation")
-	static void InitializeVehicleSettings(AMyCar* Vehicle);
-
-	// Function to possess the spawned vehicle
-	UFUNCTION(BlueprintCallable, Category = "Simulation")
-	static void PossessVehicle(UWorld* World, AMyCar* Vehicle);
-
 	// Tick function for simulation updates
 	UFUNCTION(BlueprintCallable, Category = "Simulation")
 	static void SimulationTick(float DeltaTime);
@@ -58,15 +45,28 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Simulation")
 	static void PrintMovementPointer(UChaosWheeledVehicleMovementComponent* Component);
 
+	UFUNCTION(BlueprintCallable, Category = "Simulation")
+	static void GearUpVehicle(UChaosWheeledVehicleMovementComponent* Component);
+
+	UFUNCTION(BlueprintCallable, Category = "Simulation")
+	static void GearDownVehicle(UChaosWheeledVehicleMovementComponent* Component);
+	
+	UFUNCTION(BlueprintCallable, Category = "Simulation")
+	static void InitPhysics(UChaosWheeledVehicleMovementComponent* Component);
+
+	UFUNCTION(BlueprintCallable, Category = "Simulation")
+	static void PrintVehicleComponentParams(UChaosWheeledVehicleMovementComponent* Component);
+	
 private:
 	static bool IsVREnabled;
 	static bool IsMenuOpen;
 	static bool IsOptionOpen;
 	// Static properties to store references
-	static AMyCar* SpawnedVehicle;
-	static AController* PlayerVehicleController;
 	static bool bSimulationInitialized;
 	static bool bVRCameraConnected;
 
 	static void ResetSimulationValues();
+
+	static void SetUpOptions(UChaosWheeledVehicleMovementComponent* Component);
+	static void CreateWheels(UChaosWheeledVehicleMovementComponent* Component);
 };

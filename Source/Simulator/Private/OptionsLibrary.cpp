@@ -16,12 +16,18 @@ TArray<uint8> UOptionsLibrary::Sizes = {0,0,0};
 TArray<uint8> UOptionsLibrary::MaxColumns = {5,5,1};
 int32 UOptionsLibrary::IndexOfChosenVehicle = -1;
 int32 UOptionsLibrary::IndexOfChosenMap = -1;
+bool UOptionsLibrary::OptionsInitialized = false;
 
 void UOptionsLibrary::Initialize(UTextBlock* ToolTipTextTmp, UScrollBox* ScrollBoxTmp)
 {
     CleanButtons();
     if (IsValid(ToolTipTextTmp)) GetInstance()->OptionsToolTipText = ToolTipTextTmp;
     if (IsValid(ScrollBoxTmp)) GetInstance()->OptionsScrollBox = ScrollBoxTmp;
+}
+
+bool UOptionsLibrary::AreOptionsInitialized()
+{
+    return OptionsInitialized;
 }
 
 UOptionsLibrary* UOptionsLibrary::GetInstance()
@@ -691,6 +697,7 @@ void UOptionsLibrary::CleanButtons()
 {
     GetInstance()->Buttons.Empty();
     Sizes = {0,0,0};
+    OptionsInitialized = false;
 }
 
 void UOptionsLibrary::CalculateButtonsDimensions()
@@ -718,6 +725,7 @@ void UOptionsLibrary::CalculateButtonsDimensions()
            break;
        }
    }
+    OptionsInitialized = true;
 }
 
 void UOptionsLibrary::OptionButtonPressed(UOptionBaseButton* Button, const EControllersButtonsDirection ControllerButton)
@@ -963,7 +971,9 @@ void UOptionsLibrary::TryToStartGame(UUserWidget* WidgetContext)
     }
 
     // Load the game mode class
-    const FString GameModePath = TEXT("/Script/Simulator.CRaceGM");
+
+    const FString GameModePath = TEXT("/Game/Simulator/GameMode/Race.Race_C");
+    //const FString GameModePath = TEXT("/Script/Simulator.CRaceGM");
     UClass* GameModeClass = StaticLoadClass(AGameModeBase::StaticClass(), nullptr, *GameModePath);
 
     if (!GameModeClass)
@@ -971,19 +981,9 @@ void UOptionsLibrary::TryToStartGame(UUserWidget* WidgetContext)
         UE_LOG(LogTemp, Error, TEXT("Failed to load GameMode class from path: %s"), *GameModePath);
         return;
     }
-
-    // Cast to the specific GameMode class
-    ACRaceGM* GameModeInstance = Cast<ACRaceGM>(GameModeClass->GetDefaultObject());
-    if (!GameModeInstance)
-    {
-        UE_LOG(LogTemp, Error, TEXT("Failed to cast GameMode to ACRaceGM"));
-        return;
-    }
-
-    GameModeInstance->DefaultPawnClass = VehicleClass;
     
     FString Options;
-    Options.Appendf(TEXT("?Game=%s?DefaultPawnClass=%s"), *GameModeClass->GetPathName(), *VehicleClass->GetPathName());
+    Options.Appendf(TEXT("?DefaultPawnClass=%s?GameMode=%s"), *VehiclePath, *GameModePath);
 
     UMenuSelectButton* MapButton = Cast<UMenuSelectButton>(GetInstance()->Buttons[IndexOfChosenMap]);
     if (!IsValid(MapButton)) return;
@@ -991,6 +991,8 @@ void UOptionsLibrary::TryToStartGame(UUserWidget* WidgetContext)
 
     const FString& MapPath = MapButton->AssetObjectPath;
     UGameplayStatics::OpenLevel(World, *MapPath, true, Options);
+    World->bShouldSimulatePhysics = true;
+    World->GetWorldSettings()->TimeDilation = 1.0f;
 }
 
 UClass* UOptionsLibrary::GetChosenVehicleClass()

@@ -10,7 +10,11 @@ ACRaceGM::ACRaceGM()
 	{
 		PlayerControllerClass = PlayerControllerBP.Class;
 	}
-	DefaultPawnClass = UOptionsLibrary::GetChosenVehicleClass();
+	if (UOptionsLibrary::AreOptionsInitialized())
+	{
+		DefaultPawnClass = UOptionsLibrary::GetChosenVehicleClass();
+	}
+	else DefaultPawnClass = nullptr;
 	if (DefaultPawnClass != nullptr) UE_LOG(LogTemp, Warning, TEXT("DefaultPawnClass: %s"), *DefaultPawnClass->GetName());
 	bStartPlayersAsSpectators = false;
 	PrimaryActorTick.bCanEverTick = true;

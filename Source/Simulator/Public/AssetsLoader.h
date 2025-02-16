@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MyCar.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Engine/LevelStreamingDynamic.h"
 #include "AssetRegistry/AssetRegistryModule.h"

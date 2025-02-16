@@ -4,6 +4,8 @@
  * https://github.com/JG300716
  */
 #include "AssetsLoader.h"
+
+#include "WheeledVehiclePawn.h"
 TArray<FString> UAssetsLoader::GetFoldersInDirectory(const FString& DirectoryPath)
 {
     TArray<FString> FolderPaths;
@@ -63,7 +65,7 @@ void UAssetsLoader::LoadVehicleAsset(const FString& AssetPath, bool &Success)
 {
    // Example path:
    // "/Game/Simulator/Cars/FinalModels/Chevrolet/Chevrolet_Object.Chevrolet_Object_C"
-    TSoftClassPtr<AMyCar> Asset = TSoftClassPtr<AMyCar>(FSoftObjectPath(AssetPath));
+    TSoftClassPtr<AWheeledVehiclePawn> Asset = TSoftClassPtr<AWheeledVehiclePawn>(FSoftObjectPath(AssetPath));
     Success = Asset.IsValid();
     if (Success) {
         UE_LOG(LogTemp, Warning, TEXT("Asset loaded successfully from %s."), *AssetPath);

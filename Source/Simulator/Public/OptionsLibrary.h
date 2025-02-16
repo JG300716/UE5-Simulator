@@ -53,6 +53,7 @@ class SIMULATOR_API UOptionsLibrary : public UBlueprintFunctionLibrary
 	static TArray<uint8> MaxColumns;
 	static int32 IndexOfChosenVehicle;
 	static int32 IndexOfChosenMap;
+	static bool OptionsInitialized;
 	
 	static void LoadAssetWith(const FVector &CursorPosition, int32 &IndexOfChosenAsset, const FLinearColor Color);
 	static bool IsButtonValid(const int32 Index);
@@ -80,6 +81,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
 	static void Initialize(UTextBlock* ToolTipTextTmp, UScrollBox* ScrollBoxTmp);
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
+	static bool AreOptionsInitialized();
 	
 	static UOptionsLibrary* GetInstance();
 	

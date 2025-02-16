@@ -509,16 +509,16 @@ struct FDefaultPhysicsUserOption
 		TUOption<float> SuspensionPreloadValues = {Physics, Option_ValueButton, "Suspension Preload", DefaultSuspensionPreload, DefaultSuspensionPreload, 0, 100, 1, "cm", "Set the preload of the suspension", false };
 		TUOption<float> SuspensionSmoothnessValues = {Physics, Option_ValueButton, "Suspension Smoothness", DefaultSuspensionSmoothness, DefaultSuspensionSmoothness, 0, 10, 0.1, "", "Set the smoothness of the suspension", false };
 		TUOption<FVehicleWheels> WheelsBrakeTorqueValues = {Physics, Option_WheelsValueButton, "Wheels Brake Torque",
-			{ DefaultFrontWheelsBrakeTorque, DefaultRearWheelsBrakeTorque, DefaultFrontWheelsBrakeTorque, DefaultRearWheelsBrakeTorque },
-			{ DefaultFrontWheelsBrakeTorque, DefaultRearWheelsBrakeTorque, DefaultFrontWheelsBrakeTorque, DefaultRearWheelsBrakeTorque },
+			{ DefaultFrontWheelsBrakeTorque, DefaultFrontWheelsBrakeTorque, DefaultRearWheelsBrakeTorque, DefaultRearWheelsBrakeTorque },
+			{ DefaultFrontWheelsBrakeTorque, DefaultFrontWheelsBrakeTorque, DefaultRearWheelsBrakeTorque, DefaultRearWheelsBrakeTorque },
 			{ 0, 0, 0, 0 },
 			{ 10000, 10000, 10000, 10000 },
 			10, "Nm",
 			"Set the brake torque of the wheels",
 			false };
 		TUOption<FVehicleWheels> WheelsHandBrakeTorqueValues = {Physics, Option_WheelsValueButton, "Wheels Hand Brake Torque",
-			{ DefaultFrontWheelsHandBrakeTorque, DefaultRearWheelsHandBrakeTorque, DefaultFrontWheelsHandBrakeTorque, DefaultRearWheelsHandBrakeTorque },
-			{ DefaultFrontWheelsHandBrakeTorque, DefaultRearWheelsHandBrakeTorque, DefaultFrontWheelsHandBrakeTorque, DefaultRearWheelsHandBrakeTorque },
+			{ DefaultFrontWheelsHandBrakeTorque, DefaultFrontWheelsHandBrakeTorque, DefaultRearWheelsHandBrakeTorque, DefaultRearWheelsHandBrakeTorque },
+			{ DefaultFrontWheelsHandBrakeTorque, DefaultFrontWheelsHandBrakeTorque, DefaultRearWheelsHandBrakeTorque, DefaultRearWheelsHandBrakeTorque },
 			{ 0, 0, 0, 0 },
 			{ 10000, 10000, 10000, 10000 },
 			10, "Nm",
@@ -572,8 +572,8 @@ struct FDefaultPhysicsUserOption
 		OptionMap.Add(FName(WheelsHandBrakeTorque->OptionName), WheelsHandBrakeTorque);
 	}
 	
-	static constexpr float DefaultChassisMass = 1000.0f;
-	static constexpr float DefaultWheelMass = 30.0f;
+	static constexpr float DefaultChassisMass = 1500.0f;
+	static constexpr float DefaultWheelMass = 35.0f;
 	static constexpr float DefaultHorsePower = 685.8f;
 	static constexpr float DefaultMaxRpm = 6000.0f;
 	static constexpr float DefaultMaxTorque = 600.0f;
@@ -585,10 +585,10 @@ struct FDefaultPhysicsUserOption
 	static constexpr float DefaultAutomaticGearboxDownShiftRpm = 2000.0f;
 	static constexpr float DefaultGearboxChangeTime = 0.4f;
 	static constexpr float DefaultGearboxTransmissionEfficiency = 0.95f;
-	static constexpr float DefaultWheelsFrictionForceMultiplier = 2.0f;
+	static constexpr float DefaultWheelsFrictionForceMultiplier = 2.5f;
 	static constexpr float DefaultMaxWheelsSteeringAngle = 50.0f;
 	static constexpr float DefaultSuspensionMaxRaise = 10.0f;
-	static constexpr float DefaultSuspensionMaxDrop = 10.0f;
+	static constexpr float DefaultSuspensionMaxDrop = 5.0f;
 	static constexpr float DefaultSuspensionDumpRatio = 0.5f;
 	static constexpr float DefaultSuspensionSpringRatio = 250.0f;
 	static constexpr float DefaultSuspensionPreload = 50.0f;
@@ -657,7 +657,7 @@ struct FDefaultAdvanceUserOption
 		
 	}
 	
-	static constexpr BVehicleWheels DefaultWheelsAffectedByBrakes = { false, false, false, false };
+	static constexpr BVehicleWheels DefaultWheelsAffectedByBrakes = { false, true, false, true };
 	static constexpr BVehicleWheels DefaultWheelsAffectedByHandBrakes = { false, false, false, false };
 	static constexpr BVehicleWheels DefaultWheelsAffectedByEngine = { false, true, false, true };
 	static constexpr BVehicleWheels DefaultWheelsAffectedBySteering = { true, false, true, false };

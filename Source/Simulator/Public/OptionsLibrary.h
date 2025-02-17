@@ -33,7 +33,8 @@ enum EControllersArrowsDirection : uint8
 	Up = 0,
 	Down = 1,
 	Left = 2,
-	Right = 3
+	Right = 3,
+	None = 4
 };
 
 UENUM(BlueprintType, Blueprintable, Category = "OptionsButton")
@@ -140,4 +141,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
 	static FString GetChosenVehicleName();
+
+	UFUNCTION(BlueprintCallable, Category = "OptionsLibrary")
+	static EControllersArrowsDirection GetDirectionFromButton(const int64 Value);
 };

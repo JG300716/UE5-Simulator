@@ -1014,3 +1014,20 @@ FString UOptionsLibrary::GetChosenVehicleName()
     if (!IsValid(VehicleButton)) return FString();
     return VehicleButton->MenuButtonName;
 }
+
+EControllersArrowsDirection UOptionsLibrary::GetDirectionFromButton(const int64 Value)
+{
+    switch (Value)
+    {
+    case 29:
+        return Up;
+    case 57:
+        return Right;
+    case 86:
+        return Down;
+    case 90:
+        return Left;
+    default:
+        return None;
+    }
+}
